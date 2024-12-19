@@ -1,0 +1,42 @@
+#breadcrumb {
+    padding-top: 20px;
+
+    ul {
+        padding: 0;
+        list-style: none;
+        margin-bottom: 10px;
+        display: flex;
+        flex-wrap: wrap;
+
+        li {
+            display: flex;
+            margin: 0 20px 10px 0;
+
+            a {
+                background: $color-white;
+                color: #35363A;
+                text-transform: uppercase;
+                font-size: 15px;
+                font-weight: 600;
+                padding: 5px 15px;
+                border-radius: 25px;
+                white-space: nowrap;
+
+                &:hover, &.active {
+                    background: $color-highlight3;
+                    color: $color-white;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 991px) {
+        ul {
+            justify-content: flex-start;
+
+            li a {
+                font-size: 13px;
+            }
+        }
+    }
+}

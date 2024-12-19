@@ -1,0 +1,268 @@
+* {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 62.5%;
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    font-size: 1.6rem;
+    color: #272e47;
+    font-family: roboto, sans-serif;
+}
+
+.wrapper {
+    margin: 0 auto;
+    width: 100%;
+    padding: 2rem;
+    max-width: 120rem;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    font-size: 14px;
+}
+
+.header .logo {
+    width: 190px;
+    aspect-ratio: 1/3;
+}
+
+header .auge-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+header .auge-info .col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.6rem;
+}
+
+header .auge-info .col p {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+header .auge-info .col p span,
+header .auge-info .col p a {
+    height: 100%;
+    padding-left: 0.5rem;
+    border-left: 1px solid #000000a1;
+    text-wrap: nowrap;
+    text-decoration: none;
+    color: #272e47;
+}
+
+header .auge-info .col img {
+    width: 12px;
+    color: black;
+}
+
+header .auge-info .col:first-child p:last-child img {
+    width: 12px;
+    aspect-ratio: 2/3;
+    color: black;
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    margin-top: 40px;
+    text-wrap: nowrap;
+}
+.hero .order-info1 {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding-bottom: 2rem;
+
+    border-bottom: 1px solid #272e47;
+}
+.hero .order-info1 .left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    gap: 1.6rem;
+}
+.hero .order-info1 .left .row {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+}
+.hero .order-info1 .left .row div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+}
+.hero .order-info1 .left .title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    align-self: flex-start;
+    gap: 1rem;
+}
+.hero .order-info1 .left .title > p {
+    align-self: flex-start;
+}
+.hero .order-info1 .left .title p + p {
+    align-self: flex-start;
+    font-weight: 700;
+}
+.hero .order-info1 .left .title .subtitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.hero .order-info1 .buyer-seller {
+    display: flex;
+    gap: 1.6rem;
+}
+.hero .order-info1 .qrcode img {
+    width: 12rem;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+.hero .order-info2 {
+    padding-top: 2rem;
+    width: 100%;
+}
+.hero .order-info2 .row {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    width: 100%;
+}
+.hero .order-info2 .row .supplier {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 171px;
+}
+.hero .order-info2 .row .supplier p:first-child {
+    text-wrap: wrap;
+}
+.hero .order-info2 .row .order-info-misc-col1 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+}
+.hero .order-info2 .row div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+}
+.hero .order-info2 .row div:last-child {
+    justify-self: end;
+}
+
+.hero .order-info2 .row div:last-child span {
+    color: #005cac;
+    font-size: 3rem;
+}
+
+.table-container {
+    margin-top: 2.5rem;
+    font-size: 1.2rem;
+    width: 100%;
+    display: inline-block;
+}
+.table-container table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.table-container table th,
+.table-container table td {
+    border-collapse: collapse;
+    padding: .5rem .5rem;
+    text-wrap: nowrap;
+}
+.table-container table th a,
+.table-container table td a {
+    color: black;
+    text-decoration: none;
+    display: block;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: fit-content;
+    width: fit-content;
+}
+.table-container table thead {
+    border-bottom: 1px solid #ccc;
+}
+.table-container table thead th {
+    text-transform: uppercase;
+    text-align: left;
+}
+.table-container table thead th:first-child {
+    padding-left: 0;
+}
+.table-container table thead th.text-center {
+    text-align: center;
+}
+.table-container table tbody tr {
+    border-bottom: 1px solid #ccc;
+}
+.table-container table tbody tr td.text-center {
+    text-align: center;
+}
+.table-container table tbody tr td:first-child {
+    padding-left: 0;
+}
+.table-container table tbody tr td:first-child img {
+    border: 1px solid #ccc;
+}
+.table-footer {
+    margin-top: 7.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.6rem;
+}
+.table-footer p {
+    display: block;
+}
+.table-footer .economy {
+    color: #005cac;
+}
+
+footer .order-code {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5rem;
+}
+
+footer .order-code h1 {
+    font-size: 2rem;
+    font-weight: 500;
+    display: block;
+}
+
+footer .order-code span {
+    color: #005cac;
+    font-weight: 700;
+
+}

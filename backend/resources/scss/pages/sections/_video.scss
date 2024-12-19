@@ -1,0 +1,53 @@
+section#video {
+    .video-container {
+        background: $color-white;
+        position: relative;
+        width: 100%;
+        max-width: 850px;
+        border-radius: 30px;
+        height: auto;
+        margin: 0 auto;
+        padding-bottom: 38.3%;
+
+        h5 {
+            background: $color-white;
+            position: absolute;
+            top: -18px;
+            z-index: 1;
+            border: 3px solid;
+            border-radius: 50px;
+            padding: 7px 20px;
+            text-transform: uppercase;
+            color: $color-black;
+            margin: 0;
+            left: calc(50% - 175px);
+            font-size: 14px;
+        }
+
+        & > div {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            box-shadow: 0 0 0 2px;
+        }
+    }
+}
+
+@media (max-width: 1200px) {
+    section#video .video-container {
+        padding-bottom: 51%;
+    }
+}
+
+@media (max-width: 500px) {
+    section#video .video-container h5 {
+        font-size: 12px;
+        position: inherit;
+        left: 0;
+        text-align: center;
+        top: -40px;
+    }
+}

@@ -1,0 +1,27 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      php: 8.2
+    commands:
+      - echo Installing Composer...
+      - curl -sS https://getcomposer.org/installer | php
+      - mv composer.phar /usr/local/bin/composer
+  pre_build:
+    commands:
+      - echo Starting pre-build...
+      - composer install --no-interaction --prefer-dist --optimize-autoloader
+  build:
+    commands:
+      - echo Starting build...
+      - php artisan config:cache
+      - php artisan route:cache
+      - php artisan storage:link
+  post_build:
+    commands:
+      - echo Build completed successfully.
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no

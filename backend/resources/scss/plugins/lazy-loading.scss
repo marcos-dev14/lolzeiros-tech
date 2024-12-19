@@ -1,0 +1,10 @@
+.lazy-picture img {
+    filter: blur(1vw);
+    transform: scale(.9) rotate(5deg);
+    transition: all .6s ease;
+
+    &.unblured {
+        filter: blur(0vw);
+        transform: scale(1);
+    }
+}

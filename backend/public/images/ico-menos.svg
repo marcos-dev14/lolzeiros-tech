@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+    <defs>
+        <style>.a{fill:#F2F2F2;}.b{fill:none;stroke:#040c22;stroke-linecap:round;stroke-width:2px;}</style>
+    </defs>
+    <g transform="translate(-494 -500)">
+        <path class="a" d="M0,0H32a8,8,0,0,1,8,8V32a8,8,0,0,1-8,8H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z"
+              transform="translate(534 540) rotate(180)"/>
+        <line class="b" x1="12" transform="translate(520.5 520.5) rotate(180)"/>
+    </g>
+</svg>

@@ -1,0 +1,54 @@
+/* Globals */
+
+* {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  outline: 0;
+  box-sizing: border-box;
+}
+
+*:focus{
+  outline: 0;
+}
+
+:root {
+  --main: #DC004B;
+  --black: #1f1d1d;
+  --white: #ffffff;
+  --primary: #005CAC;
+}
+
+h1 b, h2 b {
+  color: var(--main);
+}
+
+body {
+  -moz-font-smoothing: antialiased !important;
+  -webkit-font-smoothing: antialiased !important;
+  text-align: left;
+  background-color: #EDEFF7;
+  font-family: 'Quicksand', sans-serif;
+  position: relative;
+}
+
+textarea, input[type="text"] {
+  -webkit-appearance: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  background-color: rgba(0,0,0,0);
+}

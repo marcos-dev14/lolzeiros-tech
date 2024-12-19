@@ -1,0 +1,5 @@
+<svg class="tagBg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect class="tagBg" width="32" height="32" rx="4" />
+<path class="tagIcon" d="M10 10V17L13 20L16 23L23 16L17 10H10Z" stroke-width="1.5" stroke-linejoin="round"/>
+<circle class="tagCircle" cx="13.25" cy="13.25" r="1.25" />
+</svg>

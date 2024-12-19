@@ -1,0 +1,56 @@
+.tab-bar {
+    visibility: hidden;
+    padding: 20px 20px 20px;
+    box-shadow: 0 13px 20px 15px rgba(0, 0, 0, 0.4);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: $color-white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(500px);
+    transition: transform 0.3s ease-in-out;
+
+    nav {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
+
+        .menu-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+
+            svg {
+                width: 28px;
+                height: 28px;
+
+                path {
+                    stroke: #015CAE;
+                }
+
+                .wishlist {
+                    fill: #015CAE;
+                    stroke: $color-white;
+                }
+            }
+
+            &.no-auth svg path {
+                stroke: #F03F39;
+            }
+        }
+    }
+}
+
+@media (max-width: 991px) {
+    .tab-bar {
+        visibility: visible;
+        transform: translateY(0);
+    }
+}

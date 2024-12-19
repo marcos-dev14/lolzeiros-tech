@@ -1,0 +1,15 @@
+<svg class="printBlackIconBg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path class="printBlackIconBg" d="M28 0H4C1.79086 0 0 1.79086 0 4V28C0 30.2091 1.79086 32 4 32H28C30.2091 32 32 30.2091 32 28V4C32 1.79086 30.2091 0 28 0Z" />
+<mask id="path-2-inside-1_370_12" fill="white">
+<rect x="8" y="13.333" width="16" height="8" rx="1"/>
+</mask>
+<rect class="printIconStroke" x="8" y="13.333" width="16" height="8" rx="1" stroke-width="2.5" mask="url(#path-2-inside-1_370_12)"/>
+<mask id="path-3-inside-2_370_12" fill="white">
+<path d="M10.6641 17C10.6641 16.4477 11.1118 16 11.6641 16H20.3307C20.883 16 21.3307 16.4477 21.3307 17V24H10.6641V17Z"/>
+</mask>
+<path class="printIconStroke" d="M10.6641 17C10.6641 16.4477 11.1118 16 11.6641 16H20.3307C20.883 16 21.3307 16.4477 21.3307 17V24H10.6641V17Z" stroke-width="2.5" mask="url(#path-3-inside-2_370_12)"/>
+<mask id="path-4-inside-3_370_12" fill="white">
+<path d="M10.6641 8H21.3307V14H10.6641V8Z"/>
+</mask>
+<path class="printIconFill" d="M10.6641 8V6.75H9.41406V8H10.6641ZM21.3307 8H22.5807V6.75H21.3307V8ZM10.6641 9.25H21.3307V6.75H10.6641V9.25ZM20.0807 8V14H22.5807V8H20.0807ZM11.9141 14V8H9.41406V14H11.9141Z" mask="url(#path-4-inside-3_370_12)"/>
+</svg>

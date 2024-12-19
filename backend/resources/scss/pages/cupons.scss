@@ -1,0 +1,229 @@
+.cupons-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40rem, 1fr));
+    gap: 20px;
+    margin-top: 12px;
+}
+
+.cupom-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.2);
+    background: url('/images/cupom/auge_logo.svg') no-repeat center;
+    background-color: #ECEFF6;
+    background-size: contain;
+    padding: 10px 30px;
+    position: relative;
+
+    &:after, &:before {
+        position: absolute;
+        content: "";
+        height: 40px;
+        border-radius: 40px;
+        z-index: 1;
+        top: 70px;
+        background-color: #fff;
+        width: 40px;
+    }
+
+    &:after {
+        right: -20px;
+    }
+
+    &:before {
+        left: -20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cupom-card {
+        width: 100%;
+
+        h2 {
+            display: none;
+        }
+    }
+}
+
+.cupom-middle {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    p {
+        margin: 0;
+        font-size: 12px;
+        color: #565656;
+    }
+}
+
+.time-share {
+    max-width: 20rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.cupom-middle .cupom-title {
+    max-width: 20rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    h1 {
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        color: #045FAE;
+        margin: 0;
+
+        span {
+            font-size: 14px;
+        }
+    }
+
+    h2 {
+        font-size: 14px;
+        color: #565656;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 130%;
+        margin: 0;
+    }
+
+    p {
+        font-size: 16px;
+        color: #696969;
+        margin-left: -20px;
+    }
+}
+
+.validate {
+    font-size: 16px;
+    color: #696969;
+    margin-left: -20px;
+    display: flex;
+    max-width: 14rem;
+    width: 100%;
+    padding: 0.4rem 1.2rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.6rem;
+    border-radius: 0.4rem;
+    border: 1px solid #696969;
+}
+
+.shared {
+    font-size: 12px;
+    color: #fff;
+    display: flex;
+    max-width: 14rem;
+    width: 100%;
+    padding: 0.4rem 1.2rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.6rem;
+    background: #36C8B1;
+    border-radius: 0.4rem;
+    border: 1px solid #696969;
+    cursor: pointer;
+}
+
+.copy-button {
+    border-radius: 4px;
+    padding: 0;
+    background-color: #fff;
+    border: 1px solid #e1e1e1;
+    display: flex;
+    align-items: center;
+
+    input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        outline: none;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    button {
+        padding: 0;
+        background-color: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        margin-right: 1rem;
+    }
+
+    div {
+        padding: 4px 6px;
+        border-radius: 0.4rem 0 0 0.4rem;
+        background-color: #045FAE;
+        color: #fff;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        text-transform: uppercase;
+        position: relative;
+
+        &:before {
+            position: absolute;
+            content: "";
+            left: -7px;
+            top: 7px;
+            width: 10px;
+            height: 10px;
+            border-radius: 40px;
+            background-color: #ECEFF6;
+            z-index: 1;
+        }
+    }
+}
+
+a.button-products {
+    max-width: 14.5rem;
+    width: 100%;
+    gap: 0px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    background-color: #0C5DA7;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        color: #fff;
+    }
+
+    &.disabled {
+        background-color: #ccc;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+}
+
+.botton-box {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}

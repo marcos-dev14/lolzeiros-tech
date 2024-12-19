@@ -1,0 +1,27 @@
+<?php
+
+return array (
+  'site_name' => 'Auge App Representações',
+  'logo' => 'logo_1708694358.jpeg',
+  'page_title' => 'Compre Direto dos Fabricantes E Importadores',
+  'domain' => 'augeapp.com.br',
+  'seo_description' => 'Preços baixos, promoções, rápido acesso �| s novidades e muita conveniência aqui na Auge App.',
+  'seo_keywords' => NULL,
+  'script_facebook_pixel' => NULL,
+  'script_google_ads' => NULL,
+  'script_google_analytics' => NULL,
+  'scripts_general' => NULL,
+  'cellphone' => '(31) 32132-204_',
+  'phone' => '(31) 3213-2204',
+  'whatsapp' => '(31) 32132-204_',
+  'social_instagram' => 'https://www.instagram.com/augeapp',
+  'social_facebook' => 'https://www.facebook.com/augeapp',
+  'social_youtube' => 'https://www.youtube.com/@augeapp',
+  'social_twitter' => NULL,
+  'color_primary' => null,
+  'color_highlight' => null,
+  'color_highlight2' => null,
+  'color_highlight3' => null,
+  'favicon' => 'favicon_1708694371.jpeg',
+  'theme' => 'default',
+);

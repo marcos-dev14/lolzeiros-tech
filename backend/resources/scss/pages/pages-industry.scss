@@ -1,0 +1,25 @@
+@import "../app";
+
+@import "../components/breadcrumb";
+@import "../pages/sections/suppliers";
+
+section#suppliers {
+    header {
+        margin-bottom: 0;
+
+        h2 {
+            margin-top: 0;
+            color: initial;
+        }
+    }
+
+    .list {
+        background: none;
+        margin-top: 30px;
+
+        a {
+            text-align: center;
+            color: $color-black;
+        }
+    }
+}

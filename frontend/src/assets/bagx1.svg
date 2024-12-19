@@ -1,0 +1,8 @@
+<svg class="bagXBg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path class="bagXBg" d="M28 0H4C1.79086 0 0 1.79086 0 4V28C0 30.2091 1.79086 32 4 32H28C30.2091 32 32 30.2091 32 28V4C32 1.79086 30.2091 0 28 0Z" />
+<path class="bagXIcon" d="M21.5007 21.083C21.105 21.5108 20.5594 21.7694 19.9777 21.805C19.9307 21.805 19.8837 21.805 19.8367 21.805H13.3227C13.0248 21.8049 12.7297 21.746 12.4545 21.6319C12.1793 21.5177 11.9292 21.3505 11.7186 21.1397C11.508 20.9289 11.341 20.6787 11.2271 20.4034C11.1132 20.128 11.0546 19.833 11.0547 19.535C11.0547 19.489 11.0547 19.442 11.0547 19.395L11.7297 12.844" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="bagXIcon" d="M13.7461 11.5989H21.6241L21.8791 15.7379L22.0241 18.0829" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="bagXIcon" d="M13.7461 11.5989C13.7461 10.8468 14.0449 10.1254 14.5768 9.59358C15.1086 9.06173 15.83 8.76294 16.5821 8.76294C17.3343 8.76294 18.0557 9.06173 18.5875 9.59358C19.1194 10.1254 19.4182 10.8468 19.4182 11.5989V13.1299" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="bagXIcon" d="M7.65039 9.48389L24.3464 23.2339" stroke-width="1.5" stroke-linecap="round"/>
+<path class="bagXIcon" d="M18.9372 18.842H11.4082" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

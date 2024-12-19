@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@/*" : ["./*"],
+      "~/*" : ["./src/*"],
+      "~pages/*" : ["./src/pages/*"],
+      "~components/*" : ["./src/components/*"],
+      "~assets/*" : ["./src/assets/*"],
+      "~context/*" : ["./src/context/*"],
+      "~styles/*" : ["./src/styles/*"],
+      "~types/*" : ["./src/types/*"],
+      "~tables/*" : ["./src/styles/components/Tables/*"],
+      "~api" : ["./src/services/api.ts"],
+      "~utils/*" : ["./src/utils/*"],
+      "~hooks/*" : ["./src/hooks/*"]
+    }
+  }
+}

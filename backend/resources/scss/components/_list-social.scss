@@ -1,0 +1,27 @@
+ul.list-social {
+    display: flex;
+    justify-content: center;
+    max-width: 230px;
+    margin: 20px 0;
+    gap: 15px;
+
+    li {
+        padding: 0;
+    }
+
+    a {
+        color: $color-primary;
+        background: $color-white;
+        width: 40px;
+        height: 40px;
+        border-radius: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &:hover {
+            background: $color-highlight3;
+            color: $color-white;
+        }
+    }
+}

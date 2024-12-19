@@ -1,0 +1,46 @@
+.post-embed a {
+    display: flex;
+    flex-direction: row;
+    margin: 2rem 0;
+    border-radius: 2rem;
+    background: $color-white;
+    overflow: hidden;
+    width: 100%;
+    max-width: 50rem;
+    box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        box-shadow: 0 0 2rem 0 rgba(0, 92, 172, 0.2);
+    }
+
+    figure {
+        width: 40%;
+        position: relative;
+        border-radius: 2rem 2rem 0 0;
+        overflow: hidden;
+        height: 17rem;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 767px) {
+            & {
+                height: auto;
+            }
+        }
+    }
+
+    h4 {
+        padding: 3rem 4rem;
+        display: flex;
+        align-items: center;
+        margin: 0;
+        font-size: 2rem;
+        line-height: 3.5rem;
+        overflow: hidden;
+        color: $color-primary !important;
+    }
+}

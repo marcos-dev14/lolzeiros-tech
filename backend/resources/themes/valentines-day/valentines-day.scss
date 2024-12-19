@@ -1,0 +1,45 @@
+body.valentines-day {
+    --customColorPrimary: #FFB6C1 !important;
+    --customColorHighlight: #FFB6C1 !important;
+    --customColorHighlight2: #cf8792 !important;
+    --customColorHighlight3: rgb(235, 146, 223) !important;
+
+    #snow {
+        transform: translateY(-200px);
+        position: relative;
+        z-index: 101;
+
+        .snowflake {
+            position: absolute;
+            font-size: 20px;
+            color: #dc3545;
+        }
+    }
+
+    section#brands {
+        background: var(--customColorPrimary);
+        padding: 60px 0;
+        position: relative;
+
+        &::before {
+            background: url('../themes/images/valentine_bg1.png') no-repeat center center;
+            background-size: cover;
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transform: rotate(180deg);
+            opacity: 0.5;
+        }
+
+        header h4 {
+            color: #fff;
+        }
+
+        footer a {
+            color: var(--customColorHighlight2);
+        }
+    }
+}

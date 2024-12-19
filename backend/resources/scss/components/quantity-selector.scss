@@ -1,0 +1,30 @@
+.qty-selector {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    height: 45px;
+    background: $color-white;
+
+    svg {
+        position: relative;
+        top: 2px;
+        color: $color-highlight;
+    }
+
+    [data-operator="-"] svg {}
+
+    [data-operator="+"] svg {}
+
+    > input {
+        background: $color-white;
+        line-height: 36px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 600;
+        text-align: center;
+        border: none;
+    }
+}

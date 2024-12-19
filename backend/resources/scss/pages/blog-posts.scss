@@ -1,0 +1,24 @@
+@import "../app";
+
+@import "../components/breadcrumb";
+@import "../components/post-card";
+@import "../components/pagination-container";
+
+#blog-posts {
+    header h2 {
+        margin-top: 0;
+    }
+}
+
+.cols-count {
+    @media (max-width: 991px) {
+        column-count: 3;
+        column-gap: 5px;
+        display: block;
+    }
+
+    @media (max-width: 767px) {
+        column-count: 2;
+        column-gap: 0px;
+    }
+}

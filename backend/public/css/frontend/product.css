@@ -1,0 +1,106 @@
+* {
+    box-sizing: border-box;
+}
+
+.alert {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.alert h3 {
+    margin: 0;
+}
+
+.alert .btn {
+    text-decoration: none;
+}
+
+.product-item {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    border-radius: 6px;
+}
+
+.product-item .card-header figure {
+    margin: 0;
+    height: 234px;
+    width: 100%;
+    border-radius: 6px;
+}
+
+.product-item .card-header img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+.product-item .card-bottom {
+    padding: 15px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.product-item .card-bottom h3 {
+    margin-top: 0;
+    font-weight: normal;
+    font-size: 15px;
+    min-height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-item .card-bottom .values {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 25px;
+}
+
+.product-item .values p {
+    margin: 0;
+}
+
+aside {
+    margin-top: 20px;
+    background: #e2e2e2;
+    border-radius: 6px;
+    padding: 15px 0;
+    height: calc(100vh - 20px);
+    position: fixed;
+}
+
+aside h3 {
+    margin-top: 0;
+    padding: 0 15px;
+}
+
+aside ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: calc(100vh - 100px);
+    overflow-y: scroll;
+    scrollbar-color: rgba(0, 0, 0, 0.1) #e2e2e2;
+    scrollbar-width: thin;
+}
+
+aside ul a {
+    display: inline-block;
+    width: 100%;
+    text-decoration: navajowhite;
+    padding: 8px 15px;
+    font-size: 14px;
+    color: black;
+    transition: all .3s ease-in-out;
+}
+
+aside ul a:hover, aside ul a.active {
+    background: #31708f;
+    color: white;
+}

@@ -1,0 +1,5 @@
+<svg class="trashBg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M28 0H4C1.79086 0 0 1.79086 0 4V28C0 30.2091 1.79086 32 4 32H28C30.2091 32 32 30.2091 32 28V4C32 1.79086 30.2091 0 28 0Z" />
+<path class="trashIcon" d="M9 12.001H22.5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="trashIcon" d="M12.75 12V10.5C12.75 10.1022 12.908 9.72064 13.1893 9.43934C13.4706 9.15804 13.8522 9 14.25 9H17.25C17.6478 9 18.0294 9.15804 18.3107 9.43934C18.592 9.72064 18.75 10.1022 18.75 10.5V12M21 12V22.5C21 22.8978 20.842 23.2794 20.5607 23.5607C20.2794 23.842 19.8978 24 19.5 24H12C11.6022 24 11.2206 23.842 10.9393 23.5607C10.658 23.2794 10.5 22.8978 10.5 22.5V12H21Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

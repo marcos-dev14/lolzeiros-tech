@@ -1,0 +1,145 @@
+// Colors
+$color-white: #fff;
+$color-black: #040C22;
+$color-lightblack: #35363A;
+$color-blue: #015CAE;
+$color-gray: #707070;
+$color-gray-light: #d8d8d8;
+$color-primary: var(--customColorPrimary, #005CAC);
+$color-highlight: var(--customColorHighlight, #F03F39);
+$color-highlight2: var(--customColorHighlight2, #FFD628);
+$color-highlight3: var(--customColorHighlight3, #39C6B5);
+
+// Background
+$color-primary-light: color-mix(in srgb, $color-primary 20%, white);// lighten($color-primary, 20%);
+
+$bg-color-white: $color-white;
+$bg-color-black: $color-black;
+
+$font-family-base: 'Quicksand', sans-serif;
+$headings-font-weight: 600;
+$font-size-base: 16px;
+
+$body-bg: #EDEFF7;
+$text-color: $color-black;
+
+$color-text-primary: $color-primary;
+$headings-color: $color-text-primary;
+
+$link-hover-decoration: none;
+
+$grid-gutter-width: 20px;
+
+$transition: all .3s ease-in-out;
+
+$container-large-desktop: (1250px + $grid-gutter-width);
+
+@import "themes";
+
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/variables";
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/mixins";
+
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/normalize";
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/type";
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/responsive-utilities";
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/buttons";
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/grid";
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/forms";
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/theme";
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/scaffolding";
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/tooltip";
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/modals";
+@import "~bootstrap3-sass/assets/stylesheets/bootstrap/progress-bars";
+
+@import "plugins/lazy-loading";
+@import "plugins/select2";
+@import "plugins/sweetalert";
+@import "components/loader";
+@import "components/quantity-selector";
+
+body {
+    overflow-x: hidden;
+    padding-top: 110px;
+}
+
+a, button, svg {
+    transition: $transition;
+}
+
+.flex {
+    display: flex;
+}
+
+.gap-20 {
+    gap: 20px;
+    flex-gap: 20px;
+}
+
+.hide {
+    display: none !important;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+section {
+    header.with-title {
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        flex-direction: column;
+        align-items: center;
+
+        h1 span, .color-initial {
+            color: $color-black;
+        }
+
+        p {
+            margin-bottom: 10px;
+            color: $color-text-primary;
+            font-size: 18px;
+            max-width: 100%;
+            word-spacing: 6px;
+            letter-spacing: 0.4px;
+
+            span {
+                color: $color-primary;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+@import "pages/sections/cta";
+@import "fixed/header";
+@import "fixed/footer";
+@import "fixed/tab-bar";
+@import "fixed/modal-search-mobile";
+@import "fixed/absolute-whatsapp";
+
+////////////////////////
+//// Customizations
+////////////////////////
+@keyframes shine {
+    to {
+        background-position-x: -200%;
+    }
+}
+
+.skeleton {
+    background: #eee;
+    background: linear-gradient(110deg, #cecece 8%, #f5f5f5 18%, #cecece 33%);
+    background-size: 200% 100%;
+    animation: 1.5s shine linear infinite;
+}
+
+@media (max-width: 991px) {
+    body {
+        main {
+            padding-top: 11px;
+            padding-bottom: 60px;
+        }
+    }
+}

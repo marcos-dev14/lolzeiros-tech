@@ -1,0 +1,113 @@
+#modal-search-mobile {
+    .modal-dialog {
+        position: relative;
+        max-width: 350px;
+        width: 100%;
+        margin: 55px auto 0;
+
+        .modal-content {
+            position: relative;
+            background-color: #ECF0F7;
+            background-clip: padding-box;
+            border: 1px solid #707070;
+            border-radius: 20px;
+            box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+            outline: 0;
+
+            .modal-header {
+                border-bottom: none;
+                display: flex;
+                justify-content: space-between;
+                padding: 20px 20px 15px 40px;
+
+                &:before,
+                &:after {
+                    display: none;
+                    content: " ";
+                }
+
+                &:after {
+                    clear: both;
+                }
+
+                .filter-close {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: none;
+                    border-radius: 50%;
+                    background-color: $color-white;
+                    outline: none;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.0784313725);
+                    width: 36px;
+                    height: 36px;
+                    padding: 0;
+                    overflow: hidden;
+
+                    svg {
+                        width: 20px;
+                        height: auto;
+                    }
+                }
+            }
+
+            .modal-body .search-box {
+                flex: 1;
+                margin: 0 30px;
+                position: relative;
+                max-width: 500px;
+
+                form {
+                    display: flex;
+                    border-radius: 20px;
+                    align-items: center;
+                    flex-direction: column;
+                    margin-bottom: 20px;
+
+                    .select2 {
+                        max-width: 100%;
+
+                        .select2-selection {
+                            background-color: $color-white;
+                        }
+                    }
+                }
+
+                .input-search {
+                    display: flex;
+                    background: $color-white;
+                    border: none;
+                    border-radius: 18px;
+                    height: 34px;
+                    width: 100%;
+                    padding: 6px 20px 6px 10px;
+                    font-size: 15px;
+                    font-weight: 600;
+                    color: #959494;
+                    outline: none;
+                    margin-top: 20px;
+                }
+
+                button {
+                    margin-top: 20px;
+                    background: $color-primary;
+                    color: $color-white;
+                    outline: none;
+                    border: none;
+                    padding: 7px 20px;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+
+                    span {
+                        margin-left: 7px;
+                    }
+
+                    svg {
+                        width: 17px;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,100 @@
+body {
+    padding-bottom: 0!important;
+}
+
+#footer {
+    background: $color-primary url("../../../images/logo-botton.png") no-repeat 75% calc(100% + 20px);
+    //background: #212121 url("../../../images/logo-botton.png") no-repeat 75% calc(100% + 20px);
+    background-size: contain;
+    padding-top: 60px;
+
+    h4 {
+        color: $color-white;
+        margin-bottom: 30px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+
+        a {
+            line-height: 44px;
+            color: $color-white;
+            display: flex;
+            align-items: center;
+
+            img {
+                margin-left: 5px;
+            }
+
+            &:hover {
+                color: color-mix(in srgb, $color-primary 15%, black);//darken($color-primary, 15%);
+            }
+        }
+
+        &.list-buttons {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+            flex-gap: 10px;
+            margin-bottom: 20px;
+
+            a {
+                background: $color-white;
+                max-width: 220px;
+                border-radius: 30px;
+                padding: 0 30px;
+                display: flex;
+                justify-content: space-between;
+                color: $color-primary;
+
+                &:hover {
+                    background: $color-highlight3;
+                    color: $color-white;
+                }
+            }
+        }
+    }
+
+    @import '../components/list-social';
+
+    #box-google {
+        color: $color-white;
+        height: 65px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 230px;
+    }
+
+    .footer-secondary {
+        background: color-mix(in srgb, $color-primary 75%, black);// #023E94BD;
+        //background: rgba(0, 0, 0, 0.59);
+        padding: 33px 0 30px;
+        margin-top: 30px;
+
+        h5 {
+            text-align: center;
+            color: #FAFAFA;
+            margin: 0;
+            line-height: 22px;
+        }
+    }
+
+    @media (max-width: 1200px) {
+        & header {
+            h1 {
+                font-size: 28px;
+            }
+
+            a {
+                font-size: 15px;
+            }
+        }
+    }
+
+    @media (max-width: 991px) {
+        display: none;
+    }
+}

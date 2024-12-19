@@ -1,0 +1,78 @@
+$pagination-bg: #F2F2F2;
+
+.pagination-container:not(.product-pagination) {
+    display: flex;
+    justify-content: flex-end;
+    background: $color-white;
+    margin-bottom: 20px;
+    border-radius: 50px;
+    padding: 6px 20px;
+}
+
+.pagination-container {
+    ul {
+        display: flex;
+        padding-left: 0;
+        margin: 0;
+
+        li {
+            display: inline-block;
+            margin: 0 3px;
+
+            a,
+            span {
+                position: relative;
+                float: left; // Collapse white-space
+                line-height: 26px;
+                color: $color-black;
+                background-color: $pagination-bg;
+                border-radius: 50px;
+                min-width: 26px;
+                text-align: center;
+                transition: all .3s ease-in-out;
+                font-size: 14px;
+
+                &:hover,
+                &:focus {
+                    z-index: 2;
+                    color: $color-white;
+                    background-color: $color-primary-light;
+                }
+            }
+
+            &:first-child, &:last-child {
+                a, span {
+                    background: transparent;
+
+                    &:hover {
+                        color: $color-primary;
+                    }
+                }
+            }
+        }
+
+        .active > a,
+        .active > span {
+            &,
+            &:hover,
+            &:focus {
+                z-index: 3;
+                color: $color-white;
+                cursor: default;
+                background-color: $color-primary;
+            }
+        }
+
+        .disabled {
+            span,
+            span:hover,
+            span:focus,
+            a,
+            a:hover,
+            a:focus {
+                color: $pagination-disabled-color;
+                cursor: $cursor-disabled;
+            }
+        }
+    }
+}

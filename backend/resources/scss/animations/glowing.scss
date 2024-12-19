@@ -1,0 +1,18 @@
+@keyframes glowing {
+    0% {
+        box-shadow: 0 0 -10px $color-primary-light;
+    }
+    40% {
+        box-shadow: 0 0 20px $color-primary-light;
+    }
+    60% {
+        box-shadow: 0 0 20px $color-primary-light;
+    }
+    100% {
+        box-shadow: 0 0 -10px $color-primary-light;
+    }
+}
+
+.button-glow {
+    animation: glowing 2000ms infinite;
+}

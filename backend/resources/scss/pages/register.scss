@@ -1,0 +1,224 @@
+@import "../app";
+
+@import "../components/breadcrumb";
+@import "../components/form";
+@import "../animations/glowing";
+
+#login-register {
+    padding-bottom: 50px;
+
+    .gray-input {
+        background-color: #F6F6F6;
+        .select2 .select2-selection {
+            border-radius: 0px!important;
+        }
+    }
+    .gray-select {
+        .select2 .select2-selection {
+            border-radius: 0px!important;
+        }
+    }
+    .select2 .select2-selection {
+        border-radius: 0px!important;
+    }
+
+    form {
+        background: $color-white;
+        border-radius: 20px;
+        padding: 10px 40px 40px;
+        overflow: hidden;
+        position: relative;
+
+        .login-card {
+            margin-bottom: 30px;
+
+            h3 {
+                color: initial;
+                font-size: 24px;
+                margin-bottom: 5px;
+                display: flex;
+                align-items: center;
+                >svg {
+                    color: #015CAE;
+                    margin-right: 10px;
+                }
+            }
+
+            p {
+                color: $color-gray;
+
+                &.alerts {
+                    border: 2px solid $color-primary;
+                    color: $color-primary;
+                    padding: 5px 10px;
+                    border-radius: 8px;
+                    animation: glowing 2000ms infinite;
+                }
+            }
+        }
+
+        .register-card {
+            .form-header {
+                h3 {
+                    color: #050C22;
+                    >svg {
+                        color: #015CAE!important;
+                        margin-right: 10px;
+                    }
+                }
+            }
+        }
+
+        label[for="remember"] {
+            font-weight: normal;
+            margin: 6px 0;
+        }
+    }
+    .button-one {
+        /* width: 100%; */
+        border-radius: 8px !important;
+        color: #FFFFFF;
+        background: #015CAE;
+    }
+}
+
+@media (max-width: 991px) {
+    #login-register {
+        margin-bottom: 10px;
+
+
+        label {
+            font-size: 12px;
+            color: #040C22;
+            font-weight: 1;
+        }
+        .gray-input {
+            background-color: #F6F6F6;
+            .select2 .select2-selection {
+                border-radius: 0px!important;
+            }
+        }
+        .gray-select {
+            .select2 .select2-selection {
+                border-radius: 0px!important;
+            }
+        }
+        .select2 .select2-selection {
+            border-radius: 0px!important;
+        }
+
+        padding-bottom: 0px;
+        .with-title {
+            h2 {
+                font-size: 26px;
+            }
+            p {
+                font-size: 14px;
+            }
+        }
+        form {
+            padding: 10px 15px 15px!important;
+            .login-card {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-bottom: 0;
+                h3 {
+                    display: flex;
+                    align-items: center;
+                    font-size: 16px;
+                    >svg {
+                        width: 16px;
+                        height: 18px;
+                        color: #015CAE;
+                        margin-right: 5px;
+                    }
+                }
+                p {
+                    font-size: 14px;
+                    font-weight: 500!important;
+                    color: #040C22;
+                }
+
+            }
+            .register-card {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-bottom: 0;
+                .form-header {
+                    h3 {
+                        font-size: 16px!important;
+                        >svg {
+                            width: 16px!important;
+                            height: 18px!important;
+                            margin-right: 5px;;
+                        }
+                    }
+                    p {
+                        font-size: 14px!important;
+                        font-weight: 500!important;
+                        color: #040C22;
+                    }
+                }
+            }
+        }
+    }
+    .login-div {
+        margin: 10px 0;
+    }
+    .form-header {
+        margin-bottom: 0px!important;
+    }
+    .register-div {
+        margin: 10px 0;
+    }
+    .select2 {
+        max-width: 100%;
+    }
+    #cta {
+        padding: 0px;
+    }
+    .flipped {
+        transform: rotate(180deg);
+    }
+    .flipped-register {
+        transform: rotate(180deg);
+    }
+    .expand-icon span >svg {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        border: 2px solid #F3F3F3;
+        padding: 8px;
+        cursor: pointer;
+        // inve
+    }
+
+    .expand-register-icon span >svg {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        border: 2px solid #F3F3F3;
+        padding: 8px;
+        cursor: pointer;
+        // inve
+    }
+
+    .hidden-items {
+        padding-top: 0;
+    }
+    .hidden-register-items {
+        padding-top: 0;
+        display: none;
+    }
+
+    .button-one {
+            width: 100%;
+            border-radius: 8px !important;
+            color: #FFFFFF;
+            background: #015CAE;
+            padding: 7px 20px;
+            margin: 10px 0;
+    }
+}
