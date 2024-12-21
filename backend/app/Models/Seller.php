@@ -22,6 +22,7 @@ class Seller extends Model
         'password',
         'status',
         'avaliable_opportunity',
+        'receive_inactive_customers',
         'origin',
         'portfolio_customer',
         'phone',
