@@ -30,6 +30,7 @@ class SellerResource extends JsonResource
             'blocked_suppliers' => $this->blockedSuppliers->map(function ($blockedSupplier) {
                 return $blockedSupplier->supplier; // Retorna apenas os dados do fornecedor
             }),
+            'created_at' => $this->created_at,
         ];
     }
 }
