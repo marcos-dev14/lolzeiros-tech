@@ -68,6 +68,7 @@ class Supplier extends Model implements HasImageInterface, Contactable, Addressa
         'client_premium_value',
         'client_platinum_value',
         'discount_type',
+        'service_migrate',
         'lead_time_id',
         'shipping_type_id',
         'tax_regime_id',
