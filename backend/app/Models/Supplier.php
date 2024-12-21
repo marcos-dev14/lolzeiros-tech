@@ -278,6 +278,12 @@ class Supplier extends Model implements HasImageInterface, Contactable, Addressa
         return $this->hasMany(SupplierProfileFractionations::class, 'product_supplier_id');
     }
 
+    public function blockedSuppliers()
+    {
+        return $this->hasMany(BlockedSupplier::class)
+            ->with('seller');
+    }
+
     //------------------------------------------------------------------
     // Scopes
     //------------------------------------------------------------------

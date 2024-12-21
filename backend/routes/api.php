@@ -96,7 +96,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api.auth']], function () {
 
     Route::apiResource('users', UserController::class);
     Route::get('configurations', ConfigurationsController::class)->name('configurations');
-    Route::apiResource('sellers', SellerController::class, ['except' => ['show']]);
+    Route::apiResource('sellers', SellerController::class, []);
     Route::apiResource('tax_regimes', TaxRegimeController::class, ['except' => ['show']]);
     Route::apiResource('roles', RoleController::class, ['except' => ['show']]);
     Route::apiResource('address_types', AddressTypeController::class, ['except' => ['show']]);
