@@ -20,9 +20,15 @@ class SellerResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'status' => $this->status,
+            'avaliable_opportunity' => $this->avaliable_opportunity,
+            'origin' => $this->origin,
             'phone' => $this->phone,
             'cellphone' => $this->cellphone,
             'email' => $this->email,
+            'blocked_suppliers' => $this->blockedSuppliers->map(function ($blockedSupplier) {
+                return $blockedSupplier->supplier; // Retorna apenas os dados do fornecedor
+            }),
         ];
     }
 }

@@ -31,6 +31,10 @@ class SellerRequest extends FormRequest
                 Rule::requiredIf(request()->isMethod('POST')),
                 'string',
             ],
+            'status' => 'string',
+            'password' => 'string',
+            'avaliable_opportunity' => 'string',
+            'origin' => 'nullable|string',
             'email' => [
                 Rule::requiredIf(request()->isMethod('POST')),
                 Rule::unique('sellers', 'email')->ignore($this->seller ?? null),

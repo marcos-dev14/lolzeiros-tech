@@ -75,6 +75,7 @@ class SupplierResource extends JsonResource
                 'client_vip_value' => $this->client_vip_value,
                 'client_premium_value' => $this->client_premium_value,
                 'client_platinum_value' => $this->client_platinum_value,
+                'service_migrate' => $this->service_migrate,
                 'discount_type' => $this->discount_type,
                 'lead_time' => new JustNameResource($this->leadTime),
                 'shipping_type' => new JustNameResource($this->shippingType),
@@ -106,6 +107,7 @@ class SupplierResource extends JsonResource
             $this->mergeWhen(!$request->routeIs('api.suppliers.index'), $showData),
 
             'is_available' => (boolean)$this->is_available,
+            'service_migrate' => $this->service_migrate,
             'categories_count' => $this->categories_count,
             'products_count' => $this->products_count,
             'products_available_count' => $this->available_products_count,

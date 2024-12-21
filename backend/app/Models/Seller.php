@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Crypt;
 
 class Seller extends Model
 {
@@ -18,14 +19,24 @@ class Seller extends Model
 
     protected $fillable = [
         'name',
+        'password',
+        'status',
+        'avaliable_opportunity',
+        'origin',
         'phone',
         'cellphone',
         'email',
+        'created_at',
     ];
 
     public function clients(): HasMany
     {
         return $this->hasMany(Client::class);
+    }
+
+    public function blockedSuppliers()
+    {
+         return $this->hasMany(BlockedSupplier::class)->with('supplier');  
     }
 
     //------------------------------------------------------------------

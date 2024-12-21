@@ -91,6 +91,7 @@ class SupplierRequest extends FormRequest
             'client_premium_value' => ['nullable'],
             'client_platinum_value' => ['nullable'],
             'discount_type' => ['nullable'],
+            'service_migrate' => ['string'],
         ];
     }
 

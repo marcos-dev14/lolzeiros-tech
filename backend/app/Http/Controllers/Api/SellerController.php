@@ -32,15 +32,31 @@ class SellerController extends BaseController
         return $this->sendResponse(SellerResource::collection($items), 'Vendedores encontrados.');
     }
 
+    public function show(int $itemId): JsonResponse
+    {
+        $item = $this->_model->find($itemId);
+
+        if (!$item) {
+            return $this->sendError('Vendedor não encontrado.', 404);
+        }
+
+        return $this->sendResponse(new SellerResource($item), 'Vendedor encontrado.');
+    }
+
+
     public function store(SellerRequest $request): JsonResponse
     {
         $requestFields = $request->validated();
 
-        $item = $this->_model->fill($requestFields);
-        $item->save();
+        if (isset($requestFields['password'])) {
+            $requestFields['password'] = bcrypt($requestFields['password']);
+        }
+
+        $item = $this->_model->create($requestFields);
 
         return $this->sendResponse(new SellerResource($item), 'Vendedor adicionado com sucesso.');
     }
+
 
     public function update(SellerRequest $request, $itemId): JsonResponse
     {
@@ -50,7 +66,14 @@ class SellerController extends BaseController
             return $this->sendError('Vendedor não encontrado', [], 404);
         }
 
-        $item->update($request->validated());
+        $data = $request->validated();
+
+        if (isset($data['password'])) {
+
+            $data['password'] = bcrypt($data['password']);
+        }
+
+        $item->update($data);
 
         return $this->sendResponse(new SellerResource($item), 'Vendedor atualizado.');
     }
