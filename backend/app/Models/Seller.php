@@ -23,6 +23,7 @@ class Seller extends Model
         'status',
         'avaliable_opportunity',
         'origin',
+        'portfolio_customer',
         'phone',
         'cellphone',
         'email',

@@ -23,6 +23,7 @@ class SellerResource extends JsonResource
             'status' => $this->status,
             'avaliable_opportunity' => $this->avaliable_opportunity,
             'origin' => $this->origin,
+            'portfolio_customer' => $this->portfolio_customer,
             'phone' => $this->phone,
             'cellphone' => $this->cellphone,
             'email' => $this->email,

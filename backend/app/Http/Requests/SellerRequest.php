@@ -35,6 +35,7 @@ class SellerRequest extends FormRequest
             'password' => 'string',
             'avaliable_opportunity' => 'string',
             'origin' => 'nullable|string',
+            'portfolio_customer' => 'string',
             'email' => [
                 Rule::requiredIf(request()->isMethod('POST')),
                 Rule::unique('sellers', 'email')->ignore($this->seller ?? null),
