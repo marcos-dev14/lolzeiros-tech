@@ -41,6 +41,12 @@ class Seller extends Model
          return $this->hasMany(BlockedSupplier::class)->with('supplier');  
     }
 
+    public function ClientHasSeller()
+    {
+        return $this->hasMany(ClientHasSeller::class)
+            ->with('clientGroup','supplier');
+    }
+
     //------------------------------------------------------------------
     // Mutators
     //------------------------------------------------------------------
