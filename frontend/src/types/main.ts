@@ -866,6 +866,9 @@ export type ISeller = {
   email: string;
   phone: string;
   cellphone: string;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export type ISaleData = {

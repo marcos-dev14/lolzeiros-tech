@@ -40,6 +40,7 @@ type ISeller = {
   email: string;
   phone?: string;
   cellphone?: string;
+  status?: string;
 }
 
 export function Sellers() {
@@ -229,6 +230,7 @@ export function Sellers() {
                 <th>Email</th>
                 <th>Celular</th>
                 <th>Telefone Fixo</th>
+                <th>Status</th>
                 <th>Ação</th>
               </thead>
               <tbody>
@@ -292,6 +294,7 @@ export function Sellers() {
                         }
                       />
                     </td>
+                    <td>{p.status ?? 'Indefinido'}</td>
                     <td>
                       <div>
                         <TableActionButton onClick={() => handleGoEditSeller(p.id)}>
