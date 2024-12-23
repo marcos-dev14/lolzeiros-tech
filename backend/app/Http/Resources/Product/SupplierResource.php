@@ -62,6 +62,7 @@ class SupplierResource extends JsonResource
                 'youtube' => $this->youtube,
                 'twitter' => $this->twitter,
                 'commercial_status' => $this->commercial_status,
+                'loyalty' => $this->loyalty,
                 'order_schedule' => $this->order_schedule,
                 'order_balance' => $this->order_balance,
                 'enter_price_on_order' => $this->enter_price_on_order,

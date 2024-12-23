@@ -75,6 +75,7 @@ class SupplierRequest extends FormRequest
             'twitter' => ['nullable'],
             'suspend_sales' => ['nullable'],
             'commercial_status' => ['nullable'],
+            'loyalty' => ['nullable'],
             'order_schedule' => ['nullable'],
             'order_balance' => ['nullable'],
             'enter_price_on_order' => ['nullable'],
