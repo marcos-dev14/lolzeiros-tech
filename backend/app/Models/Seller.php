@@ -22,6 +22,7 @@ class Seller extends Model
         'password',
         'status',
         'avaliable_opportunity',
+        'receive_inactive_customers',
         'origin',
         'portfolio_customer',
         'phone',
@@ -38,6 +39,12 @@ class Seller extends Model
     public function blockedSuppliers()
     {
          return $this->hasMany(BlockedSupplier::class)->with('supplier');  
+    }
+
+    public function ClientHasSeller()
+    {
+        return $this->hasMany(ClientHasSeller::class)
+            ->with('clientGroup','supplier');
     }
 
     //------------------------------------------------------------------

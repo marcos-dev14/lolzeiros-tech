@@ -286,6 +286,11 @@ class Supplier extends Model implements HasImageInterface, Contactable, Addressa
             ->with('seller');
     }
 
+    public function ClientHasSeller()
+    {
+        return $this->hasMany(ClientHasSeller::class)
+            ->with('clientGroup','seller');
+    }
     //------------------------------------------------------------------
     // Scopes
     //------------------------------------------------------------------

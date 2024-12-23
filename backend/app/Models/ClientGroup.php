@@ -32,4 +32,10 @@ class ClientGroup extends Model
     {
         return $this->hasMany(Client::class);
     }
+
+    public function ClientHasSeller()
+    {
+        return $this->hasMany(ClientHasSeller::class)
+            ->with('seller','supplier');
+    }
 }
