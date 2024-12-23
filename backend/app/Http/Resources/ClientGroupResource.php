@@ -39,9 +39,17 @@ class ClientGroupResource extends JsonResource
             'name' => $this->name,
             'buyer' => $buyerData,
             'count_clients' => $this->clients_count,
+            'clients_sellers' => $this->ClientHasSeller->map(function ($ClientHasSeller) {
+                return [
+                    'seller_id' => $ClientHasSeller->seller->id ,
+                    'seller_name' => $ClientHasSeller->seller->name ,
+                    'supplier_id' => $ClientHasSeller->supplier->id ,
+                    'supplier_name' => $ClientHasSeller->supplier->company_name ?? $ClientHasSeller->supplier->name ?? null,
+                ];
+            }),
             $this->mergeWhen(!$request->routeIs('api.groups.index'), [
                 'clients' => ClientListResource::collection($this->whenLoaded('clients')),
-            ])
+            ]),
         ];
     }
 }

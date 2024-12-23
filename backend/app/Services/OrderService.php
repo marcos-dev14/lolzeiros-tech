@@ -118,6 +118,7 @@ class OrderService extends BaseService
         null|ShippingCompany $shippingCompany = null,
     ): Order {
         try {
+            $verifySupplier = $this->verifySupplier($client, $supplier);
 
             $order = $this->model::create([
                 'origin' => 'Website',
@@ -154,7 +155,7 @@ class OrderService extends BaseService
                 'address_state' => $clientAddress?->state?->code,
                 'product_supplier_id' => $supplier->id,
                 'product_supplier_name' => $supplier?->name,
-                'seller_id' => $client?->seller_id,
+                'seller_id' => $verifySupplier['seller_id'], // $client?->seller_id,
                 'sale_channel_id' => 8,
                 'order_type_id' => 1,
                 'buyer_id' => $buyer?->id,
@@ -194,5 +195,30 @@ class OrderService extends BaseService
         }
 
         return $order;
+    }
+
+    private function verifySupplier($client, $supplier)
+    {
+        $seller = [];
+
+        foreach ($client->group->ClientHasSeller as $ClientHasSeller) {
+            if ($ClientHasSeller->supplier->id == $supplier->id) {
+                $seller = [
+                    'seller_id' => $ClientHasSeller->seller->id ?? null,
+                    'seller_name' => $ClientHasSeller->seller->name ?? null,
+                ];
+                return $seller; 
+            }
+        }
+
+        $newClientHasSeller = $client->group->ClientHasSeller()->create([
+            'supplier_id' => $supplier->id,
+            'seller_id' => null, 
+        ]);
+
+        return [
+            'seller_id' => $newClientHasSeller->seller->id ?? null,
+            'seller_name' => $newClientHasSeller->seller->name ?? null,
+        ];
     }
 }

@@ -36,9 +36,18 @@ class ClientListResource extends JsonResource
             'status' => $this->status,
             'addresses' => AddressResource::collection($this->whenLoaded('addresses')),
             'main_address' => new AddressResource($this->mainAddress),
+            'clients_sellers' => $this->group->ClientHasSeller->map(function ($ClientHasSeller) {
+                return [
+                    'seller_id' => $ClientHasSeller->seller->id ?? null,
+                    'seller_name' => $ClientHasSeller->seller->name ?? null ,
+                    'supplier_id' => $ClientHasSeller->supplier->id ,
+                    'supplier_name' => $ClientHasSeller->supplier->company_name ?? $ClientHasSeller->supplier->name ?? null,
+                ];
+            }),
             'coupons' =>  $this->coupons(),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+
         ];
     }
 

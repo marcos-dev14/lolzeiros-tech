@@ -76,7 +76,7 @@ class Client extends Model implements Addressable, Bankable, Contactable
     //------------------------------------------------------------------
     public function group(): BelongsTo
     {
-        return $this->belongsTo(ClientGroup::class, 'client_group_id');
+        return $this->belongsTo(ClientGroup::class, 'client_group_id')->with('ClientHasSeller');
     }
 
     public function blockingRule(): BelongsTo

@@ -45,6 +45,7 @@ class ClientController extends Controller
     {
         $client = $this->getClient([
             'buyer',
+            'group.ClientHasSeller',
             'seller',
             'orders' => function ($query) {
                 return $query->opened();
@@ -119,11 +120,13 @@ class ClientController extends Controller
     public function commercial(): View
     {
         $client = $this->getClient();
-        $commercial = $client->seller;
+        //quando fizer a tela de varios comerciais por supplier
+       $commercialList = $client->group->ClientHasSeller;
+        //$commercial = $client->seller;
 
         return view(
             'pages.buyer.commercial',
-            compact('client', 'commercial')
+            compact('client', 'commercialList')
         );
     }
 
