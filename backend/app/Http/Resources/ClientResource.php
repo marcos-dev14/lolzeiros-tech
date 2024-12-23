@@ -93,7 +93,6 @@ class ClientResource extends JsonResource
                 'origin' => new JustNameResource($this->origin),
                 'same_group' => $siblings ?? null
             ]),
-
             'commercial_status' => $this->commercial_status,
             'main_address' => new AddressResource($this->main_address),
             'address_state_city' => "{$this->main_address?->state?->name} - {$this->main_address?->city?->name}",
@@ -101,6 +100,14 @@ class ClientResource extends JsonResource
             'group_name' => $this->group?->name,
             'group_sum_clients' => $this->group?->clients?->count() ?? 0,
             'buyer_id' => $this->buyer?->id,
+            'clients_sellers' => $this->group->ClientHasSeller->map(function ($ClientHasSeller) {
+                return [
+                    'seller_id' => $ClientHasSeller->seller->id ?? null ,
+                    'seller_name' => $ClientHasSeller->seller->name ?? null,
+                    'supplier_id' => $ClientHasSeller->supplier->id,
+                    'supplier_name' => $ClientHasSeller->supplier->company_name ?? $ClientHasSeller->supplier->name ?? null,
+                ];
+            }),
             'seller' => new SellerResource($this->seller),
             'seller_name' => $this->seller?->name,
             'profile' => new JustNameResource($this->profile),

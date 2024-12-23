@@ -21,7 +21,7 @@ class CreateClientHasSellerTable extends Migration
     {
         Schema::create('client_has_seller', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(ClientGroup::class)->constrained('clients')->cascadeOnDelete();
+            $table->foreignIdFor(ClientGroup::class)->constrained('client_groups')->cascadeOnDelete();
             $table->foreignIdFor(Seller::class)->nullable()->constrained('sellers')->cascadeOnDelete(); 
             $table->foreignIdFor(Supplier::class)->constrained('product_suppliers')->cascadeOnDelete();
             $table->timestamps();
