@@ -9,6 +9,7 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\CouponController;
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Frontend\OpportunityController;
 use App\Http\Controllers\Frontend\OrderController;
 
 // TODO Joseph crie um controller para o script abaixo - sugiro InsomniaDocumentationController
@@ -21,7 +22,7 @@ Route::get('doc/{partner}', function (string $partner) {
     return view('api.doc.index', compact('partner'));
 });
 
-
+Route::get('opportunities', [OpportunityController::class, 'index'])->name('opportunities.index');
 Route::get('sitemap.xml', SitemapController::class);
 
 Route::get('', [HomeController::class, 'index'])->name('index');
