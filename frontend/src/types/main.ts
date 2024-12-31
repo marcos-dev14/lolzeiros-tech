@@ -867,6 +867,7 @@ export type ISeller = {
   phone: string;
   cellphone: string;
   status?: string;
+  blocked_suppliers: IBaseType[];
   created_at?: string;
   updated_at?: string;
 }
