@@ -58,7 +58,10 @@ Route::group(['middleware' => 'auth:buyer'], function () {
     });
 });
 
+
+
 require 'Frontend/buyer.php';
+require 'Frontend/seller.php';
 
 Route::get('produtos', [ProductController::class, 'index'])->name('products');
 Route::get('products/suggestions', [ProductController::class, 'suggestions'])->name('products.suggestions');

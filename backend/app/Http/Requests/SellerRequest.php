@@ -45,6 +45,8 @@ class SellerRequest extends FormRequest
             ],
             'phone' => 'nullable|string',
             'cellphone' => 'nullable|string',
+            'blocked_suppliers' => 'array',
+            'blocked_suppliers.*' => 'integer|exists:product_suppliers,id',
         ];
     }
 
