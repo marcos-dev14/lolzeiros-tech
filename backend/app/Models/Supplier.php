@@ -52,6 +52,7 @@ class Supplier extends Model implements HasImageInterface, Contactable, Addressa
         'twitter',
         'suspend_sales',
         'commercial_status',
+        'loyalty',
         'order_schedule',
         'order_balance',
         'enter_price_on_order',

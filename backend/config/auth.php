@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Buyer;
+use App\Models\Seller;
 use App\Models\User;
 
 return [
@@ -47,6 +48,10 @@ return [
         'buyer' => [
             'driver' => 'session',
             'provider' => 'buyers'
+        ],
+        'seller' => [
+            'driver' => 'session',
+            'provider' => 'sellers'
         ]
     ],
 
@@ -77,6 +82,11 @@ return [
              'driver' => 'eloquent',
              'model' => Buyer::class,
          ],
+
+         'sellers' => [
+             'driver' => 'eloquent',
+             'model' => Seller::class,
+         ],
     ],
 
     /*
@@ -105,6 +115,13 @@ return [
         'buyers' => [
             'provider' => 'buyers',
             'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'sellers' => [
+            'provider' => 'sellers',
+            'table' => 'seller_password_resets',
             'expire' => 60,
             'throttle' => 60,
         ],

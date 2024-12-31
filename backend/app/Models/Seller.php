@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Crypt;
 
-class Seller extends Model
+class Seller extends Authenticatable
 {
     use SoftDeletes;
-
+    protected string $guard = 'seller';
     public array $validationRules = [
         'name' => 'required',
         'email' => 'required|email|unique:sellers',
@@ -50,6 +51,11 @@ class Seller extends Model
     //------------------------------------------------------------------
     // Mutators
     //------------------------------------------------------------------
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = bcrypt($password);
+    }
+    
     public function setEmailAttribute($email)
     {
         $this->attributes['email'] = Str::lower($email);

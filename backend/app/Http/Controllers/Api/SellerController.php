@@ -74,6 +74,17 @@ class SellerController extends BaseController
         }
 
         $item->update($data);
+        if (isset($data['blocked_suppliers'])) {
+            // Limpar os bloqueios existentes antes de salvar os novos
+            $item->blockedSuppliers()->delete();
+
+            // Adicionar os novos bloqueios
+            foreach ($data['blocked_suppliers'] as $supplierId) {
+                $item->blockedSuppliers()->create([
+                    'supplier_id' => $supplierId,
+                ]);
+            }
+        }
 
         return $this->sendResponse(new SellerResource($item), 'Vendedor atualizado.');
     }
