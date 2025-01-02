@@ -55,7 +55,7 @@ export interface FormTextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaEl
   ref?: RefObject<HTMLTextAreaElement>;
 }
 
-export type Badge = FunctionComponent<SVGProps<SVGSVGElement> & {title?: string | undefined;}>;
+export type Badge = FunctionComponent<SVGProps<SVGSVGElement> & { title?: string | undefined; }>;
 
 export type Component = {
   children?: ReactNode;
@@ -161,7 +161,7 @@ export type LocationState = {
 }
 
 export type PDFFile = {
-  ​name: string;
+  name: string;
   fileUrl: string;
   type: string;
   size: number;
@@ -217,64 +217,64 @@ export type MainProduct = {
   description: string;
   created_at: string;
   updated_at: string;
-	searcheable: string;
-	image: string;
-	published_at: string;
-	featured_until: string;
-	use_video: 0;
-	youtube_link: string;
-	primary_text: string;
-	secondary_text: string;
-	inner_code: string;
-	dun14: string;
-	expiration_date: string;
-	origin: string;
-	release_year: string;
-	catalog_name: string;
-	catalog_page: string;
-	gender: string;
-	size_height: string;
-	size_width: string;
-	size_length: string;
-	size_cubic: string;
-	size_weight: string;
-	packing_type: string;
-	box_height: string;
-	box_width: string;
-	box_length: string;
-	box_cubic: string;
-	box_weight: string;
-	box_packing_type: string;
-	unit_price: string;
-	unit_price_promotional: string;
-	unit_minimal: string;
-	unit_subtotal: string;
-	availability: string;
-	expected_arrival: string;
-	box_price: string;
-	box_price_promotional: string;
-	box_minimal: string;
-	box_subtotal: string;
-	ipi: string;
-	ncm: string;
-	cst: string;
-	icms: string;
-	certification: string;
-	age_group: string;
-	seo_tags: string;
-	seo_description: string;
-	qrcode_color: string;
-	qrcode_custom_title: string;
-	qrcode_title: string;
-	qrcode_image1: string;
-	qrcode_image2: string;
-	views: string;
-	sales: string;
-	category: ICategory;
-	category_id: string;
-	brand: IBrand;
-	brand_id: string;
-	badge: string;
+  searcheable: string;
+  image: string;
+  published_at: string;
+  featured_until: string;
+  use_video: 0;
+  youtube_link: string;
+  primary_text: string;
+  secondary_text: string;
+  inner_code: string;
+  dun14: string;
+  expiration_date: string;
+  origin: string;
+  release_year: string;
+  catalog_name: string;
+  catalog_page: string;
+  gender: string;
+  size_height: string;
+  size_width: string;
+  size_length: string;
+  size_cubic: string;
+  size_weight: string;
+  packing_type: string;
+  box_height: string;
+  box_width: string;
+  box_length: string;
+  box_cubic: string;
+  box_weight: string;
+  box_packing_type: string;
+  unit_price: string;
+  unit_price_promotional: string;
+  unit_minimal: string;
+  unit_subtotal: string;
+  availability: string;
+  expected_arrival: string;
+  box_price: string;
+  box_price_promotional: string;
+  box_minimal: string;
+  box_subtotal: string;
+  ipi: string;
+  ncm: string;
+  cst: string;
+  icms: string;
+  certification: string;
+  age_group: string;
+  seo_tags: string;
+  seo_description: string;
+  qrcode_color: string;
+  qrcode_custom_title: string;
+  qrcode_title: string;
+  qrcode_image1: string;
+  qrcode_image2: string;
+  views: string;
+  sales: string;
+  category: ICategory;
+  category_id: string;
+  brand: IBrand;
+  brand_id: string;
+  badge: string;
   tags: ITag[];
   seoTags: ITag[];
   certificationTags: ITag[];
@@ -352,14 +352,14 @@ export type MainBlogPost = {
   tags: ITag[];
   seoTags: ITag[];
   category: IBlogCategory;
-	category_id: string;
+  category_id: string;
   author: IAuthor;
-	author_id: string;
+  author_id: string;
   qrcode_image1: string;
-	qrcode_image2: string;
-	qrcode_color: string;
-	full_url: string;
-	api_reference: string;
+  qrcode_image2: string;
+  qrcode_color: string;
+  full_url: string;
+  api_reference: string;
   created_at: string;
   updated_at: string;
 }
@@ -420,11 +420,11 @@ export type CustomBlogPostData = {
 
 export type IReport = {
   line: string;
-	column_reference: string;
-	column_name: string;
-	product_reference: string | null;
-	status: "SUCESSO" | "ERRO";
-	message: string;
+  column_reference: string;
+  column_name: string;
+  product_reference: string | null;
+  status: "SUCESSO" | "ERRO";
+  message: string;
 }
 
 export type ITemplate = {
@@ -528,7 +528,7 @@ export type MainClient = {
   };
   updated_at: string;
   activity_start: string;
-	phones: IPhone[];
+  phones: IPhone[];
   newsletter_tags: string;
   blocked_suppliers: IBaseType[];
   regions: IBaseType[];
@@ -600,24 +600,24 @@ export type MainClientGroup = {
 export type IPaymentPromotion = {
   id: number;
   order_deadline: string;
-	min_value: string;
-	payment_term_start: string;
+  min_value: string;
+  payment_term_start: string;
 }
 
 export type IStateDiscount = {
   id: number;
   discount_value: string;
-	additional_value: string;
-	states: ICountryState[];
+  additional_value: string;
+  states: ICountryState[];
 }
 
 export type IProfileDiscount = {
   id: number;
   profile: IBaseType;
-	fractional_box: number;
-	discount_value: string;
-	auge_commission: string;
-	commercial_commission: string;
+  fractional_box: number;
+  discount_value: string;
+  auge_commission: string;
+  commercial_commission: string;
   categories: ICategory[];
 }
 
@@ -638,66 +638,67 @@ export interface IFractionationProps extends Omit<IFractionation, 'profile'> {
 
 export type IPhone = {
   id: number;
-	type: string;
-	country_code: string;
-	number: string;
+  type: string;
+  country_code: string;
+  number: string;
 }
 
 export type MainSupplier = {
   id: number;
-	name: string;
-	slug: string;
-	company_name: string;
-	document: string;
-	document_status: string;
-	state_registration: string;
-	code: string;
-	activity_start: string;
-	age: string;
-	status: string;
-	auge_register: string;
-	corporate_email: string;
-	website: string;
-	instagram: string;
-	facebook: string;
-	youtube: string;
-	twitter: string;
-	commercial_status: string;
-	order_schedule: string;
-	order_balance: string;
-	enter_price_on_order: string;
-	can_migrate_service: string;
-	auto_observation_order: string;
-	min_ticket: string;
-	min_order: string;
-	discount_in_cash: string;
-	fractional_box: number;
-	allows_reservation: number;
-	client_mei_value: string;
-	client_vip_value: string;
-	client_premium_value: string;
-	client_platinum_value: string;
-	discount_type: string;
-	lead_time: IBaseType;
-	shipping_company: IBaseType;
-	tax_regime: IBaseType;
-	phones: IPhone[];
-	commission_rules: IBaseType[];
-	blocked_regions: IBaseType[];
-	blocking_rules: IBaseType[];
-	blocked_states: IState[];
-	payment_promotions: IPaymentPromotion[];
-	promotions: IPromotion[];
+  name: string;
+  slug: string;
+  company_name: string;
+  document: string;
+  document_status: string;
+  state_registration: string;
+  code: string;
+  activity_start: string;
+  age: string;
+  status: string;
+  auge_register: string;
+  corporate_email: string;
+  website: string;
+  instagram: string;
+  facebook: string;
+  youtube: string;
+  twitter: string;
+  commercial_status: string;
+  loyalty: number | null;
+  order_schedule: string;
+  order_balance: string;
+  enter_price_on_order: string;
+  can_migrate_service: string;
+  auto_observation_order: string;
+  min_ticket: string;
+  min_order: string;
+  discount_in_cash: string;
+  fractional_box: number;
+  allows_reservation: number;
+  client_mei_value: string;
+  client_vip_value: string;
+  client_premium_value: string;
+  client_platinum_value: string;
+  discount_type: string;
+  lead_time: IBaseType;
+  shipping_company: IBaseType;
+  tax_regime: IBaseType;
+  phones: IPhone[];
+  commission_rules: IBaseType[];
+  blocked_regions: IBaseType[];
+  blocking_rules: IBaseType[];
+  blocked_states: IState[];
+  payment_promotions: IPaymentPromotion[];
+  promotions: IPromotion[];
   profile_discounts: IProfileDiscount[];
-	installment_rules: InstallmentRule[];
-	state_discounts: IStateDiscount[];
-	is_available: boolean;
-	categories_count: number;
-	products_count: number;
-	products_available_count: number;
-	last_imported_at: string;
-	created_at: string;
-	updated_at: string;
+  installment_rules: InstallmentRule[];
+  state_discounts: IStateDiscount[];
+  is_available: boolean;
+  categories_count: number;
+  products_count: number;
+  products_available_count: number;
+  last_imported_at: string;
+  created_at: string;
+  updated_at: string;
   suspend_sales: boolean;
   suspendSales?: string;
   orderSchedule?: string;
@@ -715,7 +716,7 @@ export type MainSupplier = {
     JPG: string;
     WEBP: string;
   };
-} 
+}
 
 export type CustomSupplierData = {
   suspendSales?: string;
@@ -750,13 +751,13 @@ export type IPromotion = {
 }
 
 export type IPromotionProps = {
-	id: number;
-	min_quantity: string;
+  id: number;
+  min_quantity: string;
   discount_value: string;
-	max_quantity: string;
-	valid_until: string;
-	type: string;
-	items: string;
+  max_quantity: string;
+  valid_until: string;
+  type: string;
+  items: string;
 }
 
 export interface IProductPromotionProps extends IPromotionProps {
