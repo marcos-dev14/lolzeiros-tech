@@ -40,11 +40,14 @@ class ClientGroupResource extends JsonResource
             'buyer' => $buyerData,
             'count_clients' => $this->clients_count,
             'clients_sellers' => $this->ClientHasSeller->map(function ($ClientHasSeller) {
+                $seller = $ClientHasSeller->seller;
+                $supplier = $ClientHasSeller->supplier;
+
                 return [
-                    'seller_id' => $ClientHasSeller->seller->id ,
-                    'seller_name' => $ClientHasSeller->seller->name ,
-                    'supplier_id' => $ClientHasSeller->supplier->id ,
-                    'supplier_name' => $ClientHasSeller->supplier->company_name ?? $ClientHasSeller->supplier->name ?? null,
+                    'seller_id' => $seller?->id, // Utilizando o operador de null-safe
+                    'seller_name' => $seller?->name,
+                    'supplier_id' => $supplier?->id,
+                    'supplier_name' => $supplier?->company_name ?? $supplier?->name ?? null,
                 ];
             }),
             $this->mergeWhen(!$request->routeIs('api.groups.index'), [
