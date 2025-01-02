@@ -4,23 +4,23 @@ import { Form } from "@unform/web";
 
 import { ReactComponent as GoBackIcon } from '~assets/goback_arrow.svg';
 
+import { api } from "@/src/services/api";
+
 import { Header } from "@/src/components/Header";
 import { Menu } from "@/src/components/Menu";
 import { InputContainer, MenuAndTableContainer, SectionTitle } from "@/src/styles/components";
 import { FormInput } from "@/src/components/FormInput";
-
-import { Button, Container } from "../styles";
-import { GoBackButton } from "./styles";
 import { useHistory, useParams } from "react-router";
-import { api } from "@/src/services/api";
 import { useRegister } from "@/src/context/register";
 import { DateBox } from "@/src/components/DateBox";
 import { RadioBox } from "@/src/components/RadioBox";
 import type { DefaultValuePropsWithId, IBaseType, ISeller } from "@/src/types/main";
-import { FormSelect } from "@/src/components/FormSelect";
 import { MultiSelect } from "@/src/components/MultiSelect";
 import { SuccessModal } from "@/src/components/SuccessModal";
 import { ErrorModal } from "@/src/components/ErrorModal";
+
+import { GoBackButton } from "./styles";
+import { Button, Container } from "../styles";
 
 export function EditSeller() {
   const [sellerData, setSellerData] = useState<ISeller>({} as ISeller);
@@ -99,62 +99,23 @@ export function EditSeller() {
     }
   }, [sellerData])
 
-  // const handleBlockedSupplier = useCallback(async (value: DefaultValuePropsWithId[]) => {
-  //   try {
-  //     if (!sellerData.blocked_suppliers) return;
-  //     setIsUpdatingBlockedSupplier(true);
-
-  //     const { blocked_suppliers } = sellerData;
-  //     const formattedBlockedSuppliers = value.map(e => ({ id: e.id, name: e.value }));
-
-  //     console.log("FORMATTED BLOCKED: ", formattedBlockedSuppliers)
-
-  //     if (!!blocked_suppliers.length && !value.length) {
-  //       // @ts-ignore
-  //       let { id } = blocked_suppliers[blocked_suppliers.length - 1];
-  //       await api.delete(`/clients/${sellerData.id}/blocked_suppliers/${id}`);
-  //       updateSeller({ blocked_suppliers: formattedBlockedSuppliers });
-
-  //       return;
-  //     }
-
-  //     const valuesOnlyId = value.map(c => c.id);
-  //     const blockedSuppliersOnlyId = blocked_suppliers.map(c => c.id);
-
-  //     console.log("ID BLOCKED: ", blockedSuppliersOnlyId)
-
-  //     if (blocked_suppliers.length > value.length) {
-  //       // @ts-ignore
-  //       let [id] = blockedSuppliersOnlyId.filter(e => !valuesOnlyId.includes(e));
-  //       await api.delete(`/clients/${sellerData.id}/blocked_suppliers/${id}`);
-  //     }
-  //     else {
-  //       const id = !blocked_suppliers.length ? value[0].id : valuesOnlyId.filter((e) => !blockedSuppliersOnlyId.includes(e));
-  //       await api.post(`/clients/${sellerData.id}/blocked_suppliers`, { attach_supplier_id: id });
-  //     }
-
-  //     updateSeller({ blocked_suppliers: formattedBlockedSuppliers });
-  //   } catch (e) {
-  //     console.log('e', e);
-  //   } finally {
-  //     setIsUpdatingBlockedSupplier(false);
-  //   }
-  // }, [seller, sellerData, updateSeller])
-
   const handleBlockedSupplier = useCallback((value: DefaultValuePropsWithId[]) => {
+
     try {
       if (!sellerData.blocked_suppliers) return;
       setIsUpdatingBlockedSupplier(true);
   
-      const formattedBlockedSuppliers = value.map(e => e.id); // Extraindo apenas os IDs
+      const formattedBlockedSuppliersId = value.map(e => e.id); // Extraindo apenas os IDs
   
       // console.log("FORMATTED BLOCKED: ", formattedBlockedSuppliers);
   
       // Atualizando o suppliersId com os IDs (números) extraídos
-      setSuppliersId(formattedBlockedSuppliers);
+      setSuppliersId(formattedBlockedSuppliersId);
+
+      const formattedBlockedSuppliers = value.map(e => ({ id: e.id, name: e.value }));
   
       // @ts-ignore
-      updateSeller({ blocked_suppliers: value.map(e => ({ name: e.value })) });
+      updateSeller({ blocked_suppliers: formattedBlockedSuppliers });
     } catch (e) {
       console.log('e', e);
     } finally {
@@ -180,27 +141,25 @@ export function EditSeller() {
       blocked_suppliers: suppliersId
     }
 
-    console.log("DADOS ENVIADO: ", formattingData)
+    // console.log("DADOS ENVIADO: ", formattingData)
 
-    // try {
-    //   await api.post(`/sellers/${id}?_method=PUT`, formattingData);
-    //   setMessage('Salvo com sucesso');
-    // } catch (e) {
-    //   console.log('Erro ao editar vendedor:', e);
+    try {
+      await api.post(`/sellers/${id}?_method=PUT`, formattingData);
+      setMessage('Salvo com sucesso');
+    } catch (e) {
+      console.log('Erro ao editar vendedor:', e);
 
-    //   // @ts-ignore
-    //   const errorMessage = !!e.response ? e.response.data.message :
-    //     'Houve um erro ao salvar o cliente.';
+      // @ts-ignore
+      const errorMessage = !!e.response ? e.response.data.message :
+        'Houve um erro ao salvar o cliente.';
 
-    //   setError(errorMessage);
-    // }
+      setError(errorMessage);
+    }
   }, [sellerStatus, avaliableOpportunity, portfolioCustomer, suppliersId])
 
   useEffect(() => {
     fetchSeller();
   }, [id]);
-
-  console.log("DADOS DO SUPPLIERS: ", sellerData.blocked_suppliers)
 
   return (
     <>
@@ -260,7 +219,7 @@ export function EditSeller() {
                 data={suppliersOptions}
                 // @ts-ignore
                 setValue={(value) => handleBlockedSupplier(value)}
-                defaultValue={!!sellerData && !!sellerData.blocked_suppliers && sellerData.blocked_suppliers.map((s: IBaseType) => ({ id: s.id, value: s.name, label: s.name }))}
+                defaultValue={!!seller && !!seller.blocked_suppliers && seller.blocked_suppliers.map((s: IBaseType) => ({ id: s.id, value: s.name, label: s.name }))}
               />
 
               {sellerData.created_at && (
