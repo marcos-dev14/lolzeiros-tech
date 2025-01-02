@@ -22,7 +22,6 @@ Route::get('doc/{partner}', function (string $partner) {
     return view('api.doc.index', compact('partner'));
 });
 
-Route::get('opportunities', [OpportunityController::class, 'index'])->name('opportunities.index');
 Route::get('sitemap.xml', SitemapController::class);
 
 Route::get('', [HomeController::class, 'index'])->name('index');
