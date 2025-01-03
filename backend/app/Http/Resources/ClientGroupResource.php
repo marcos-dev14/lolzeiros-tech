@@ -38,6 +38,7 @@ class ClientGroupResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'buyer' => $buyerData,
+            'service_migrate' => $this->service_migrate,
             'count_clients' => $this->clients_count,
             'clients_sellers' => $this->ClientHasSeller->map(function ($ClientHasSeller) {
                 $seller = $ClientHasSeller->seller;
