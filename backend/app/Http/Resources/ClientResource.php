@@ -98,6 +98,7 @@ class ClientResource extends JsonResource
             'address_state_city' => "{$this->main_address?->state?->name} - {$this->main_address?->city?->name}",
             'group' => new JustNameResource($this->group),
             'group_name' => $this->group?->name,
+            'service_migrate' => $this->group?->service_migrate,
             'group_sum_clients' => $this->group?->clients?->count() ?? 0,
             'buyer_id' => $this->buyer?->id,
             'clients_sellers' => $this->group->ClientHasSeller->map(function ($ClientHasSeller) {

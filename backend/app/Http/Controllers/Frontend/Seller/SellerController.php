@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Frontend\Seller;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Seller;
 use App\Models\Client;

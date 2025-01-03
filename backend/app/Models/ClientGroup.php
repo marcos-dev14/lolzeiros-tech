@@ -14,6 +14,7 @@ class ClientGroup extends Model
     protected $fillable = [
         'name',
         'buyer_id',
+         'service_migrate',
     ];
 
     public array $validationRules = ['name' => 'required'];

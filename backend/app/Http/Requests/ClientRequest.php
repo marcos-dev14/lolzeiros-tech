@@ -93,6 +93,7 @@ class ClientRequest extends FormRequest
             'joint_stock' => ['nullable', 'string'],
             'name' => ['string', 'nullable'],
             'document_status' => 'nullable',
+            'service_migrate' => ['nullable', 'string'],
             'auge_register' => Rule::requiredIf(request()->isMethod('POST')),
             'activity_start' => ['nullable'],
             'address' => [
