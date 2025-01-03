@@ -2,12 +2,12 @@ import styled from 'styled-components';
 import { TableContent, TableHeader } from '../../styles';
 
 export const Header = styled(TableHeader)`
-  grid-template-columns: 52% 14% 14% 14% 6%;
+  grid-template-columns: 32% 14% 14% 14% 14% 14%;
   height: 2.75rem;
 `;
 
 export const Content = styled(TableContent)`
-  grid-template-columns: 52% 14% 14% 14% 6%;
+  grid-template-columns:32% 14% 14% 14% 14% 14%;
 `;
 
 export const DeleteItemsContainer = styled.div`

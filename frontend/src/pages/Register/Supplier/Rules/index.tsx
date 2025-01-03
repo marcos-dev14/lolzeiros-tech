@@ -47,19 +47,21 @@ import { TableActionButton } from '@/src/styles/components/tables';
 import { ErrorModal } from '@/src/components/ErrorModal';
 import { SuccessModal } from '@/src/components/SuccessModal';
 import { fetchRulesData, fetchSupplierData } from '@/src/services/requests';
+import { FormInput } from '@/src/components/FormInput';
 
 export function SuppliersRules() {
   const { supplier, updateSupplier, setSupplier } = useRegister();
- 
-  const noSupplier = useMemo(() => 
+
+  const noSupplier = useMemo(() =>
     !supplier || (!!supplier && !supplier.id)
-  , [supplier])
- 
+    , [supplier])
+
   const [loading, setLoading] = useState(true);
+
 
   const [statesById, setStatesById] = useState({});
   const [regionsById, setRegionsById] = useState({});
-  
+
   const [registering, setRegistering] = useState(false);
 
   const [regionName, setRegionName] = useState('');
@@ -73,7 +75,7 @@ export function SuppliersRules() {
 
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
-  
+
   const [countryStatesOptions, setCountryStatesOptions] = useState([]);
   const [regionsOptions, setRegionsOptions] = useState([]);
   const [leadTimes, setLeadTimes] = useState([]);
@@ -92,11 +94,11 @@ export function SuppliersRules() {
   ], []);
 
   const [allowReservation, setAllowReservation] = useState(() =>
-    !!supplier ? 
+    !!supplier ?
       'allowReservation' in supplier ? supplier.allowReservation! :
-      !!supplier.allows_reservation ? !!supplier.allows_reservation ? 'Sim' : 'Não' 
+        !!supplier.allows_reservation ? !!supplier.allows_reservation ? 'Sim' : 'Não'
+          : 'Sim'
       : 'Sim'
-    : 'Sim'
   );
 
   const [fractionalBox, setFractionalBox] = useState(() =>
@@ -108,7 +110,7 @@ export function SuppliersRules() {
   // const attributesOptions = useMemo(() => 
   //   attributes.map((a: MainAttribute) => ({ value: a.name, label: a.name }))
   // , [attributes]);
-console.log('s', supplier)
+  console.log('s', supplier)
   const { data: rulesData, isLoading } = useQuery('rulesData', fetchRulesData, {
     staleTime: 1000 * 60 * 5,
   });
@@ -122,11 +124,11 @@ console.log('s', supplier)
     try {
       setRegistering(true);
       // @ts-ignore
-      const data = formRef.getData(); 
+      const data = formRef.getData();
 
       const newsletter_tags =
         !!supplier.newsletterTags ?
-          supplier.newsletterTags.reduce((init, value) => `${init},${value.value}`, '').replace(',','')
+          supplier.newsletterTags.reduce((init, value) => `${init},${value.value}`, '').replace(',', '')
           : '';
 
       const allows_reservation = allowReservation === 'Sim' ? 1 : 0;
@@ -140,7 +142,7 @@ console.log('s', supplier)
       }
 
       if (!!supplier.tax_regime) {
-        if(typeof(supplier.tax_regime) === 'string') {
+        if (typeof (supplier.tax_regime) === 'string') {
           // @ts-ignore
           const { id } = taxRegimesOptions.find(e => e.value === supplier.tax_regime);
           formattedData['tax_regime_id'] = id;
@@ -156,7 +158,7 @@ console.log('s', supplier)
       }
 
       if (!!supplier.lead_time) {
-        if(typeof(supplier.lead_time) === 'string') {
+        if (typeof (supplier.lead_time) === 'string') {
           // @ts-ignore
           const { id } = leadTimes.find(e => e.value === supplier.lead_time);
           formattedData['lead_time_id'] = id;
@@ -168,7 +170,7 @@ console.log('s', supplier)
       // @ts-ignore
       if (!!supplier.shipping_type_name) {
         // @ts-ignore
-        if(typeof(supplier.shipping_type_name) === 'string') {
+        if (typeof (supplier.shipping_type_name) === 'string') {
           // @ts-ignore
           const { id } = shippingOptions.find(e => e.value === supplier.shipping_type_name);
           formattedData['shipping_type_id'] = id;
@@ -189,21 +191,21 @@ console.log('s', supplier)
         const { id } = blogPostsOptions.find(e => e.value === supplier.blog_post_id);
         formattedData['blog_post_id'] = id;
       }
-      
+
       // const supplierWithoutNullValues = // @ts-ignore
-        // Object.fromEntries(Object.entries(formattedData).filter(e => typeof e[1] === 'number' || !!e[1]));
+      // Object.fromEntries(Object.entries(formattedData).filter(e => typeof e[1] === 'number' || !!e[1]));
 
       // const supplierWithoutArrayValues =
-        // Object.fromEntries(Object.entries(formattedData).filter(e => typeof e[1] !== 'object'));
-        // Object.fromEntries(Object.entries(supplierWithoutNullValues).filter(e => typeof e[1] !== 'object'));
-      
+      // Object.fromEntries(Object.entries(formattedData).filter(e => typeof e[1] !== 'object'));
+      // Object.fromEntries(Object.entries(supplierWithoutNullValues).filter(e => typeof e[1] !== 'object'));
+
       // @ts-ignore
       delete formattedData.id;
       // @ts-ignore
       delete formattedData.image;
       // delete supplierWithoutArrayValues.id;
       //  console.log('f', formattedData)
-      if (!noSupplier) 
+      if (!noSupplier)
         await api.post(`/products/suppliers/${supplier.id}?_method=PUT`, formattedData);
       else {
         const {
@@ -227,23 +229,23 @@ console.log('s', supplier)
       setRegistering(false);
     }
   }, [
-      formRef,
-      noSupplier,
-      supplier,
-      setSupplier,
-      commercialStatusOptions,
-      taxRegimesOptions,
-      leadTimes,
-      shippingOptions,
-      blogPostsOptions,
-      allowReservation,
-      fractionalBox
-    ]);
+    formRef,
+    noSupplier,
+    supplier,
+    setSupplier,
+    commercialStatusOptions,
+    taxRegimesOptions,
+    leadTimes,
+    shippingOptions,
+    blogPostsOptions,
+    allowReservation,
+    fractionalBox
+  ]);
 
   // const fetchData = useCallback(async () => {
   //   try {
   //     if (!!countryStatesOptions.length && !!regionsOptions.length) return;
-      
+
   //     const [
   //       countryStatesResponse,
   //       regionsResponse
@@ -315,63 +317,63 @@ console.log('s', supplier)
     };
   }, [supplier]);
 
-  const paymentPromotionsData = useMemo(() => 
+  const paymentPromotionsData = useMemo(() =>
     !!supplier ?
       !!supplier.payment_promotions ? supplier.payment_promotions : []
-    : []
-  , [supplier])
+      : []
+    , [supplier])
 
-  const stateDiscountsData = useMemo(() => 
+  const stateDiscountsData = useMemo(() =>
     !!supplier ?
       !!supplier.state_discounts ? supplier.state_discounts : []
-    : []
-  , [supplier])
+      : []
+    , [supplier])
 
-  const profileDiscountsData = useMemo(() => 
-    !!supplier ? 
-      !!supplier.profile_discounts ? 
-      supplier.profile_discounts.filter(s => !s.categories.length) : []
-    : []
-  , [supplier])
+  const profileDiscountsData = useMemo(() =>
+    !!supplier ?
+      !!supplier.profile_discounts ?
+        supplier.profile_discounts.filter(s => !s.categories.length) : []
+      : []
+    , [supplier])
 
-  const profileCategoriesDiscountsData = useMemo(() => 
-    !!supplier ? 
-      !!supplier.profile_discounts ? 
-      supplier.profile_discounts.filter(s => !!s.categories.length) : []
-    : []
-  , [supplier])
+  const profileCategoriesDiscountsData = useMemo(() =>
+    !!supplier ?
+      !!supplier.profile_discounts ?
+        supplier.profile_discounts.filter(s => !!s.categories.length) : []
+      : []
+    , [supplier])
 
-  const promotionsByProductsData = useMemo(() => 
-    !!supplier ? 
+  const promotionsByProductsData = useMemo(() =>
+    !!supplier ?
       !!supplier.promotions ? supplier.promotions.filter(p => !!p.products) : []
-    : []
-  , [supplier])
+      : []
+    , [supplier])
 
-  const promotionsByCategoryData = useMemo(() => 
-    !!supplier ? 
+  const promotionsByCategoryData = useMemo(() =>
+    !!supplier ?
       !!supplier.promotions ? supplier.promotions.filter(p => !!p.categories) : []
-    : []
-  , [supplier])
+      : []
+    , [supplier])
 
-  const installmentsRules = useMemo(() => 
-    !!supplier ? 
+  const installmentsRules = useMemo(() =>
+    !!supplier ?
       !!supplier.installment_rules ? supplier.installment_rules : []
-    : []
-  , [supplier])
+      : []
+    , [supplier])
 
-  const fractionations = useMemo(() => 
-    !!supplier ? 
+  const fractionations = useMemo(() =>
+    !!supplier ?
       !!supplier.profile_fractionations ? supplier.profile_fractionations : []
-    : []
-  , [supplier])
+      : []
+    , [supplier])
 
   const handleShouldUpdate = useCallback((fieldTitle: string, newValue: string) => {
     // @ts-ignore
     let data = formRef.getData();
-    
+
     // @ts-ignore
     data[fieldTitle] = newValue;
-          
+
     // @ts-ignore
     updateSupplier(data);
   }, [formRef, updateSupplier]);
@@ -380,7 +382,7 @@ console.log('s', supplier)
     try {
       // let endpoint = `/products/suppliers/${supplier.id}/blocking_rules/${id}`
       let endpoint = `/blocking_rules/${id}`
-      endpoint = !!id ? `${endpoint}?_method=PUT` : endpoint; 
+      endpoint = !!id ? `${endpoint}?_method=PUT` : endpoint;
 
       // await api.post(`/blocking_rules/${id}`);
       const { data: { data } } = await api.post(endpoint, { name });
@@ -388,7 +390,7 @@ console.log('s', supplier)
       // @ts-ignore
       setRegionsOptions(prev => // @ts-ignore
         !!id ? prev.map(e => e.id === id ? ({ id, value: name, label: name }) : e) : // @ts-ignore
-        [...prev, { id: data.id, value: data.name, label: data.name }]
+          [...prev, { id: data.id, value: data.name, label: data.name }]
       );
     } catch (e) {
       console.log('e', e);
@@ -411,18 +413,18 @@ console.log('s', supplier)
 
   const handleBlockingRule = useCallback(async (value: DefaultValuePropsWithId[]) => {
     try {
-      if(!supplier) return;
-      
+      if (!supplier) return;
+
       const { blocking_rules } = supplier;
-      
+
       const formattedBlockingRules = value.map(e => ({ id: e.id, name: e.value }));
-      
+
       if (!!blocking_rules.length && !value.length) {
         // @ts-ignore
-        let { id } = blocking_rules[blocking_rules.length -1];
+        let { id } = blocking_rules[blocking_rules.length - 1];
         await api.delete(`/products/suppliers/${supplier.id}/blocking_rules/${id}`);
         updateSupplier({ blocking_rules: formattedBlockingRules });
-        
+
         return;
       }
 
@@ -438,7 +440,7 @@ console.log('s', supplier)
         const id = !blocking_rules.length ? value[0].id : valuesOnlyId.filter((e) => !blockedRegionsOnlyId.includes(e));
         await api.post(`/products/suppliers/${supplier.id}/blocking_rules`, { attach_id: id });
       }
-      
+
       updateSupplier({ blocking_rules: formattedBlockingRules });
     } catch (e) {
       console.log('e', e);
@@ -447,35 +449,35 @@ console.log('s', supplier)
 
   const handleAllowedStates = useCallback(async (value: DefaultValuePropsWithId[]) => {
     try {
-      if(!supplier) return;
-      
+      if (!supplier) return;
+
       const { blocked_states } = supplier;
-      
+
       // @ts-ignore
       const formattedBlockedStates = value.map(e => ({ id: e.id, code: e.value, name: statesById[e.id] }));
 
       if (!!blocked_states.length && !value.length) {
         // @ts-ignore
-        let { id } = blocked_states[blocked_states.length -1];
+        let { id } = blocked_states[blocked_states.length - 1];
         await api.delete(`/products/suppliers/${supplier.id}/blocked_states/${id}`);
         updateSupplier({ blocked_states: formattedBlockedStates });
-        
+
         return;
       }
 
       const valuesOnlyId = value.map(c => c.id);
       const blockedStatesOnlyId = blocked_states.map(c => c.id);
 
-      if (blocked_states.length > value.length) {        
+      if (blocked_states.length > value.length) {
         // @ts-ignore
         let [id] = blockedStatesOnlyId.filter((e) => !valuesOnlyId.includes(e))
         await api.delete(`/products/suppliers/${supplier.id}/blocked_states/${id}`);
       }
-      else {        
+      else {
         const id = !blocked_states.length ? value[0].id : valuesOnlyId.filter((e) => !blockedStatesOnlyId.includes(e));
         await api.post(`/products/suppliers/${supplier.id}/blocked_states`, { attach_id: id });
       }
-      
+
       updateSupplier({ blocked_states: formattedBlockedStates });
     } catch (e) {
       console.log('e', e);
@@ -512,7 +514,7 @@ console.log('s', supplier)
   // }, []);
 
   useEffect(() => {
-    if(!isLoading && !!rulesData) {
+    if (!isLoading && !!rulesData) {
       // @ts-ignore
       setStatesById(rulesData.countrySet)
       // @ts-ignore
@@ -525,16 +527,16 @@ console.log('s', supplier)
   }, [isLoading, rulesData]);
 
   useEffect(() => {
-    if(!isSupplierLoading && !!supplierData) {
+    if (!isSupplierLoading && !!supplierData) {
       // @ts-ignore
       setShippingOptions(supplierData.shippingOptions)
-      
+
       // @ts-ignore
-      setLeadTimes(supplierData.leadTimesOptions)      
-      
+      setLeadTimes(supplierData.leadTimesOptions)
+
       // @ts-ignore
-      setTaxRegimesOptions(supplierData.taxRegimesOptions)      
-      
+      setTaxRegimesOptions(supplierData.taxRegimesOptions)
+
       // @ts-ignore
       setBlogPostsOptions(supplierData.blogPostsOptions);
     }
@@ -545,43 +547,43 @@ console.log('s', supplier)
       <Header minimal route={['Cadastro', 'Representada', 'Editar Representada']} />
       <MenuAndTableContainer>
         <Menu minimal />
-          {/* @ts-ignore */}
-        <Form ref={updateFormRef} onSubmit={() => {}} initialData={formattedData}>
-        <Container>
-          <SupplierHeader
-          // @ts-ignore
-            ref={formRef}
-            disabled={disabled}
-            data={{
-              fractionalBox,
-              allowReservation
-            }}
-          >
-            <div
-              style={{
-                margin: '0 1rem',
-                borderLeft: '2px solid #eee'
+        {/* @ts-ignore */}
+        <Form ref={updateFormRef} onSubmit={() => { }} initialData={formattedData}>
+          <Container>
+            <SupplierHeader
+              // @ts-ignore
+              ref={formRef}
+              disabled={disabled}
+              data={{
+                fractionalBox,
+                allowReservation
               }}
             >
-              <Button
-                onClick={handleSubmit}
-                disabled={registering}
-                type="button"
+              <div
                 style={{
-                  width: '12.375rem',
-                  marginLeft: '1rem',
-                  backgroundColor: '#21D0A1',
-                  color: '#fff'
+                  margin: '0 1rem',
+                  borderLeft: '2px solid #eee'
                 }}
               >
-                {registering ? 'Aguarde...' : 'Salvar'}
-              </Button>
-            </div>
-          </SupplierHeader>
+                <Button
+                  onClick={handleSubmit}
+                  disabled={registering}
+                  type="button"
+                  style={{
+                    width: '12.375rem',
+                    marginLeft: '1rem',
+                    backgroundColor: '#21D0A1',
+                    color: '#fff'
+                  }}
+                >
+                  {registering ? 'Aguarde...' : 'Salvar'}
+                </Button>
+              </div>
+            </SupplierHeader>
 
-          <CustomSectionTitle>
-            Políticas e Estratégias Comerciais
-          </CustomSectionTitle>
+            <CustomSectionTitle>
+              Políticas e Estratégias Comerciais
+            </CustomSectionTitle>
             <InputContainer>
               <MeasureBox
                 name="min_ticket"
@@ -670,12 +672,21 @@ console.log('s', supplier)
                       marginLeft: '0.5rem'
                     }}
                   >
-                    <EditIcon />  
-                  </TableActionButton> 
+                    <EditIcon />
+                  </TableActionButton>
                 </>
                 :
-                 <></>
-                }
+                <></>
+              }
+            </InputContainer>
+            <InputContainer>
+              <FormInput title='Fidelidade'
+                name='loyalty'
+                defaultValue={supplier?.loyalty ? `${supplier?.loyalty} dias` : ''}
+              />
+              {/* <FormInput title='op_bonus'
+                name='id'
+              /> */}
             </InputContainer>
             <StatesWithIcmsOff data={stateDiscountsData} />
             {!!fractionalBox &&
@@ -687,14 +698,14 @@ console.log('s', supplier)
             <PromotionsByCategories data={promotionsByCategoryData} />
             <InstallmentsRules data={installmentsRules} setDisabled={setDisabled} />
             <PaymentPromotion data={paymentPromotionsData} />
-        </Container>
+          </Container>
         </Form>
       </MenuAndTableContainer>
       <Modal
         title="Regra de Bloqueio"
         isModalOpen={isRegionModalOpen}
         setIsModalOpen={setIsRegionModalOpen}
-        customOnClose={() => {}}
+        customOnClose={() => { }}
         style={{ width: 471 }}
       >
         <InputContainer style={{ alignItems: 'flex-end' }}>
@@ -714,7 +725,7 @@ console.log('s', supplier)
           </TableActionButton>
         </InputContainer>
         <DeleteItemsContainer>
-          {regionsOptions.map((t: DefaultValuePropsWithId) => 
+          {regionsOptions.map((t: DefaultValuePropsWithId) =>
             // t.value !== 'new' &&
             <div key={t.id}>
               <Input
@@ -736,7 +747,7 @@ console.log('s', supplier)
               >
                 <TrashIcon />
               </TableActionButton>
-            </div>  
+            </div>
           )}
         </DeleteItemsContainer>
       </Modal>
