@@ -491,17 +491,19 @@ export function NewClient() {
       // Object.fromEntries(Object.entries(formattedData).filter(e => !!e[1]));
       // Object.fromEntries(Object.entries(formattedData).filter(e => !!e[1]));
 
-      if (!noClient)
-        await api.put(`/clients/${client.id}`, clientWithoutNullValues);
-      else {
-        const {
-          data: { data }
-        } = await api.post('/clients', clientWithoutNullValues);
+      console.log("DADOS DO SUBMIT: ", clientWithoutNullValues)
 
-        setClient(data as unknown as MainClient);
-      }
+      // if (!noClient)
+      //   await api.put(`/clients/${client.id}`, clientWithoutNullValues);
+      // else {
+      //   const {
+      //     data: { data }
+      //   } = await api.post('/clients', clientWithoutNullValues);
 
-      setMessage('Salvo com sucesso');
+      //   setClient(data as unknown as MainClient);
+      // }
+
+      // setMessage('Salvo com sucesso');
     } catch (e) {
       console.log('e', e);
       // @ts-ignore
