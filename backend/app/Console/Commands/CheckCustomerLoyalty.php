@@ -28,10 +28,13 @@ class CheckCustomerLoyalty extends Command
 
                 foreach ($clientsGroups as $clientGroup) {
                     $clientHasSeller = $this->getClientHasSeller($clientGroup->id, $supplier->id);
+                    $isSupplierBlockedByClientGroup = $this->isSupplierBlockedByClientGroup($clientGroup, $supplier->id);
 
-                    $clientHasSeller
-                        ? $this->processLoyalty($clientGroup, $supplier, $clientHasSeller)
-                        : $this->createNewClientHasSeller($clientGroup, $supplier);
+                    if ($clientHasSeller) {
+                        $this->processLoyalty($clientGroup, $supplier, $clientHasSeller, $isSupplierBlockedByClientGroup);
+                    } else {
+                        $this->createNewClientHasSeller($clientGroup, $supplier, $isSupplierBlockedByClientGroup);
+                    }
                 }
             }
 
@@ -47,7 +50,7 @@ class CheckCustomerLoyalty extends Command
         return Supplier::query()
             ->where('is_available', 1)
             ->where('suspend_sales', 0)
-            ->where('service_migrate', 'Ativo')
+            ->where('service_migrate', 'Ativado')
             ->has('installmentRules')
             ->get();
     }
@@ -64,17 +67,17 @@ class CheckCustomerLoyalty extends Command
             ->first();
     }
 
-    private function processLoyalty($clientGroup, $supplier, $clientHasSeller)
+    private function processLoyalty($clientGroup, $supplier, $clientHasSeller, $isSupplierBlockedByClientGroup)
     {
         $loyaltyDays = $supplier->loyalty ?? 0;
         $lastOrder = $this->getLastOrder($clientGroup, $supplier->id);
         $existingOpportunity = $this->opportunityExists($clientGroup->id, $supplier->id);
 
-        if (!$clientHasSeller->seller_id && !$existingOpportunity) {
+        if (!$clientHasSeller->seller_id && !$existingOpportunity && $clientGroup->service_migrate === 'Ativado' && $isSupplierBlockedByClientGroup) {
             $this->createOpportunity($clientGroup->id, $supplier->id, 'Fidelidade expirada');
-        } elseif ($lastOrder && !$existingOpportunity) {
+        } elseif ($lastOrder && !$existingOpportunity && $clientGroup->service_migrate === 'Ativado' && $isSupplierBlockedByClientGroup) {
             $this->handleOrderLoyalty($lastOrder, $supplier, $clientHasSeller, $clientGroup->id);
-        } elseif (!$lastOrder && !$existingOpportunity) {
+        } elseif (!$lastOrder && !$existingOpportunity && $clientGroup->service_migrate === 'Ativado' && $isSupplierBlockedByClientGroup) {
             $this->createOpportunity($clientGroup->id, $supplier->id, 'Fidelidade expirada');
         }
     }
@@ -87,6 +90,17 @@ class CheckCustomerLoyalty extends Command
             ->where('product_supplier_id', $supplierId)
             ->sortByDesc('created_at')
             ->first();
+    }
+
+    private function isSupplierBlockedByClientGroup($clientGroup, $supplierId)
+    {
+        foreach ($clientGroup->clients as $client) {
+            if ($client->blockedSuppliers->contains('product_supplier_id', $supplierId)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function opportunityExists($clientGroupId, $supplierId)
@@ -107,15 +121,18 @@ class CheckCustomerLoyalty extends Command
         }
     }
 
-    private function createNewClientHasSeller($clientGroup, $supplier)
+    private function createNewClientHasSeller($clientGroup, $supplier, $isSupplierBlockedByClientGroup)
     {
         ClientHasSeller::create([
             'client_group_id' => $clientGroup->id,
             'supplier_id' => $supplier->id,
         ]);
+
         $this->info("Vinculo criado: grupo {$clientGroup->id}, fornecedor {$supplier->id}");
 
-        $this->createOpportunity($clientGroup->id, $supplier->id, 'Fidelidade expirada');
+        if ($clientGroup->service_migrate === 'Ativado' && $isSupplierBlockedByClientGroup) {
+            $this->createOpportunity($clientGroup->id, $supplier->id, 'Fidelidade expirada');
+        }
     }
 
     private function createOpportunity($clientGroupId, $supplierId, $description)

@@ -120,12 +120,17 @@ class ClientController extends BaseController
         try {
             $this->entityService->update($itemId, $request->validated());
             $item = $this->entityService->show($itemId);
+
+            if ($serviceMigrateValue = $request->service_migrate) {
+                $item->group->update(['service_migrate' => $serviceMigrateValue]);
+            }
         } catch (Throwable $e) {
             return $this->sendError($e->getMessage(), [], $this->getExceptionCode($e));
         }
 
         return $this->sendResponse(new ClientResource($item), Lang::get('custom.register_updated'));
     }
+
 
     public function destroy(int $itemId): JsonResponse
     {

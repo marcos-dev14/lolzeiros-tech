@@ -20,20 +20,30 @@ class ClientBlockedSupplierController extends BaseController
     {
         $attachSupplierId = $request->attach_supplier_id;
         $attachSupplier = $this->_model->select(['id'])->find($attachSupplierId);
-        $client = $this->_baseModel->select(['id'])->with('blockedSuppliers')->find($id);
+        $client = $this->_baseModel->select(['id'])->with('blockedSuppliers', 'group')->find($id);
 
         if (is_null($client)) {
             return $this->sendError('Cliente não existe', [], 404);
-        } elseif (is_null($attachSupplier)) {
+        }
+
+        if (is_null($attachSupplier)) {
             return $this->sendError('Representada não existe', [], 404);
-        } elseif ($client->blockedSuppliers->contains($attachSupplierId)) {
+        }
+
+        if ($client->blockedSuppliers->contains($attachSupplierId)) {
             return $this->sendError('A representada informada já está relacionada ao cliente', [], 400);
         }
 
         $client->blockedSuppliers()->attach($attachSupplier);
 
-        return $this->sendResponse([], 'Representada adicionada a lista de bloqueadas com sucesso.');
+         foreach ($client->group->clients as $groupClient) {
+            if (!$groupClient->blockedSuppliers->contains($attachSupplierId)) {
+                $groupClient->blockedSuppliers()->attach($attachSupplier);
+            }
+        } 
+        return $this->sendResponse([], 'Representada adicionada à lista de bloqueadas com sucesso.');
     }
+
 
     public function destroy($id, $detachSupplierId): JsonResponse
     {
@@ -49,6 +59,11 @@ class ClientBlockedSupplierController extends BaseController
         }
 
         $client->blockedSuppliers()->detach($detachSupplier);
+         foreach ($client->group->clients as $groupClient) {
+            if (!$groupClient->blockedSuppliers->contains($detachSupplierId)) {
+                $groupClient->blockedSuppliers()->detachSupplier($detachSupplierId);
+            }
+        } 
 
         return $this->sendResponse([], 'Representada removida da lista de bloqueadas com sucesso.');
     }
