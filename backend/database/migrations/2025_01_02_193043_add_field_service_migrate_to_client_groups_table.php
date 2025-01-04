@@ -14,7 +14,7 @@ class AddFieldServiceMigrateToClientGroupsTable extends Migration
     public function up()
     {
         Schema::table('client_groups', function (Blueprint $table) {
-            $table->string('service_migrate')->default('Ativo')->after('name');
+            $table->string('service_migrate')->default('Ativado')->after('name');
         });
     }
 

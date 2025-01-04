@@ -14,7 +14,7 @@ class AddFieldServiceMigrateToProductSuppliersTable extends Migration
     public function up()
     {
         Schema::table('product_suppliers', function (Blueprint $table) {
-            $table->string('service_migrate')->default('Ativo')->after('discount_type');
+            $table->string('service_migrate')->default('Ativado')->after('discount_type');
         });
     }
 
