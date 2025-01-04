@@ -537,6 +537,7 @@ export type MainClient = {
   order_balance: boolean;
   enter_price_on_order: boolean;
   can_migrate_service: boolean;
+  service_migrate?: string;
   hasEcommerce?: string;
   orderSchedule?: string;
   orderBalance?: string;
@@ -668,6 +669,7 @@ export type MainSupplier = {
   order_balance: string;
   enter_price_on_order: string;
   can_migrate_service: string;
+  service_migrate?: string;
   auto_observation_order: string;
   min_ticket: string;
   min_order: string;
