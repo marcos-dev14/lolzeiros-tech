@@ -1,16 +1,17 @@
-@extends('layouts.app')
-
-@section('content')
+<x-layouts.seller-panel
+    title="Oportunidades"
+    subtitle="Olá <strong>{{ $seller->name ?? 'Wesley Bananas' }}</strong> aqui estão todas oportunidades disponiveis pra você arrasar com a AugeApp."
+    icon="icons.users"
+>
     <div class="container">
-        <h1>Opportunities</h1>
         <table class="table">
             <thead>
-                @dd($opportunities)
                 <tr>
                     <th>#</th>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Client Group</th>
+                    <th>#</th>
                     <th>Supplier</th>
                 </tr>
             </thead>
@@ -21,10 +22,12 @@
                         <td>{{ $opportunity->name }}</td>
                         <td>{{ $opportunity->description }}</td>
                         <td>{{ $opportunity->clientGroup->name ?? 'N/A' }}</td>
+                        <td>#</td>
                         <td>{{ $opportunity->supplier->name ?? 'N/A' }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-@endsection
+</x-layouts.seller-panel>
+

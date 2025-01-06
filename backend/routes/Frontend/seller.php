@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:seller')->group(function () {
     Route::prefix('vendedor')->group(function () {
         Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
-        Route::get('/clientes-disponivel', [OpportunityController::class, 'index'])->name('opportunities.index');
+        Route::get('/clientes-disponiveis', [OpportunityController::class, 'index'])->name('opportunities.index');
         Route::get('/clientes', [SellerController::class, 'clients'])->name('clients');
         Route::get('/perfil', [SellerController::class, 'profile'])->name('profile');
     });
