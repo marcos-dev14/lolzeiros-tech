@@ -833,3 +833,31 @@ async function handleSearchSubmit() {
         console.error('Erro ao salvar o termo de busca:', error);
     }
 }
+
+const tabs = document.querySelectorAll('.tab');
+const form = document.getElementById('login-client');
+
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Atualiza a aba ativa
+      tabs.forEach(t => t.classList.remove('active'));
+
+      tab.classList.add('active');
+
+      const targetTabContent = document.getElementById(tab.dataset.tab);
+      if (targetTabContent) {
+        targetTabContent.classList.add('active');
+      } else {
+        console.error(`Elemento com id "${tab.dataset.tab}" não encontrado.`);
+      }
+
+      // Atualiza a rota do formulário
+      if (tab.dataset.tab === 'client') {
+        form.action = 'buyer.login';
+      } else if (tab.dataset.tab === 'seller') {
+        form.action = 'seller.login';
+      } else {
+        console.error('Tab inválida: ', tab.dataset.tab);
+      }
+    });
+  });

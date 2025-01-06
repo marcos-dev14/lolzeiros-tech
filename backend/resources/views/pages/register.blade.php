@@ -23,7 +23,17 @@
                 </div>
 
                 <div class="col-12 col-md-6 login-div">
-                    {!! Form::open(['route' => 'buyer.login', 'method' => 'post', 'data-toggle' => 'validator']) !!}
+                    <div class="tabs">
+                        <div id="client" class="tab active" data-tab="client">
+                            <p>Sou cliente Auge App</p>
+                        </div>
+
+                        <div id="seller" class="tab" data-tab="seller">
+                            <p>Sou vendedor Auge App</p>
+                        </div>
+                    </div>
+
+                    {!! Form::open(['route' => 'buyer.login', 'method' => 'post', 'data-toggle' => 'validator', 'id' => 'login-client']) !!}
                         <div class="form-header login-card">
                             <div>
                                 <h3>
@@ -60,7 +70,13 @@
                             </div>
 
                             <div class="col-12">
-                                <x-form.input type="password" name="password" label="Senha" class="gray-input" required></x-form.input>
+                                <x-form.input
+                                    type="password"
+                                    name="password"
+                                    label="Senha"
+                                    class="gray-input"
+                                    required
+                                ></x-form.input>
                             </div>
 
                             {!! app('captcha')->render('pt-BR') !!}
@@ -71,9 +87,7 @@
                                 </div>
                             </div>
 
-{{--                            <div class="col-xs-6">--}}
-{{--                                <x-form.input type="checkbox" name="remember" label="Permanecer logado"></x-form.input>--}}
-{{--                            </div>--}}
+
 
                             <div class="col-xs-12 text-right">
                                 <a href="{{ route('password.email') }}">Esqueceu sua senha?</a>

@@ -699,6 +699,169 @@ $(function () {
     });
 });
 
+
+let timer;
+const MIN_CHARACTERS = 3;
+
+const suggestionsBox = document.getElementById('suggestions-box');
+const searchInput = document.getElementById('product-search');
+
+function showSuggestions() {
+    suggestionsBox.classList.remove('hidden');
+    suggestionsBox.classList.add('visible');
+}
+
+function hideSuggestions() {
+    setTimeout(() => {
+        suggestionsBox.classList.remove('visible');
+        suggestionsBox.classList.add('hidden');
+    }, 200); // Pequeno atraso para permitir cliques nos itens
+}
+
+function handleSearch(term) {
+    clearTimeout(timer);
+
+    if (term.length < MIN_CHARACTERS) {
+        suggestionsBox.classList.add('hidden');
+        suggestionsBox.classList.remove('visible');
+        return;
+    }
+
+    // Debounce para evitar chamadas excessivas ao endpoint
+    timer = setTimeout(() => {
+        fetchSuggestions(term);
+    }, 300);
+}
+
+async function fetchSuggestions(term) {
+    try {
+        const response = await fetch(`/products/suggestions?pe=${term}`);
+        const data = await response.json();
+
+        // Chame renderSuggestions para atualizar a exibição
+        renderSuggestions(data.suggestions, data.popular);
+    } catch (error) {
+        console.error('Erro ao buscar sugestões:', error);
+    }
+}
+
+function renderSuggestions(suggestions, popular) {
+    suggestionsBox.innerHTML = '';
+
+    // Se não houver sugestões ou populares, oculte a caixa
+    if (!suggestions.length && !popular.length) {
+        suggestionsBox.classList.add('hidden');
+        suggestionsBox.classList.remove('visible');
+        return;
+    }
+
+    // Mostrar sugestões recentes
+    if (suggestions.length) {
+        suggestionsBox.innerHTML += `
+            <li>
+                <strong>Recentes</strong>
+            </li>`;
+        suggestions.forEach(product => {
+            suggestionsBox.innerHTML += `
+                <li onclick="selectSuggestion('${product}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon sb-suggestions__history-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        <line x1="12" y1="7" x2="12" y2="12"></line>
+                        <line x1="12" y1="12" x2="15" y2="15"></line>
+                    </svg>
+                    ${product}
+                </li>`;
+        });
+    }
+
+    // Mostrar termos populares
+    if (popular.length) {
+        suggestionsBox.innerHTML += `
+            <li>
+                <strong>Populares</strong>
+            </li>`;
+        popular.forEach(product => {
+            const displayText = `${product.reference} - ${product.title}`;
+            suggestionsBox.innerHTML += `
+                <li onclick="selectSuggestion('${product.reference}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon suggestion-trending-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 17 9 11 13 15 21 7"></polyline>
+                        <polyline points="14 7 21 7 21 14"></polyline>
+                    </svg>
+                    ${displayText}
+                </li>`;
+        });
+    }
+
+    // Sempre exibir a caixa se houver resultados
+    showSuggestions();
+}
+
+function selectSuggestion(term) {
+    const displayText = term.length > 18 ? term.slice(0, 18) + '...' : term;
+    searchInput.value = displayText;
+    hideSuggestions();
+    handleSearchSubmit(term);
+
+    // Submeter o formulário após selecionar uma sugestão
+    document.getElementById('form-search').submit();
+}
+
+async function handleSearchSubmit() {
+    const searchInput = document.getElementById('product-search');
+    const searchTerm = searchInput.value;
+
+    if (!searchTerm || searchTerm.length < 3) {
+        return;
+    }
+
+    try {
+        // Enviar o termo de busca ao endpoint de salvar
+        await fetch(`/products/save-search-term`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: JSON.stringify({ term: searchTerm }),
+        });
+
+        // Submeter o formulário após salvar o termo
+        document.getElementById('form-search').submit();
+    } catch (error) {
+        console.error('Erro ao salvar o termo de busca:', error);
+    }
+}
+
+const tabs = document.querySelectorAll('.tab');
+const form = document.getElementById('login-client');
+
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Atualiza a aba ativa
+      tabs.forEach(t => t.classList.remove('active'));
+
+      tab.classList.add('active');
+
+      const targetTabContent = document.getElementById(tab.dataset.tab);
+      if (targetTabContent) {
+        targetTabContent.classList.add('active');
+      } else {
+        console.error(`Elemento com id "${tab.dataset.tab}" não encontrado.`);
+      }
+
+      // Atualiza a rota do formulário
+      if (tab.dataset.tab === 'client') {
+        form.action = 'buyer.login';
+      } else if (tab.dataset.tab === 'seller') {
+        form.action = 'seller.login';
+      } else {
+        console.error('Tab inválida: ', tab.dataset.tab);
+      }
+    });
+  });
+
 function updateProgressBar(mainContainer, minOrderRemaining, minOrderRemainingPercentage) {
     const progressBar = mainContainer.find('.progress-bar');
     const minOrderValue = progressBar.data('min-value');

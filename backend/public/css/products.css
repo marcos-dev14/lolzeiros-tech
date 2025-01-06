@@ -4124,6 +4124,7 @@ section header.with-title p span {
   border-radius: 50px;
   align-items: center;
   padding-left: 10px;
+  transition: all 0.3s ease-in-out;
 }
 #header .row-top .search-box input {
   display: flex;
@@ -4137,6 +4138,7 @@ section header.with-title p span {
   font-weight: 600;
   color: #959494;
   outline: none;
+  transition: all 0.3s ease-in-out;
 }
 #header .row-top .search-box button {
   position: absolute;
@@ -4150,6 +4152,73 @@ section header.with-title p span {
 #header .row-top .search-box button svg {
   width: 18px;
   height: auto;
+}
+#header .row-top .search-box:focus-within form {
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+#header .row-top .search-box .suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ccc;
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 0 0 10px 10px;
+  transition: all 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  transform: scaleY(0.95);
+}
+#header .row-top .search-box .suggestions.visible {
+  opacity: 1;
+  transform: scaleY(1);
+}
+#header .row-top .search-box .suggestions.hidden {
+  display: none;
+}
+#header .row-top .search-box .suggestions::-webkit-scrollbar {
+  width: 8px;
+}
+#header .row-top .search-box .suggestions::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+  -webkit-transition: background 0.3s ease;
+  transition: background 0.3s ease;
+}
+#header .row-top .search-box .suggestions::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+#header .row-top .search-box .suggestions::-webkit-scrollbar-track {
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+#header .row-top .search-box .suggestions li {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.3s ease-in-out;
+}
+#header .row-top .search-box .suggestions li:hover {
+  background: #f9f9f9;
+}
+#header .row-top .search-box .suggestions li strong {
+  font-weight: bold;
+  color: #333;
+}
+#header .row-top .search-box .suggestions li svg {
+  width: 18px;
+  height: auto;
+  color: #005CAC;
 }
 #header .row-top .sign-in {
   display: flex;
@@ -5351,11 +5420,20 @@ body {
   border-radius: 20px;
   background: #fff;
   overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Configurações do container da imagem */
+  /* Ajustes do conteúdo da parte inferior do card */
+}
+.post-card a {
+  text-decoration: none;
+  color: inherit;
 }
 .post-card figure {
-  height: 250px;
   width: 100%;
+  margin: 0;
   position: relative;
+  /* Regra de imagem mais específica */
+  /* Ajuste para dispositivos móveis */
 }
 .post-card figure figcaption {
   position: absolute;
@@ -5371,46 +5449,63 @@ body {
 }
 .post-card figure img {
   width: 100%;
-  height: 100%;
+  height: 300px !important; /* Força a altura da imagem */
   -o-object-fit: cover;
      object-fit: cover;
+  border-bottom: 2px solid #f1f1f1;
 }
 @media (max-width: 767px) {
-  .post-card figure {
-    height: 0;
-    padding-bottom: 100%;
-    position: relative;
-  }
   .post-card figure img {
+    height: auto !important;
+    width: 100%;
+    padding-bottom: 100%;
     position: absolute;
     top: 0;
     left: 0;
   }
 }
 .post-card .card-bottom {
-  padding: 30px;
+  padding: 20px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Ajustes para telas menores */
+  /* Ajustes para tablets */
 }
 .post-card .card-bottom p {
   font-size: 14px;
+  color: #888;
+  margin: 0 0 10px;
 }
 .post-card .card-bottom h4 {
   margin: 0;
   font-size: 18px;
-  line-height: 22px;
-  max-height: 66px;
+  line-height: 1.4;
+  max-height: 2.8em;
   overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
 }
 @media (max-width: 500px) {
   .post-card .card-bottom {
     padding: 15px 10px 20px;
-    min-height: 80px;
-    align-items: center;
-    display: flex;
-    justify-content: center;
   }
   .post-card .card-bottom h4 {
-    font-size: 15px;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  .post-card .card-bottom {
+    padding: 25px;
+  }
+  .post-card .card-bottom h4 {
+    font-size: 17px;
+    line-height: 1.4;
   }
 }
 
@@ -5946,6 +6041,14 @@ section#suppliers .list figure p {
   }
   #blog .blog-posts .post-card {
     margin-bottom: 10px;
+  }
+  #blog .blog-posts .post-card > a {
+    height: 80px;
+    width: 100%;
+  }
+  #blog .blog-posts .post-card > a figure {
+    width: 100%;
+    height: 100%;
   }
   #blog .blog-posts .post-card .card-bottom h4 {
     font-size: 14px;

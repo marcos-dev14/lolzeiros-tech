@@ -82,6 +82,6 @@ copy('node_modules/slick-carousel/slick/ajax-loader.gif', 'public/css/ajax-loade
 copyDirectory('node_modules/slick-carousel/slick/fonts', 'public/css/fonts');
 
 browserSync({
-    proxy: 'auge.test',
-    port: '8000'
+    proxy: 'localhost:8001',
+    port: '8001'
 });
