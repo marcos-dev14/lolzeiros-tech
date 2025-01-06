@@ -36,11 +36,11 @@ class ClientBlockedSupplierController extends BaseController
 
         $client->blockedSuppliers()->attach($attachSupplier);
 
-        foreach ($client->group->clients as $groupClient) {
+         foreach ($client->group->clients as $groupClient) {
             if (!$groupClient->blockedSuppliers->contains($attachSupplierId)) {
                 $groupClient->blockedSuppliers()->attach($attachSupplier);
             }
-        }
+        } 
         return $this->sendResponse([], 'Representada adicionada à lista de bloqueadas com sucesso.');
     }
 
@@ -59,11 +59,11 @@ class ClientBlockedSupplierController extends BaseController
         }
 
         $client->blockedSuppliers()->detach($detachSupplier);
-        foreach ($client->group->clients as $groupClient) {
+         foreach ($client->group->clients as $groupClient) {
             if (!$groupClient->blockedSuppliers->contains($detachSupplierId)) {
                 $groupClient->blockedSuppliers()->detachSupplier($detachSupplierId);
             }
-        }
+        } 
 
         return $this->sendResponse([], 'Representada removida da lista de bloqueadas com sucesso.');
     }

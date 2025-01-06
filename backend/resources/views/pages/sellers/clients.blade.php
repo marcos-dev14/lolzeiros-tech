@@ -1,23 +1,25 @@
-@extends('layouts.app')
-
-@section('content')
+<x-layouts.seller-panel
+    title="Clientes"
+    subtitle="Olá <strong>{{ $seller->name ?? 'Wesley Bananas' }}</strong> aqui estão todas seus clientes junta a AugeApp."
+    icon="icons.users"
+>
     <div class="container">
-        <h1>Opportunities</h1>
         <table class="table">
             <thead>
-                @dd($clients)
                 <tr>
                     <th>#</th>
                     <th>Name</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($clients as $client)
-                    <tr>
-                        <td>{{ $client->name }}</td>
-                    </tr>
-                @endforeach
+                @if($seller)
+                    @foreach ($seller->clients as $client)
+                        <tr>
+                            <td>{{ $client->name }}</td>
+                        </tr>
+                    @endforeach
+                @endif
             </tbody>
         </table>
     </div>
-@endsection
+</x-layouts.seller-panel>

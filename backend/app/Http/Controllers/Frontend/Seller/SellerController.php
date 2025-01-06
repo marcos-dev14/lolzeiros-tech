@@ -17,7 +17,7 @@ class SellerController extends Controller
     {
         $seller = auth()->guard('seller')->user();
         $this->entityService->relations = ['client'];
-        return view('pages.seller.clients', compact('sellers'));
+        return view('pages.sellers.clients', compact('seller'));
     }
 
     public function orders()
