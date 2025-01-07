@@ -65,9 +65,9 @@ class SellerController extends Controller
             return $firstClient;
         });
 
-        $clientDataPaginated = $clientData->forPage(request()->get('page', 1), 15); // 15 itens por página
+        $clientDataPaginated = $clientData->forPage(request()->get('page', 1), 15);
         $total = $clientData->count();
-
+          
         return view('pages.sellers.clients', [
             'seller' => $seller,
             'clientData' => $clientDataPaginated,
@@ -105,6 +105,20 @@ class SellerController extends Controller
     }
 
     public function order($orderCode)
+    {
+        $seller = auth()->guard('seller')->user();
+
+        if (!$seller) {
+            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+        }
+
+        $order = Order::where('code', $orderCode)->first();
+        $order = new OrderResource($order);
+
+        return view('pages.sellers.order', compact('seller', 'order'));
+    }
+
+    public function abandonedCarts()
     {
         $seller = auth()->guard('seller')->user();
 
