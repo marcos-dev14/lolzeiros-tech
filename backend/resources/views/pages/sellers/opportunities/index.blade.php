@@ -7,23 +7,27 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Client Group</th>
-                    <th>#</th>
-                    <th>Supplier</th>
+                    <th>Cliente</th>
+                    <th>Cnpj</th>
+                    <th>Grupo</th>
+                    <th>Estado</th>
+                    <th>Cadastro</th>
+                    <th>ultimo login</th>
+                    <th>Carrinho Abandonado</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($opportunities as $opportunity)
+                @foreach ($paginatedOpportunities as $opportunity)
                     <tr>
-                        <td>{{ $opportunity->id }}</td>
-                        <td>{{ $opportunity->name }}</td>
-                        <td>{{ $opportunity->description }}</td>
-                        <td>{{ $opportunity->clientGroup->name ?? 'N/A' }}</td>
-                        <td>#</td>
-                        <td>{{ $opportunity->supplier->name ?? 'N/A' }}</td>
+                        <td>{{ $opportunity->cliente }}</td>
+                        <td>{{ $opportunity->cnpj }}</td>
+                        <td>{{ $opportunity->grupo }}</td>
+                        <td>{{ $opportunity->estado }}</td>
+                        <td>{{ $opportunity->cadastro }}</td>
+                        <td>{{ $opportunity->ultimologin }}</td>
+                        <td>{{ $opportunity->carrinhoabandonado }}</td>
+                        <td>{{ $opportunity->status }}</td>
                     </tr>
                 @endforeach
             </tbody>

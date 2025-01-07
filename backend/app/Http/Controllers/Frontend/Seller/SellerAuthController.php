@@ -16,7 +16,7 @@ class SellerAuthController extends Controller
     public function showLoginForm(): View|RedirectResponse
     {
         if (auth()->guard($this->guard)->user()) {
-            dd(auth()->guard($this->guard)->user());
+            return redirect()->intended(route('seller.dashboard'));
         }
 
         return view('pages.sellers.register');
@@ -46,7 +46,7 @@ class SellerAuthController extends Controller
             return back()->with('error', $exception->getMessage());
         }
 
-        return redirect()->intended(route('buyer.clients'));
+        return redirect()->intended(route('seller.dashboard'));
     }
 
     public function logout(Request $request): RedirectResponse
