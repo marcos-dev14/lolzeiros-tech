@@ -190,7 +190,7 @@ class SellerController extends Controller
 
         $clientDataPaginated = $clientData->forPage(request()->get('page', 1), 15);
         $total = $clientData->count();
-        dd($clientDataPaginated);
+        //dd($clientDataPaginated);
         return view('pages.sellers.abandonedCarts', [
             'seller' => $seller,
             'clientData' => $clientDataPaginated,
