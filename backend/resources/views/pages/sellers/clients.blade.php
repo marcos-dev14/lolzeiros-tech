@@ -8,14 +8,24 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Name</th>
+                    <th>Cliente</th>
+                    <th>CNPJ</th>
+                    <th>Grupo</th>
+                    <th>Estado</th>
+                    <th>Cadastro</th>
+                    <th>Ultimo login</th>
                 </tr>
             </thead>
             <tbody>
                 @if($seller)
-                    @foreach ($seller->clients as $client)
+                    @foreach ($clientData as $client)
                         <tr>
-                            <td>{{ $client->name }}</td>
+                            <td>{{ $client->cliente }}</td>
+                            <td>{{ $client->cnpj }}</td>
+                            <td>{{ $client->grupo }}</td>
+                            <td>{{ $client->estado }}</td>
+                            <td>{{ $client->cadastro }}</td>
+                            <td>{{ $client->ultimologin }}</td>
                         </tr>
                     @endforeach
                 @endif
