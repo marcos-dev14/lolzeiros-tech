@@ -65,7 +65,6 @@ class OpportunityController extends BaseController
         });
 
         $paginatedOpportunities = $opportunities->flatten()->paginate(10);
-         //dd($paginatedOpportunities);
         return view('pages.sellers.opportunities.index', compact('paginatedOpportunities', 'seller'));
     }
 

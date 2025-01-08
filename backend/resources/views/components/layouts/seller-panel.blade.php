@@ -48,8 +48,8 @@
                                         </a>
                                     </li>
 
-                                    <li class="nav-item nav-client @if(url()->current() == route('seller.clients')) active @endif">
-                                        <a href="{{ route('seller.clients') }}" title="Carrinhos abandonados" data-toggle="tooltip">
+                                    <li class="nav-item nav-client @if(url()->current() == route('seller.abandonedCarts')) active @endif">
+                                        <a href="{{ route('seller.abandonedCarts') }}" title="Carrinhos abandonados" data-toggle="tooltip">
                                             <x-icons.shopping-cart></x-icons.shopping-cart>
 
                                             <p>Carrinhos abandonados</p>
