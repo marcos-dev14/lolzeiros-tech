@@ -97,7 +97,7 @@
                 </div>
 
                 <div class="col-12 col-md-6 register-div">
-                    {!! Form::open(['route' => 'buyer.register', 'method' => 'post', 'data-toggle' => 'validator']) !!}
+                    {!! Form::open(['route' => 'seller.login', 'method' => 'post', 'data-toggle' => 'validator']) !!}
                         <x-loader id="register-loader"></x-loader>
 
                         {!! Form::hidden('receita_api', old('receita_api') ?? null, ['id' => 'receitaws']) !!}
