@@ -1,10 +1,10 @@
 <x-layouts.seller-panel
     title="Clientes"
-    subtitle="Olá <strong>{{ $seller->name ?? 'Wesley Bananas' }}</strong> aqui estão todas suas vendas junta a AugeApp."
+    subtitle="Olá <strong>{{ $seller->name }}</strong> aqui estão todas suas vendas junta a AugeApp."
     icon="icons.users"
 >
     <div class="container">
-        <table class="table">
+        <table id="orders-table" class="table">
             <thead>
                 <tr>
                     <th>#</th>

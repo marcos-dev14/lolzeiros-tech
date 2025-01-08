@@ -69,7 +69,7 @@
                         </aside>
                     </div>
 
-                    <div class="col-md-9">
+                    <div class="col-md-9 seller-options">
                         <div class="panel-box @if(!isset($title)) bg-transparent @endif">
                             @if(isset($title))
                                 <div class="panel-header">
