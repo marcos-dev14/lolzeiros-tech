@@ -4970,6 +4970,10 @@ a.bt.bt-inverse:hover, button.bt.bt-inverse:hover {
 }
 #login-register .login-div form {
   padding: 10px 0;
+  display: none;
+}
+#login-register .login-div form.active {
+  display: block;
 }
 #login-register form {
   background: #fff;

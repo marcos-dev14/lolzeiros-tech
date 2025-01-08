@@ -835,32 +835,27 @@ async function handleSearchSubmit() {
 }
 
 const tabs = document.querySelectorAll('.tab');
-const form = document.getElementById('login-client');
+const clientForm = document.getElementById('login-client');
+const sellerForm = document.getElementById('login-seller');
 
 tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      // Atualiza a aba ativa
-      tabs.forEach(t => t.classList.remove('active'));
+    // Atualiza a aba ativa
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
 
-      tab.classList.add('active');
-
-      const targetTabContent = document.getElementById(tab.dataset.tab);
-      if (targetTabContent) {
-        targetTabContent.classList.add('active');
-      } else {
-        console.error(`Elemento com id "${tab.dataset.tab}" não encontrado.`);
-      }
-
-      // Atualiza a rota do formulário
-      if (tab.dataset.tab === 'client') {
-        form.action = 'buyer.login';
-      } else if (tab.dataset.tab === 'seller') {
-        form.action = 'seller.login';
-      } else {
+    // Mostra o formulário correspondente
+    if (tab.dataset.tab === 'client') {
+        clientForm.classList.add('active');
+        sellerForm.classList.remove('active');
+    } else if (tab.dataset.tab === 'seller') {
+        sellerForm.classList.add('active');
+        clientForm.classList.remove('active');
+    } else {
         console.error('Tab inválida: ', tab.dataset.tab);
-      }
+    }
     });
-  });
+});
 
 const productsFilter = $('#products-filter');
 const selectSort = $('#select-sort');
