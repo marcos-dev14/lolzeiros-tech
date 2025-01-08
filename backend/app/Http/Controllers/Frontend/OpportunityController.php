@@ -40,7 +40,7 @@ class OpportunityController extends BaseController
                 : Carbon::parse('0000-01-01 00:00:00');
 
             $groupName = $clientGroup->name;
-            $supplierName = $opportunity->supplier->name;
+            $supplierName = $opportunity->supplier->company_name ?? $opportunity->supplier->name;
 
             return $clientGroup->clients->map(function ($client) use ($groupName, $supplierName, $lastLogin) {
                 $mainAddress = $client->getMainAddress();
@@ -65,7 +65,6 @@ class OpportunityController extends BaseController
         });
 
         $paginatedOpportunities = $opportunities->flatten()->paginate(10);
-
         return view('pages.sellers.opportunities.index', compact('paginatedOpportunities', 'seller'));
     }
 
