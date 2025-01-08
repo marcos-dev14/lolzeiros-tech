@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Frontend\BaseController;
 use App\Http\Resources\ClientListCartResource;
 use App\Models\BlockedSupplier;
+use App\Models\ClientHasSeller;
 use App\Models\CountryState;
 use App\Models\Opportunity;
+use App\Models\Supplier;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\SupplierDiscount;
 use App\Services\OpportunityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -23,49 +27,104 @@ class OpportunityController extends BaseController
             return redirect()->route('seller.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
-        $this->entityService->relations = ['supplier', 'clientGroup'];
+        $suppliers = Supplier::query()
+            ->where('is_available', 1)
+            ->where('suspend_sales', 0)
+            ->where('service_migrate', 'Ativado')
+            ->has('installmentRules')
+            ->whereDoesntHave('blockedSuppliers', fn($query) => $query->where('seller_id', $seller->id))
+            ->get()
+            ->map(fn($supplier) => [
+                'id' => $supplier->id,
+                'slug' => $supplier->slug,
+                'name' => $supplier->name,
+                'image_url' => $supplier->getImagePath() . $supplier->webp_image
+            ]);
 
-        $opportunities = $this->entityService->all()->filter(function ($opportunity) use ($seller) {
-            return !BlockedSupplier::where('seller_id', $seller->id)
-                ->where('supplier_id', $opportunity->supplier->id)
-                ->exists();
-        });
+        return view('pages.sellers.opportunities.index', compact('suppliers', 'seller'));
+    }
 
-        $opportunities = $opportunities->map(function ($opportunity) use ($seller) {
-            $clientGroup = $opportunity->clientGroup;
-            $client = $clientGroup->client;
+    public function opportunitiesFromSupplier($supplierSlug)
+    {
+        $seller = auth()->guard('seller')->user();
 
-            $lastLogin = $clientGroup->buyer && $clientGroup->buyer->last_login
-                ? Carbon::parse($clientGroup->buyer->last_login)
-                : Carbon::parse('0000-01-01 00:00:00');
+        if (!$seller) {
+            return redirect()
+                ->route('seller.login')
+                ->with('error', 'Você precisa estar autenticado para acessar esta página.');
+        }
 
-            $groupName = $clientGroup->name;
-            $supplierName = $opportunity->supplier->company_name ?? $opportunity->supplier->name;
+        $supplier = Supplier::where('slug', $supplierSlug)->first();
 
-            return $clientGroup->clients->map(function ($client) use ($groupName, $supplierName, $lastLogin) {
+        if (!$supplier) {
+            return redirect()
+                ->route('seller.opportunities.index')
+                ->with('error', 'Fornecedor não encontrado.');
+        }
+
+        $perPage = 15;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+
+        $countryStates = CountryState::pluck('name', 'id')->toArray();
+
+        $opportunities = Opportunity::orderByDesc('created_at')->where('supplier_id', $supplier->id)
+            ->with([
+                'clientGroup.clients' => function ($query) {
+                    $query->select('id', 'client_group_id', 'company_name', 'name', 'document', 'document_status', 'client_profile_id', 'auge_register');
+                }
+            ])
+            ->paginate($perPage, ['*'], 'page', $currentPage);
+
+        $clients = $opportunities->sortByDesc('created_at')->flatMap(function ($opportunity) use ($countryStates, $supplier) {
+            $groupName = $opportunity->clientGroup->name ?? null;
+            $lastLogin = optional($opportunity->clientGroup->buyer)->last_login;
+
+            $formattedLastLogin = $lastLogin
+                ? Carbon::parse($lastLogin)->format('d/m/Y H:i') . 'h (' . Carbon::parse($lastLogin)->diffForHumans() . ')'
+                : null;
+
+            return $opportunity->clientGroup->clients->map(function ($client) use ($groupName, $formattedLastLogin, $countryStates, $supplier, $opportunity) {
                 $mainAddress = $client->getMainAddress();
+                $clientStateCode = $mainAddress?->state?->code;
+                $stateDiscount = $supplier->stateDiscounts()->whereHas('states', function ($query) use ($clientStateCode) {
+                    $query->where('code', $clientStateCode);
+                })->first();
+
                 $state = $mainAddress?->country_state_id
-                    ? CountryState::find($mainAddress->country_state_id)
+                    ? ($countryStates[$mainAddress->country_state_id] ?? null)
                     : null;
 
-                return (object) [
-                    'grupo' => $groupName,
-                    'fornecedor' => $supplierName,
-                    'cliente' => $client->company_name ?? $client->name,
-                    'cnpj' => $client->document ?? null,
-                    'estado' => $state ? "{$state->name} - {$state->code}" : null,
-                    'cadastro' => Carbon::parse($client->auge_register)->format('d/m/Y H:i'),
-                    'ultimologin' => $lastLogin->format('d/m/Y H:i') . 'h (' . $lastLogin->diffForHumans() . ')',
-                    'carrinhoabandonado' => $client->cart?->products?->count()
+                $icmsDiscount = 0;
+                if ($stateDiscount instanceof SupplierDiscount) {
+                    $icmsDiscount += floatval($stateDiscount->discount_value);
+                    $icmsDiscount += floatval($stateDiscount->additional_value);
+                }
+
+                $clientProfile = $client->client_profile_id;
+                $profileDiscount = $supplier->profileDiscounts->where('client_profile_id', $clientProfile)->first();
+
+                return (object)[
+                    'group' => $groupName,
+                    'name' => $client->company_name ?? $client->name,
+                    'profile' => $client->profile->name ?? null,
+                    'document' => $client->document ?? null,
+                    'state' => $state ? "{$state} - {$mainAddress->code}" : null,
+                    'icms' => $icmsDiscount,
+                    'profile_discount' => $profileDiscount->discount_value ?? 0,
+                    'commercial_commission' => $profileDiscount->commercial_commission ?? 0,
+                    'fractional_box' => $supplier['fractional_box'] ?? 0,
+                    'register' => optional($client->auge_register)->format('d/m/Y H:i'),
+                    'lastLogin' => $formattedLastLogin,
+                    'cartAbandoned' => $client->cart?->products?->count()
                         ? (new ClientListCartResource($client->cart))->created_at
                         : null,
                     'status' => $client->document_status,
+                    'opportunityData' => $opportunity->created_at,
                 ];
             });
         });
 
-        $paginatedOpportunities = $opportunities->flatten()->paginate(10);
-        return view('pages.sellers.opportunities.index', compact('paginatedOpportunities', 'seller'));
+        return view('pages.sellers.opportunities.opportunitiesFromSupplier', compact('clients', 'opportunities', 'seller'));
     }
 
     public function store(Request $request)
