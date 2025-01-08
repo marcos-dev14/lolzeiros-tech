@@ -17,14 +17,14 @@
             </thead>
             <tbody>
                 @if($clients->count())
-                    @foreach ($clients as $index => $client)
+                    @foreach ($clients as $client)
                         <tr>
                             <td>{{ $loop->iteration + (($clients->currentPage() - 1) * $clients->perPage()) }}</td>
-                            <td>{{ $client['name'] }}</td>
-                            <td>{{ $client['cnpj'] }}</td>
-                            <td>{{ $client['state'] ?? 'N/A' }}</td>
-                            <td>{{ $client['register'] }}</td>
-                            <td>{{ $client['lastLogin'] }}</td>
+                            <td>{{ $client->name }}</td>
+                            <td>{{ $client->document }}</td>
+                            <td>{{ $client->state ?? 'N/A' }}</td>
+                            <td>{{ $client->register }}</td>
+                            <td>{{ $client->lastLogin }}</td>
                         </tr>
                     @endforeach
                 @else

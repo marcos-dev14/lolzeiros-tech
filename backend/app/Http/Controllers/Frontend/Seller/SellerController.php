@@ -10,6 +10,7 @@ use App\Models\CountryState;
 use App\Models\Order;
 use App\Models\Seller;
 use App\Models\Supplier;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SupplierDiscount;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -29,102 +30,53 @@ class SellerController extends Controller
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
-        $clients = $seller->ClientHasSeller->map(function ($clientHasSeller) use ($seller) {
-            $lastClient = null;
-            $clientLastOrder = null;
+        $clientData = $seller->ClientHasSeller->flatMap(function ($clientHasSeller) {
+            $groupName = $clientHasSeller->clientGroup->name ?? null;
+            $supplierName = $clientHasSeller->supplier->company_name
+                ?? $clientHasSeller->supplier->name
+                ?? null;
+            $lastLogin = Carbon::parse($clientHasSeller->clientGroup->buyer->last_login);
 
-            if ($clientHasSeller->clientGroup && $clientHasSeller->clientGroup->clients) {
-                $clientHasSeller->clientGroup->clients->each(function ($client) use (&$clientLastOrder, &$lastClient) {
-                    $lastOrder = $client->orders->last();
-                    if ($lastOrder && (!$clientLastOrder || $lastOrder->created_at > $clientLastOrder->created_at)) {
-                        $clientLastOrder = $lastOrder;
-                        $lastClient = $client;
-                    }
-                });
-            }
+            return $clientHasSeller->clientGroup->clients->map(function ($client) use ($groupName, $supplierName, $lastLogin) {
+                $mainAddress = $client->getMainAddress();
+                $state = $mainAddress?->country_state_id
+                    ? CountryState::find($mainAddress->country_state_id)
+                    : null;
 
-            if (!$lastClient) {
-                $lastClient = $clientHasSeller->clientGroup->clients->first();
-            }
-
-            $mainAddress = $lastClient?->getMainAddress();
-            $state = $mainAddress?->country_state_id
-                ? CountryState::find($mainAddress->country_state_id)
-                : null;
-
-            $lastLogin = Carbon::parse($clientHasSeller->clientGroup->buyer->last_login ?? now());
-            $suppliers = Supplier::query()
-                ->where('is_available', 1)
-                ->where('suspend_sales', 0)
-                ->where('service_migrate', 'Ativado')
-                ->has('installmentRules')
-                ->get();
-
-            $supplierData = $suppliers->map(function ($supplier) use ($clientHasSeller, $seller, $lastClient) {
-                $isSellerClient = ClientHasSeller::where('client_group_id', $clientHasSeller->clientGroup->id)
-                    ->where('supplier_id', $supplier['id'])
-                    ->first();
-
-                $mainAddress = $lastClient?->getMainAddress();
-                $clientStateCode = $mainAddress?->state?->code;
-
-                $stateDiscountFromClientState = $supplier->stateDiscounts()->whereHas('states', function ($query) use ($clientStateCode) {
-                    $query->where('code', $clientStateCode);
-                })->first();
-
-                $icmsDiscount = 0;
-                if ($stateDiscountFromClientState instanceof SupplierDiscount) {
-                    $icmsDiscount += floatval($stateDiscountFromClientState->discount_value);
-                    $icmsDiscount += floatval($stateDiscountFromClientState->additional_value);
-                }
-
-                $clientProfile = $lastClient?->client_profile_id;
-                $supplierDiscounts = $supplier->profileDiscounts;
-                $discountToClientProfile = $supplierDiscounts->where('client_profile_id', $clientProfile)->first();
-
-                return [
-                    'name' => $supplier['name'],
-                    ...($isSellerClient && ($isSellerClient->seller_id == $seller->id || $isSellerClient->seller_id === null) ?
-                        [
-                            'icms' => $icmsDiscount,
-                            'profileDiscount' => $discountToClientProfile->discount_value ?? 0,
-                            'commercial_commission' => $discountToClientProfile->commercial_commission ?? 0,
-                            'fractional_box' => $supplier['fractional_box'] ?? 0
-                        ] : []),
+                return (object) [
+                    'group' => $groupName,
+                    'name' => $client->company_name ?? $client->name,
+                    'document' => $client->document ?? null,
+                    'state' => $state ? "{$state->name} - {$state->code}" : null,
+                    'register' => Carbon::parse($client->auge_register)->format('d/m/Y H:i'),
+                    'lastLogin' => $lastLogin->format('d/m/Y H:i') . 'h (' . $lastLogin->diffForHumans() . ')',
+                    'cartAbandoned' => $client->cart?->products?->count()
+                        ? (new ClientListCartResource($client->cart))->created_at
+                        : null,
+                    'status' => $client->document_status,
                 ];
             });
-
-            return [
-                'name' => $clientHasSeller->clientGroup->company_name ?? $clientHasSeller->clientGroup->name,
-                'cnpj' => $lastClient?->document,
-                'suppliers' => $supplierData,
-                'state' => $state ? "{$state->name} - {$state->code}" : null,
-                'register' => Carbon::parse($lastClient?->auge_register)->format('d/m/Y H:i'),
-                'lastLogin' => $lastLogin->format('d/m/Y H:i') . 'h (' . $lastLogin->diffForHumans() . ')',
-                'cartAbandoned' => $lastClient?->cart ? (new ClientListCartResource($lastClient?->cart))->created_at : null,
-                'status' => $lastClient?->document_status,
-                'clients' => $clientHasSeller->clientGroup->clients,
-            ];
         });
 
-        $clientData = $clients->groupBy(function ($client) {
-            return $client['name'] . '-' . $client['cnpj'];
+        $clientData = $clientData->groupBy(function ($client) {
+            return $client->document . '-' . $client->group;
         })->map(function ($group) {
-            $mergedSuppliers = $group->flatMap(function ($client) {
-                return $client['suppliers'];
-            })->unique('name')->values()->toArray();
-
-            $firstClient = $group->first();
-            $firstClient['suppliers'] = $mergedSuppliers;
-
-            return $firstClient;
+            return $group->first();
         });
 
-        $paginatedData = collect($clientData->values())->paginate(1);
-        
+        $currentPage = request()->get('page', 1);
+        $perPage = 15;
+        $clientDataPaginated = new LengthAwarePaginator(
+            $clientData->forPage($currentPage, $perPage),
+            $clientData->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url()]
+        );
+        // dd($clientDataPaginated);
         return view('pages.sellers.clients', [
             'seller' => $seller,
-            'clients' => $paginatedData,
+            'clients' => $clientDataPaginated,
         ]);
     }
 
@@ -275,7 +227,7 @@ class SellerController extends Controller
         });
 
         $paginatedData = collect($clientData->values())->paginate(10);
-       dd($paginatedData);
+        dd($paginatedData);
         return view('pages.sellers.abandonedCarts', [
             'seller' => $seller,
             'clientData' => $paginatedData,
