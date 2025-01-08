@@ -1,6 +1,6 @@
 <x-layouts.seller-panel
     title="Clientes"
-    subtitle="Olá <strong>{{ $seller->name ?? 'Wesley Bananas' }}</strong> aqui estão todas seus clientes junta a AugeApp."
+    subtitle="Olá <strong>{{ $seller->name ?? 'Wesley Bananas' }}</strong>, aqui estão todos os seus clientes junto à AugeApp."
     icon="icons.users"
 >
     <div class="container">
@@ -10,26 +10,33 @@
                     <th>#</th>
                     <th>Cliente</th>
                     <th>CNPJ</th>
-                    <th>Grupo</th>
                     <th>Estado</th>
                     <th>Cadastro</th>
-                    <th>Ultimo login</th>
+                    <th>Último Login</th>
                 </tr>
             </thead>
             <tbody>
-                @if($seller)
-                    @foreach ($clientData as $client)
+                @if($clients->count())
+                    @foreach ($clients as $index => $client)
                         <tr>
-                            <td>{{ $client->cliente }}</td>
-                            <td>{{ $client->cnpj }}</td>
-                            <td>{{ $client->grupo }}</td>
-                            <td>{{ $client->estado }}</td>
-                            <td>{{ $client->cadastro }}</td>
-                            <td>{{ $client->ultimologin }}</td>
+                            <td>{{ $loop->iteration + (($clients->currentPage() - 1) * $clients->perPage()) }}</td>
+                            <td>{{ $client['name'] }}</td>
+                            <td>{{ $client['cnpj'] }}</td>
+                            <td>{{ $client['state'] ?? 'N/A' }}</td>
+                            <td>{{ $client['register'] }}</td>
+                            <td>{{ $client['lastLogin'] }}</td>
                         </tr>
                     @endforeach
+                @else
+                    <tr>
+                        <td colspan="6" class="text-center">Nenhum cliente encontrado.</td>
+                    </tr>
                 @endif
             </tbody>
         </table>
+
+        <div class="d-flex justify-content-center">
+            {{ $clients->links() }}
+        </div>
     </div>
 </x-layouts.seller-panel>
