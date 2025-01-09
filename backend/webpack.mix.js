@@ -9,6 +9,7 @@ mix.js('resources/js/app.js', 'public/js')
     .sass('resources/scss/pages/product-details.scss', 'public/css')
     .sass('resources/scss/pages/buyer-panel.scss', 'public/css')
     .sass('resources/scss/pages/seller-panel.scss', 'public/css')
+    .sass('resources/scss/pages/orders-seller.scss', 'public/css')
     .sass('resources/scss/pages/register.scss', 'public/css')
     .sass('resources/scss/pages/blog-posts.scss', 'public/css')
     .sass('resources/scss/pages/blog-post.scss', 'public/css')
@@ -83,6 +84,6 @@ copy('node_modules/slick-carousel/slick/ajax-loader.gif', 'public/css/ajax-loade
 copyDirectory('node_modules/slick-carousel/slick/fonts', 'public/css/fonts');
 
 browserSync({
-    proxy: 'auge.test',
-    port: '8000'
+    proxy: 'localhost:8001',
+    port: '8001'
 });

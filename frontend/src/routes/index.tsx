@@ -83,6 +83,7 @@ import { EditAdmin } from '../pages/Register/Admin/Edit';
 import { EditSupport } from '../pages/Register/Clients/Support/Edit';
 import { EditSiteMap } from '../pages/Settings/SiteMap/Edit';
 import { Sellers } from '../pages/Register/Sellers';
+import { EditSeller } from '../pages/Register/Sellers/Edit';
 import { Shipping } from '../pages/Register/Shipping';
 import { NewShipping } from '../pages/Register/Shipping/New';
 import { NewInvoice } from '../pages/Finances/NewInvoice';
@@ -144,6 +145,7 @@ export default function Routes() {
         <Route path="/register/clients" exact component={Clients} />
         <Route path="/register/clients/groups" exact component={ClientGroups} />
         <Route path="/register/sellers" exact component={Sellers} />
+        <Route path="/register/sellers/edit/:id" component={EditSeller} />
         <Route path="/register/clients/new" component={NewClient} />
         <Route path="/register/clients/groups/new" component={NewClientGroup} />
         <Route path="/register/clients/order" component={ClientOrder} />

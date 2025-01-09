@@ -23,7 +23,17 @@
                 </div>
 
                 <div class="col-12 col-md-6 login-div">
-                    {!! Form::open(['route' => 'buyer.login', 'method' => 'post', 'data-toggle' => 'validator']) !!}
+                    <div class="tabs">
+                        <div id="client" class="tab active" data-tab="client">
+                            <p>Sou cliente Auge App</p>
+                        </div>
+
+                        <div id="seller" class="tab" data-tab="seller">
+                            <p>Sou vendedor Auge App</p>
+                        </div>
+                    </div>
+
+                    {!! Form::open(['route' => 'buyer.login', 'method' => 'post', 'data-toggle' => 'validator', 'id' => 'login-client', 'class' => 'active']) !!}
                         <div class="form-header login-card">
                             <div>
                                 <h3>
@@ -60,7 +70,13 @@
                             </div>
 
                             <div class="col-12">
-                                <x-form.input type="password" name="password" label="Senha" class="gray-input" required></x-form.input>
+                                <x-form.input
+                                    type="password"
+                                    name="password"
+                                    label="Senha"
+                                    class="gray-input"
+                                    required
+                                ></x-form.input>
                             </div>
 
                             {!! app('captcha')->render('pt-BR') !!}
@@ -71,9 +87,69 @@
                                 </div>
                             </div>
 
-{{--                            <div class="col-xs-6">--}}
-{{--                                <x-form.input type="checkbox" name="remember" label="Permanecer logado"></x-form.input>--}}
-{{--                            </div>--}}
+
+
+                            <div class="col-xs-12 text-right">
+                                <a href="{{ route('password.email') }}">Esqueceu sua senha?</a>
+                            </div>
+                        </div>
+                    {!! Form::close() !!}
+
+                    {!! Form::open(['route' => 'seller.login', 'method' => 'post', 'data-toggle' => 'validator', 'id' => 'login-seller']) !!}
+                        <div class="form-header login-card">
+                            <div>
+                                <h3>
+                                    <x-icons.like></x-icons.like>
+                                    <span class="title-login">Entrar</span>
+                                </h3>
+
+                                <p>Bem vindo de volta e boas compras.</p>
+
+                                @if(Session::has('message'))
+                                    <p class="alerts">{!! Session::get('message') !!}</p>
+                                @endif
+                            </div>
+
+                            <div class="expand-icon disabled hidden-md hidden-lg flipped">
+                                <span>
+                                    <x-icons.down class="rotate"></x-icons.down>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="hidden-items">
+                            <div class="col-12">
+                                <x-form.input
+                                    type="email"
+                                    name="email"
+                                    value="{{ old('email') }}"
+                                    onkeyup="this.value = this.value.toLowerCase();"
+                                    label="Email"
+                                    required
+                                    autofocus
+                                    class="gray-input"
+                                ></x-form.input>
+                            </div>
+
+                            <div class="col-12">
+                                <x-form.input
+                                    type="password"
+                                    name="password"
+                                    label="Senha"
+                                    class="gray-input"
+                                    required
+                                ></x-form.input>
+                            </div>
+
+                            {!! app('captcha')->render('pt-BR') !!}
+
+                            <div class="col-xs-12 col-md-12 text-center">
+                                <div class="col-xs-8 col-xs-offset-2" style="margin-bottom: 6px;">
+                                    <x-form.button label="ENTRAR" class="btn btn-block btn-sm button-one"></x-form.button>
+                                </div>
+                            </div>
+
+
 
                             <div class="col-xs-12 text-right">
                                 <a href="{{ route('password.email') }}">Esqueceu sua senha?</a>
@@ -83,7 +159,7 @@
                 </div>
 
                 <div class="col-12 col-md-6 register-div">
-                    {!! Form::open(['route' => 'buyer.register', 'method' => 'post', 'data-toggle' => 'validator']) !!}
+                    {!! Form::open(['route' => 'seller.login', 'method' => 'post', 'data-toggle' => 'validator']) !!}
                         <x-loader id="register-loader"></x-loader>
 
                         {!! Form::hidden('receita_api', old('receita_api') ?? null, ['id' => 'receitaws']) !!}

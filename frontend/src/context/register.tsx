@@ -16,7 +16,8 @@ import {
   ISaleData,
   IShipping,
   IBanner,
-  IBuyer
+  IBuyer,
+  ISeller
 } from '~types/main';
 import { api } from '~api';
 
@@ -46,6 +47,9 @@ type RegisterContextData = {
   buyer: IBuyer;
   setBuyer: (buyer: IBuyer) => void;
   updateBuyer: (buyer: Partial<IBuyer>) => void;
+  seller: ISeller;
+  setSeller: (seller: ISeller) => void;
+  updateSeller: (seller: Partial<ISeller>) => void;
 
   // updateClient: (client: MainClient) => void;
 }
@@ -130,6 +134,14 @@ export function RegisterProvider({ children }: ProviderProps) {
 
     return {} as IBuyer;
   });
+
+  const [currentSeller, setCurrentSeller] = useState<ISeller>(() => {
+    const seller = localStorage.getItem('@auge:seller');
+
+    if(!!seller) return JSON.parse(seller);
+
+    return {} as ISeller;
+  })
   
   const updateClient = useCallback((client: Partial<MainClient>) => {
     let oldClient = currentClient ?? {};
@@ -229,6 +241,22 @@ export function RegisterProvider({ children }: ProviderProps) {
     setCurrentBuyer({...oldBuyer, ...buyer});
   }, [currentBuyer]);
 
+  const updateSeller = useCallback((seller: Partial<ISeller>) => {
+    let oldSeller = currentSeller ?? {};
+    const newEntries = Object.entries(seller);
+
+    // @ts-ignore
+    newEntries.forEach((e) => oldSeller[e[0]] = e[1]);
+    
+    const updatedSeller = {...oldSeller, ...seller};
+    
+    localStorage.setItem('@auge:seller', JSON.stringify(updatedSeller));
+
+    // @ts-ignore
+    setCurrentSeller({});
+    setCurrentSeller({...oldSeller, ...seller});
+  }, [currentSeller])
+
   const handleSetClient = useCallback((updatedClient: MainClient) => {
     // @ts-ignore
     setCurrentClient({});
@@ -289,6 +317,14 @@ export function RegisterProvider({ children }: ProviderProps) {
     setCurrentBuyer(updatedBanner);
   }, []);
   
+  const handleSetSeller = useCallback((updateSeller: ISeller) => {
+    // @ts-ignore
+    setCurrentSeller({});
+    localStorage.setItem('@auge:seller', JSON.stringify(updateSeller));
+    setCurrentSeller(updateSeller)
+  }, [])
+
+  
   return (
     <RegisterContext.Provider
       value={{
@@ -310,6 +346,9 @@ export function RegisterProvider({ children }: ProviderProps) {
         setBanner: handleSetBanner,
         buyer: currentBuyer,
         setBuyer: handleSetBuyer,
+        seller: currentSeller,
+        setSeller: handleSetSeller,
+        updateSeller,
         updateClient,
         updateSale,
         updateShippingCompany,

@@ -40,6 +40,7 @@ type ISeller = {
   email: string;
   phone?: string;
   cellphone?: string;
+  status?: string;
 }
 
 export function Sellers() {
@@ -190,6 +191,10 @@ export function Sellers() {
     }
   }, []);
 
+  const handleGoEditSeller = (editSeller: number) => {
+    push(`/register/sellers/edit/${editSeller}`);
+  }
+
   const handleShouldUpdate = useCallback(
     (oldValue: string, newValue: string, seller: ISeller, updatingEmail = false) =>
       String(newValue) !== String(oldValue) && handleEditSeller(seller, updatingEmail)
@@ -213,35 +218,109 @@ export function Sellers() {
             /> :
           <>
             <Table isOnSafari={usingSafari}>
-            <colgroup>
-              <col span={1} style={{ width: '17%' }} />
-              <col span={1} style={{ width: '23%' }} />
-              <col span={1} style={{ width: '19%' }} />
-              <col span={1} style={{ width: '35%' }} />
-              <col span={1} style={{ width: '6%' }} />
-            </colgroup>
-            <thead>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>Celular</th>
-              <th>Telefone Fixo</th>
-              <th>Ação</th>
-            </thead>
-            <tbody>
-              {sellers.map(p => (
-                <tr key={p.id}>
+              <colgroup>
+                <col span={1} style={{ width: '17%' }} />
+                <col span={1} style={{ width: '23%' }} />
+                <col span={1} style={{ width: '19%' }} />
+                <col span={1} style={{ width: '35%' }} />
+                <col span={1} style={{ width: '6%' }} />
+              </colgroup>
+              <thead>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Celular</th>
+                <th>Telefone Fixo</th>
+                <th>Status</th>
+                <th>Ação</th>
+              </thead>
+              <tbody>
+                {sellers.map(p => (
+                  <tr key={p.id}>
+                    <td>
+                      <Input
+                        name="name"
+                        noTitle
+                        width="10.9375rem"
+                        validated={false}
+                        onBlur={({ target: { value: name } }) =>
+                          isNotEmpty(name) &&  
+                          handleShouldUpdate(p.name, name, {...p, name: capitalizeContent(name) })
+                        }
+                        defaultValue={capitalizeContent(p.name)}
+                        noValueInput
+                      />
+                    </td>
+                    <td style={{ padding: '0 0.625rem' }}>
+                      <StaticSocialBox
+                        name="email"
+                        type="social"
+                        noTitle
+                        badge={EmailIcon}
+                        validated
+                        width="13rem"
+                        title=""
+                        defaultValue={p.email}
+                        inputStyle={{ textTransform: 'lowercase' }}
+                        onBlur={({ target: { value: email } }) =>
+                          handleShouldUpdate(p.email, email, {...p, email }, true)
+                        }
+                      />
+                    </td>
+                    <td style={{ padding: '0 0.625rem' }}>
+                      <PhoneBox
+                        name="a"
+                        width="10.5rem"
+                        noTitle
+                        validated
+                        defaultValue={p.cellphone}
+                        onBlur={({ target: { value: cellphone } }) =>
+                          phoneIsValid(cellphone) &&
+                          handleShouldUpdate(!!p.cellphone ? p.cellphone : '', cellphone, {...p, cellphone })
+                        }
+                      />
+                    </td>
+                    <td style={{ padding: '0 0.625rem' }}>
+                      <PhoneBox
+                        name="a"
+                        width="10.5rem"
+                        noTitle
+                        validated
+                        mask="(99) 9999-9999"
+                        placeholder="(00) 0000-0000"
+                        defaultValue={p.phone}
+                        onBlur={({ target: { value: phone } }) =>
+                          landlineIsValid(phone) &&
+                          handleShouldUpdate(!!p.phone ? p.phone : '', phone, {...p, phone })
+                        }
+                      />
+                    </td>
+                    <td>{p.status ?? 'Indefinido'}</td>
+                    <td>
+                      <div>
+                        <TableActionButton onClick={() => handleGoEditSeller(p.id)}>
+                          <EditIcon />
+                        </TableActionButton>
+
+                        <TableActionButton
+                          onClick={() => handleDeleteSeller(p.id)}
+                          disabled={deletingSeller === p.id}
+                          loading={deletingSeller === p.id}
+                        >
+                          {deletingSeller === p.id ? <LoadingIcon /> : <TrashIcon />}
+                        </TableActionButton>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                <tr>
                   <td>
                     <Input
-                      name="name"
+                      name="min_q"
                       noTitle
                       width="10.9375rem"
                       validated={false}
-                      onBlur={({ target: { value: name } }) =>
-                        isNotEmpty(name) &&  
-                        handleShouldUpdate(p.name, name, {...p, name: capitalizeContent(name) })
-                      }
-                      defaultValue={capitalizeContent(p.name)}
-                      noValueInput
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                     />
                   </td>
                   <td style={{ padding: '0 0.625rem' }}>
@@ -253,11 +332,9 @@ export function Sellers() {
                       validated
                       width="13rem"
                       title=""
-                      defaultValue={p.email}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       inputStyle={{ textTransform: 'lowercase' }}
-                      onBlur={({ target: { value: email } }) =>
-                        handleShouldUpdate(p.email, email, {...p, email }, true)
-                      }
                     />
                   </td>
                   <td style={{ padding: '0 0.625rem' }}>
@@ -266,11 +343,8 @@ export function Sellers() {
                       width="10.5rem"
                       noTitle
                       validated
-                      defaultValue={p.cellphone}
-                      onBlur={({ target: { value: cellphone } }) =>
-                        phoneIsValid(cellphone) &&
-                        handleShouldUpdate(!!p.cellphone ? p.cellphone : '', cellphone, {...p, cellphone })
-                      }
+                      value={cellphone}
+                      onChange={(e) => setCellphone(e.target.value)}
                     />
                   </td>
                   <td style={{ padding: '0 0.625rem' }}>
@@ -279,89 +353,26 @@ export function Sellers() {
                       width="10.5rem"
                       noTitle
                       validated
+                      value={phone}
                       mask="(99) 9999-9999"
                       placeholder="(00) 0000-0000"
-                      defaultValue={p.phone}
-                      onBlur={({ target: { value: phone } }) =>
-                        landlineIsValid(phone) &&
-                        handleShouldUpdate(!!p.phone ? p.phone : '', phone, {...p, phone })
-                      }
+                      onChange={(e) => setPhone(e.target.value)}
                     />
                   </td>
                   <td>
                     <div>
                       <TableActionButton
-                        onClick={() => handleDeleteSeller(p.id)}
-                        disabled={deletingSeller === p.id}
-                        loading={deletingSeller === p.id}
+                        disabled={addingSeller}
+                        onClick={() => handleAddSeller()}
+                        loading={addingSeller}
                       >
-                        {deletingSeller === p.id ? <LoadingIcon /> : <TrashIcon />}
+                        {addingSeller ? <LoadingIcon /> : <PlusIcon />}
                       </TableActionButton>
                     </div>
                   </td>
                 </tr>
-              ))}
-              <tr>
-                <td>
-                  <Input
-                    name="min_q"
-                    noTitle
-                    width="10.9375rem"
-                    validated={false}
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </td>
-                <td style={{ padding: '0 0.625rem' }}>
-                  <StaticSocialBox
-                    name="email"
-                    type="social"
-                    noTitle
-                    badge={EmailIcon}
-                    validated
-                    width="13rem"
-                    title=""
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    inputStyle={{ textTransform: 'lowercase' }}
-                  />
-                </td>
-                <td style={{ padding: '0 0.625rem' }}>
-                  <PhoneBox
-                    name="a"
-                    width="10.5rem"
-                    noTitle
-                    validated
-                    value={cellphone}
-                    onChange={(e) => setCellphone(e.target.value)}
-                  />
-                </td>
-                <td style={{ padding: '0 0.625rem' }}>
-                  <PhoneBox
-                    name="a"
-                    width="10.5rem"
-                    noTitle
-                    validated
-                    value={phone}
-                    mask="(99) 9999-9999"
-                    placeholder="(00) 0000-0000"
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                </td>
-                <td>
-                  <div>
-                    <TableActionButton
-                      disabled={addingSeller}
-                      onClick={() => handleAddSeller()}
-                      loading={addingSeller}
-                    >
-                      {addingSeller ? <LoadingIcon /> : <PlusIcon />}
-                    </TableActionButton>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </Table>
+              </tbody>
+            </Table>
           </>
           }
         </Container>
