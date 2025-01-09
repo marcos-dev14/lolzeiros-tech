@@ -20,8 +20,8 @@
                         <aside>
                             <div class="hidden-items">
                                 <ul class="nav">
-                                    <li class="nav-item nav-seller @if(url()->current() == route('profile')) active @endif">
-                                       <a href="{{ route('profile') }}" title="Nome do comercial" data-toggle="tooltip">
+                                    <li class="nav-item nav-seller ">
+                                       <a href="" title="Nome do comercial" data-toggle="tooltip">
                                             <x-icons.like-new></x-icons.like-new>
 
                                             <div class="text">
@@ -31,8 +31,8 @@
                                        </a>
                                     </li>
 
-                                    <li class="nav-item nav-client @if(url()->current() == route('clients')) active @endif">
-                                        <a href="{{ route('clients') }}" title="Meus Clientes" data-toggle="tooltip">
+                                    <li class="nav-item nav-client @if(url()->current() == route('seller.clients')) active @endif">
+                                        <a href="{{ route('seller.clients') }}" title="Meus Clientes" data-toggle="tooltip">
                                             <x-icons.user-plus></x-icons.user-plus>
 
                                             <p>Meus Clientes</p>
@@ -40,24 +40,24 @@
                                         </a>
                                     </li>
 
-                                     <li class="nav-item nav-client @if(url()->current() == route('buyer.canceledOrders')) active @endif">
-                                        <a href="{{ route('buyer.wishlist') }}" title="Meus Pedidos" data-toggle="tooltip">
+                                     <li class="nav-item nav-client @if(url()->current() == route('seller.orders')) active @endif">
+                                        <a href="{{ route('seller.orders') }}" title="Meus Pedidos" data-toggle="tooltip">
                                             <x-icons.bag-seller></x-icons.bag-seller>
 
                                             <p>Meus Pedidos</p>
                                         </a>
                                     </li>
 
-                                    <li class="nav-item nav-client @if(url()->current() == route('buyer.canceledOrders')) active @endif">
-                                        <a href="{{ route('buyer.wishlist') }}" title="Carrinhos abandonados" data-toggle="tooltip">
+                                    <li class="nav-item nav-client @if(url()->current() == route('seller.abandonedCarts')) active @endif">
+                                        <a href="{{ route('seller.abandonedCarts') }}" title="Carrinhos abandonados" data-toggle="tooltip">
                                             <x-icons.shopping-cart></x-icons.shopping-cart>
 
                                             <p>Carrinhos abandonados</p>
                                         </a>
                                     </li>
 
-                                    <li class="nav-item nav-client @if(url()->current() == route('opportunities.index')) active @endif">
-                                        <a href="{{ route('opportunities.index') }}" title="Clientes Disponíveis" data-toggle="tooltip">
+                                    <li class="nav-item nav-client @if(url()->current() == route('seller.opportunities.index')) active @endif">
+                                        <a href="{{ route('seller.opportunities.index') }}" title="Clientes Disponíveis" data-toggle="tooltip">
                                             <x-icons.users></x-icons.users>
 
                                             <p>Clientes Disponíveis</p>
@@ -69,7 +69,7 @@
                         </aside>
                     </div>
 
-                    <div class="col-md-9">
+                    <div class="col-md-9 seller-options">
                         <div class="panel-box @if(!isset($title)) bg-transparent @endif">
                             @if(isset($title))
                                 <div class="panel-header">

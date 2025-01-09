@@ -22,6 +22,54 @@
         border-radius: 0px!important;
     }
 
+    .login-div {
+        background: $color-white;
+        border-radius: 20px;
+        padding: 10px 40px 40px;
+        overflow: hidden;
+
+        .tabs {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .tab {
+                width: 100%;
+                flex: 1;
+                height: 51px;
+                border: 2px solid #F6F6F6;
+                border-radius: 10px;
+                background-color: #F6F6F6;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+
+                p {
+                    font-weight: 600;
+                    font-size: 16px;
+                    line-height: 25px;
+                    color: #6A6A6A;
+                    margin: 0;
+                }
+
+                &.active {
+                    border: 2px solid $color-highlight3;
+                }
+            }
+        }
+
+        form {
+            padding: 10px 0;
+            display: none;
+
+            &.active {
+                display: block;
+            }
+        }
+    }
+
     form {
         background: $color-white;
         border-radius: 20px;

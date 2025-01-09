@@ -107,6 +107,13 @@ export function SuppliersRules() {
         supplier.fractional_box : 0
   );
 
+  const [serviceMigrate, setServiceMigrate] = useState(() => {
+    if (!supplier || !('service_migrate' in supplier)) {
+      return 'Não';
+    }
+    return supplier.service_migrate === 'Ativado' ? 'Sim' : 'Não';
+  });
+
   // const attributesOptions = useMemo(() => 
   //   attributes.map((a: MainAttribute) => ({ value: a.name, label: a.name }))
   // , [attributes]);
@@ -138,7 +145,8 @@ export function SuppliersRules() {
         ...data,
         allows_reservation,
         fractional_box: fractionalBox,
-        newsletter_tags
+        newsletter_tags,
+        service_migrate: serviceMigrate === 'Sim' ? 'Ativado' : 'Desativado',
       }
 
       if (!!supplier.tax_regime) {
@@ -205,6 +213,7 @@ export function SuppliersRules() {
       delete formattedData.image;
       // delete supplierWithoutArrayValues.id;
       //  console.log('f', formattedData)
+
       if (!noSupplier)
         await api.post(`/products/suppliers/${supplier.id}?_method=PUT`, formattedData);
       else {
@@ -239,7 +248,8 @@ export function SuppliersRules() {
     shippingOptions,
     blogPostsOptions,
     allowReservation,
-    fractionalBox
+    fractionalBox,
+    serviceMigrate
   ]);
 
   // const fetchData = useCallback(async () => {
@@ -684,9 +694,12 @@ export function SuppliersRules() {
                 name='loyalty'
                 defaultValue={supplier?.loyalty ? `${supplier?.loyalty} dias` : ''}
               />
-              {/* <FormInput title='op_bonus'
-                name='id'
-              /> */}
+             
+             <RadioBox
+                title="Pode migrar atendimento?"
+                value={serviceMigrate}
+                setValue={setServiceMigrate}
+              />
             </InputContainer>
             <StatesWithIcmsOff data={stateDiscountsData} />
             {!!fractionalBox &&

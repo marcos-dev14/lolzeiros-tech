@@ -6479,6 +6479,9 @@ a.bt.bt-inverse:hover, button.bt.bt-inverse:hover {
 #seller-panel .seller-content .seller-menu aside .hidden-items {
   width: 100%;
 }
+#seller-panel .seller-content .seller-options {
+  width: 100%;
+}
 
 @media (max-width: 1200px) {
   #seller-panel aside {

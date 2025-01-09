@@ -171,12 +171,12 @@ export function NewClient() {
       : 'Não'
   );
 
-  const [canMigrateService, setCanMigrateService] = useState(() =>
-    !!client ?
-      'canMigrateService' in client ? client.canMigrateService! :
-        !!client.can_migrate_service ? 'Sim' : 'Não'
-      : 'Não'
-  );
+  const [serviceMigrate, setServiceMigrate] = useState(() => {
+    if (!client || !('service_migrate' in client)) {
+      return 'Não';
+    }
+    return client.service_migrate === 'Ativado' ? 'Sim' : 'Não';
+  });
 
   const [website, setWebsite] = useState(() =>
     !!client ?
@@ -466,7 +466,7 @@ export function NewClient() {
         order_schedule: orderSchedule === 'Sim',
         order_balance: orderBalance === 'Sim',
         enter_price_on_order: enterPriceOnOrder === 'Sim',
-        can_migrate_service: canMigrateService === 'Sim',
+        service_migrate: serviceMigrate === 'Sim' ? 'Ativado' : 'Desativado',
         auge_register:
           typeof auge_register === 'string' ? auge_register :
             // @ts-ignore
@@ -533,7 +533,7 @@ export function NewClient() {
     orderSchedule,
     orderBalance,
     enterPriceOnOrder,
-    canMigrateService,
+    serviceMigrate,
     commercialStatusOptions
   ]);
 
@@ -1311,10 +1311,10 @@ export function NewClient() {
               />
               <RadioBox
                 title="Pode migrar atendimento?"
-                value={canMigrateService}
-                setValue={setCanMigrateService}
+                value={serviceMigrate}
+                setValue={setServiceMigrate}
               />
-              {/* <MultiSelect
+              {/* <MultiSeleadot
                 title="Regra de Bloqueio"
                 placeholder="Selecione..."
                 customWidth="32.5rem"

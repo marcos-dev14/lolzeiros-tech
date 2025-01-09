@@ -11,6 +11,7 @@ Route::group(['as' => 'seller.'],function () {
 
     Route::prefix('vendedor')->group(function () {
         Route::get('/dashboard', [SellerController::class, 'clients'])->name('dashboard');
+        Route::get('/carrinhos-abandonados', [SellerController::class, 'abandonedCarts'])->name('abandonedCarts');
         Route::get('/pedidos', [SellerController::class, 'orders'])->name('orders');
         Route::get('/pedido/{orderCode}', [SellerController::class, 'order'])->name('order');
         Route::get('/clientes-disponiveis', [OpportunityController::class, 'index'])->name('opportunities.index');

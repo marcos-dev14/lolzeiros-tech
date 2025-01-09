@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
 
-  //baseURL: 'https://augeapp.com.br/api',
+  // baseURL: 'https://augeapp.com.br/api',
   baseURL: 'http://localhost:8000/api',
   // headers: {
   //   'Api-Authorization': 'Bearer $2y$10$F2lQyAkinhFZ5NsrpcCK8OB.amiqhBLbRG1FdSt.a2XepHDEABXNm',

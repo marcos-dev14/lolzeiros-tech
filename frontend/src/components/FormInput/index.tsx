@@ -65,7 +65,7 @@ export function FormInput({
     <Box fullW={fullW} noTitle={noTitle} style={style}>
       {!noTitle && <label htmlFor={name}>{title}</label>}
       <BaseInput
-        style={{overflow: 'auto', textAlign: 'center'}}
+        style={{overflow: 'auto', textAlign: 'left'}}
         id={name}
         disabled={disabled}
         validated={validated || !!isValidated}
