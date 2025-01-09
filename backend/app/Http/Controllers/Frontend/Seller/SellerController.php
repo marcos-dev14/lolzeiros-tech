@@ -283,7 +283,7 @@ class SellerController extends Controller
             $currentPage,
             ['path' => request()->url()]
         );
-        dd($clientDataPaginated);
+
         return view('pages.sellers.abandonedCarts', [
             'seller' => $seller,
             'clients' => $clientDataPaginated,
