@@ -71,6 +71,10 @@
 
                             <td>
                                 <div class="action-buttons">
+                                    <button class="double-arrow-down">
+                                        <x-icons.eye></x-icons.eye>
+                                    </button>
+
                                     <button class="eye">
                                         <x-icons.eye></x-icons.eye>
                                     </button>
