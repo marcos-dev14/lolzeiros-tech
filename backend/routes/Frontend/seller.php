@@ -15,6 +15,7 @@ Route::group(['as' => 'seller.'],function () {
         Route::get('/pedidos', [SellerController::class, 'orders'])->name('orders');
         Route::get('/pedido/{orderCode}', [SellerController::class, 'order'])->name('order');
         Route::get('/clientes-disponiveis', [OpportunityController::class, 'index'])->name('opportunities.index');
+        Route::get('/clientes-disponiveis/{supplierSlug}', [OpportunityController::class, 'opportunitiesFromSupplier'])->name('opportunitiesFromSupplier');
         Route::get('/clientes', [SellerController::class, 'clients'])->name('clients');
         Route::get('/perfil', [SellerController::class, 'profile'])->name('profile');
     });
