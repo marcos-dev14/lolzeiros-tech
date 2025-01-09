@@ -20,7 +20,6 @@
             </tr>
         </thead>
         <tbody>
-            @dd($clients)
             @if ($clients->count())
                 @foreach ($clients as $client)
                     <tr>
@@ -72,11 +71,22 @@
                             </div>
                         </td>
                     </tr>
-                    <tr class="collapsable-row" style="display: none;">
+                    <tr class="collapsable-row">
                         <td colspan="9" style= "width: 100%;background-color: #F4F5F8; padding: 1.25rem 0.625rem 0.625rem 0.75rem; box-sizing: border-box;">
                             <div style="display: flex;flex-direction: column;width: 100%;height: 100%;">
                                 <div class="profile-client">
-                                    <span>Perfil do cliente:</span> {p.profile.name}
+                                    <span>Perfil do cliente:</span> {{ $client->profile }}
+                                </div>
+                                <div class="suppliers-list">
+                                    @foreach ($client->supplies as $supplier)
+                                        <div class="card-supplier">
+                                            <div class="card-header">
+                                                <h2>
+                                                    {{ $supplier->name }}
+                                                </h2>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </td>
@@ -84,7 +94,7 @@
                 @endforeach
             @else
                 <tr>
-                    <td colspan="6" class="text-center">Nenhum cliente encontrado.</td>
+                    <td colspan="9" class="text-center">Nenhum cliente encontrado.</td>
                 </tr>
             @endif
         </tbody>

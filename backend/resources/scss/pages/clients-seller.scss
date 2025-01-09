@@ -42,6 +42,55 @@
         }
     }
 
+    .profile-client {
+        padding: 0.8rem;
+        border-radius: 4px;
+
+        width: fit-content;
+
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        background-color: #ffffff;
+
+        font-size: 1.2rem;
+        line-height: 1.059rem;
+        font-weight: 300;
+        text-align: left;
+        text-transform: capitalize;
+
+        span {
+            font-weight: 600;
+            color: #015CAE;
+        }
+    }
+
+    .suppliers-list {
+        width: 100%;
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        .card-supplier {
+            display: flex;
+            flex-direction: column;
+            padding: .6rem;
+            width: calc((100% - 2rem) / 3);
+            background-color: #fff;
+            border-radius: 8px;
+            gap: 1rem;
+
+            .card-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+              
+            }
+        }
+    }
+
     .formatted-input {
         display: flex;
         align-items: center;
