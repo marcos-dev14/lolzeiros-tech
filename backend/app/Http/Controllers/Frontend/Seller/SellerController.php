@@ -17,10 +17,10 @@ class SellerController extends Controller
 
     public function clients()
     {
-        $seller = auth()->guard('seller')->user()?->load([
-            'ClientHasSeller.clientGroup',
-            'ClientHasSeller.supplier',
-        ]);
+        // $seller = auth()->guard('seller')->user()?->load([
+        //     'ClientHasSeller.clientGroup',
+        //     'ClientHasSeller.supplier',
+        // ]);
 
         if (!$seller) {
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
