@@ -18,14 +18,14 @@
             </thead>
             <tbody>
                 @if($seller)
-                    @foreach ($clientData as $client)
+                    @foreach ($clients as $client)
                         <tr>
-                            <td>{{ $client->cliente }}</td>
-                            <td>{{ $client->cnpj }}</td>
-                            <td>{{ $client->grupo }}</td>
-                            <td>{{ $client->estado }}</td>
-                            <td>{{ $client->cadastro }}</td>
-                            <td>{{ $client->ultimologin }}</td>
+                            <td>{{ $loop->iteration + (($clients->currentPage() - 1) * $clients->perPage()) }}</td>
+                            <td>{{ $client->name }}</td>
+                            <td>{{ $client->document }}</td>
+                            <td>{{ $client->state ?? 'N/A' }}</td>
+                            <td>{{ $client->register }}</td>
+                            <td>{{ $client->lastLogin }}</td>
                         </tr>
                     @endforeach
                 @endif
