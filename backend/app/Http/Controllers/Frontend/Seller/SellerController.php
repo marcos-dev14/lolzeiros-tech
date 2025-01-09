@@ -148,10 +148,10 @@ class SellerController extends Controller
         $orders->getCollection()->transform(function ($order) {
             return (object) [
                 'code' => $order->code,
-                'cliente' => $order->client->company_name ?? $order->client->name,
-                'fornecedor' => $order->supplier->company_name ?? $order->supplier->name ?? null,
-                'data' => Carbon::parse($order->created_at)->format('d/m/Y H:i'),
-                'valor' => $order->getTotalValue(),
+                'client' => $order->client->company_name ?? $order->client->name,
+                'supplier' => $order->supplier->company_name ?? $order->supplier->name ?? null,
+                'date' => Carbon::parse($order->created_at)->format('d/m/Y'),
+                'value' => $order->getTotalValue(),
                 'status' => $order->getCurrentStatusAttribute(),
             ];
         });
