@@ -10,6 +10,7 @@ use App\Models\CountryState;
 use App\Models\Order;
 use App\Models\Seller;
 use App\Models\Supplier;
+use App\Services\SellerService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SupplierDiscount;
 use Carbon\Carbon;
@@ -17,7 +18,7 @@ use Illuminate\Http\Request;
 
 class SellerController extends Controller
 {
-    public function __construct(private Seller $entityService) {}
+    public function __construct(private SellerService $entityService) {}
 
     public function clients()
     {
@@ -25,6 +26,9 @@ class SellerController extends Controller
         //     'ClientHasSeller.clientGroup',
         //     'ClientHasSeller.supplier',
         // ]);
+
+        $seller = $this->entityService->getBy(3, 'id');
+
 
         if (!$seller) {
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
@@ -133,7 +137,8 @@ class SellerController extends Controller
 
     public function orders()
     {
-        $seller = auth()->guard('seller')->user();
+        $seller = $this->entityService->getBy(3, 'id');
+        // $seller = auth()->guard('seller')->user();
 
         if (!$seller) {
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
