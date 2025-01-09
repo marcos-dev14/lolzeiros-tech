@@ -30,14 +30,61 @@ class SellerController extends Controller
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
-        $clientData = $seller->ClientHasSeller->flatMap(function ($clientHasSeller) {
+        $clientData = $seller->ClientHasSeller->flatMap(function ($clientHasSeller) use ($seller) {
             $groupName = $clientHasSeller->clientGroup->name ?? null;
             $supplierName = $clientHasSeller->supplier->company_name
                 ?? $clientHasSeller->supplier->name
                 ?? null;
+
             $lastLogin = Carbon::parse($clientHasSeller->clientGroup->buyer->last_login);
 
-            return $clientHasSeller->clientGroup->clients->map(function ($client) use ($groupName, $supplierName, $lastLogin) {
+            return $clientHasSeller->clientGroup->clients->map(function ($client) use ($groupName, $supplierName, $lastLogin, $clientHasSeller, $seller) {
+                $suppliers = Supplier::query()
+                    ->where('is_available', 1)
+                    ->where('suspend_sales', 0)
+                    ->where('service_migrate', 'Ativado')
+                    ->has('installmentRules')
+                    ->get();
+
+                $suppliersData = $suppliers->map(function ($supplier) use ($client, $clientHasSeller, $seller) {
+                    $isSellerClient = ClientHasSeller::where('client_group_id', $clientHasSeller->clientGroup->id)
+                        ->where('supplier_id', $supplier['id'])
+                        ->first();
+
+                    $mainAddress = $client->getMainAddress();
+                    $clientStateCode = $mainAddress?->state?->code;
+
+                    $stateDiscount = $supplier->stateDiscounts()->whereHas('states', function ($query) use ($clientStateCode) {
+                        $query->where('code', $clientStateCode);
+                    })->first();
+
+                    $icmsDiscount = 0;
+                    if ($stateDiscount instanceof SupplierDiscount) {
+                        $icmsDiscount += floatval($stateDiscount->discount_value);
+                        $icmsDiscount += floatval($stateDiscount->additional_value);
+                    }
+
+                    $clientProfile = $client->client_profile_id;
+                    $profileDiscount = $supplier->profileDiscounts->where('client_profile_id', $clientProfile)->first();
+                    $lastOrder = $client->orders
+                        ->where('product_supplier_id', $supplier['id'])
+                        ->last();
+
+                    $lastBuy = $lastOrder?->created_at ?? null;
+                    return [
+                        'name' => $supplier['name'],
+                        ...($isSellerClient && ($isSellerClient->seller_id == $seller->id || $isSellerClient->seller_id === null) ?
+                            [
+                                'opportunity' => $isSellerClient->seller_id === null ?  1 : 0,
+                                'icms' => $icmsDiscount,
+                                'profile_discount' => $profileDiscount->discount_value ?? 0,
+                                'commercial_commission' => $profileDiscount->commercial_commission ?? 0,
+                                'fractional_box' => $supplier['fractional_box'] ?? 0,
+                                'last_buy' => $lastBuy,
+                            ] : []),
+                    ];
+                });
+
                 $mainAddress = $client->getMainAddress();
                 $state = $mainAddress?->country_state_id
                     ? CountryState::find($mainAddress->country_state_id)
@@ -46,6 +93,8 @@ class SellerController extends Controller
                 return (object) [
                     'group' => $groupName,
                     'name' => $client->company_name ?? $client->name,
+                    'profile' => $client->profile->name  ?? null,
+                    'supplies' => $suppliersData,
                     'document' => $client->document ?? null,
                     'state' => $state ? "{$state->name} - {$state->code}" : null,
                     'register' => Carbon::parse($client->auge_register)->format('d/m/Y H:i'),
@@ -73,12 +122,13 @@ class SellerController extends Controller
             $currentPage,
             ['path' => request()->url()]
         );
-        // dd($clientDataPaginated);
+
         return view('pages.sellers.clients', [
             'seller' => $seller,
             'clients' => $clientDataPaginated,
         ]);
     }
+
 
 
     public function orders()
