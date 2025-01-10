@@ -27,15 +27,15 @@
                         @foreach ($orders as $order)
                             <tr>
                                 <td>{{ $order->code }}</td>
-                                <td>{{ $order->cliente }}</td>
-                                <td>{{ $order->fornecedor }}</td>
+                                <td>{{ $order->client }}</td>
+                                <td>{{ $order->supplier }}</td>
                                 <td>
                                     <div class="formatted-input">
                                         <div class="formatted-input-icon">
                                             <x-icons.calendar></x-icons.calendar>
                                         </div>
 
-                                        <input type="text" id="date" disabled value="{{ $order->data }}">
+                                        <input type="text" id="date" disabled value="{{ $order->date }}">
                                     </div>
                                   </td>
                                   <td>
@@ -44,7 +44,7 @@
                                             <x-icons.money></x-icons.money>
                                         </div>
 
-                                        <input type="text" id="value" disabled value="{{ $order->valor }}">
+                                        <input type="text" id="value" disabled value="{{ $order->value }}">
                                     </div>
                                 </td>
 
@@ -83,7 +83,7 @@
                                             <x-icons.printer></x-icons.printer>
                                         </button>
 
-                                        <button class="heart">
+                                        <button class="heart" data-id="{{ $order->order_id }}" onclick="addToFavorites(this)">
                                             <x-icons.order-heart></x-icons.order-heart>
                                         </button>
                                     </div>
