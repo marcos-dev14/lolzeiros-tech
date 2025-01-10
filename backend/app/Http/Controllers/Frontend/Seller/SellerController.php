@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Frontend\Seller;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ClientListCartResource;
 use App\Http\Resources\OrderResource;
+use App\Models\Client;
 use App\Models\ClientHasSeller;
 use App\Models\CountryState;
+use App\Models\Favoritable;
 use App\Models\Order;
 use App\Models\Seller;
 use App\Models\Supplier;
+use App\Services\FavoritableService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SupplierDiscount;
 use Carbon\Carbon;
@@ -17,7 +20,11 @@ use Illuminate\Http\Request;
 
 class SellerController extends Controller
 {
-    public function __construct(private Seller $entityService) {}
+    protected $favoritableService;
+    public function __construct(private Seller $entityService, FavoritableService $favoritableService)
+    {
+        $this->favoritableService = $favoritableService;
+    }
 
     public function clients()
     {
@@ -30,7 +37,11 @@ class SellerController extends Controller
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
-        $clientData = $seller->ClientHasSeller->flatMap(function ($clientHasSeller) use ($seller) {
+        $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
+
+        $favoriteClientsIds = $sellerId->favoriteClients->pluck('id')->toArray();
+
+        $clientData = $seller->ClientHasSeller->flatMap(function ($clientHasSeller) use ($seller, $favoriteClientsIds) {
             $groupName = $clientHasSeller->clientGroup->name ?? null;
             $supplierName = $clientHasSeller->supplier->company_name
                 ?? $clientHasSeller->supplier->name
@@ -38,7 +49,7 @@ class SellerController extends Controller
 
             $lastLogin = Carbon::parse($clientHasSeller->clientGroup->buyer->last_login);
 
-            return $clientHasSeller->clientGroup->clients->map(function ($client) use ($groupName, $supplierName, $lastLogin, $clientHasSeller, $seller) {
+            return $clientHasSeller->clientGroup->clients->map(function ($client) use ($favoriteClientsIds, $groupName, $supplierName, $lastLogin, $clientHasSeller, $seller) {
                 $suppliers = Supplier::query()
                     ->where('is_available', 1)
                     ->where('suspend_sales', 0)
@@ -103,6 +114,7 @@ class SellerController extends Controller
                         ? (new ClientListCartResource($client->cart))->created_at
                         : null,
                     'status' => $client->document_status,
+                    'favorite' => in_array($client->id, $favoriteClientsIds) ? 1 : 0,
                 ];
             });
         });
@@ -139,25 +151,32 @@ class SellerController extends Controller
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
+        $seller = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
+
+        $favoriteOrderIds = $seller->favoriteOrders->pluck('id')->toArray();
+
         $orders = Order::where('seller_id', $seller->id)
             ->orderBy('created_at', 'desc')
             ->with('supplier', 'client')
-            ->paginate(10)
+            ->paginate(1)
             ->withQueryString();
 
-        $orders->getCollection()->transform(function ($order) {
+        $orders->getCollection()->transform(function ($order) use ($favoriteOrderIds): object {
             return (object) [
                 'code' => $order->code,
+                'order_id' => $order->id,
                 'client' => $order->client->company_name ?? $order->client->name,
                 'supplier' => $order->supplier->company_name ?? $order->supplier->name ?? null,
                 'date' => Carbon::parse($order->created_at)->format('d/m/Y'),
                 'value' => $order->getTotalValue(),
                 'status' => $order->getCurrentStatusAttribute(),
+                'favorite' => in_array($order->id, $favoriteOrderIds) ? 1 : 0,
             ];
         });
 
         return view('pages.sellers.orders', compact('seller', 'orders'));
     }
+
 
     public function order($orderCode)
     {
@@ -184,7 +203,11 @@ class SellerController extends Controller
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
-        $clientData = $seller->ClientHasSeller->flatMap(function ($clientHasSeller) use ($seller) {
+        $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
+
+        $favoriteClientsIds = $sellerId->favoriteClients->pluck('id')->toArray();
+
+        $clientData = $seller->ClientHasSeller->flatMap(function ($clientHasSeller) use ($seller, $favoriteClientsIds) {
             $groupName = $clientHasSeller->clientGroup->name ?? null;
             $supplierName = $clientHasSeller->supplier->company_name
                 ?? $clientHasSeller->supplier->name
@@ -194,7 +217,7 @@ class SellerController extends Controller
                 ? Carbon::parse($clientHasSeller->clientGroup->buyer->last_login)
                 : null;
 
-            return $clientHasSeller->clientGroup->clients->map(function ($client) use ($groupName, $supplierName, $lastLogin, $clientHasSeller, $seller) {
+            return $clientHasSeller->clientGroup->clients->map(function ($client) use ($groupName, $supplierName, $lastLogin, $clientHasSeller, $seller, $favoriteClientsIds) {
                 $suppliers = Supplier::query()
                     ->where('is_available', 1)
                     ->where('suspend_sales', 0)
@@ -265,6 +288,7 @@ class SellerController extends Controller
                         'lastLogin' => $lastLogin ? $lastLogin->format('d/m/Y H:i') . 'h (' . $lastLogin->diffForHumans() . ')' : null,
                         'cartAbandoned' => $client->cart?->products->count() ? (new ClientListCartResource($client->cart))->created_at : null,
                         'status' => $client->document_status,
+                        'favorite' => in_array($client->id, $favoriteClientsIds) ? 1 : 0,
                     ];
                 }
             })->filter();
@@ -288,5 +312,64 @@ class SellerController extends Controller
             'seller' => $seller,
             'clients' => $clientDataPaginated,
         ]);
+    }
+
+    public function addFavoritable(Request $request)
+    {
+        $seller = auth()->guard('seller')->user()?->load([
+            'ClientHasSeller.clientGroup',
+            'ClientHasSeller.supplier',
+        ]);
+
+        if (!$seller) {
+            return response()->json([
+                'error' => 'Você precisa estar autenticado para acessar esta página.'
+            ], 401);
+        }
+
+        $result = $this->favoritableService->addFavoritable(
+            $request->type,
+            $request->id,
+            $seller->id
+        );
+
+        if (!$result['success']) {
+            return response()->json([
+                'error' => $result['message'],
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $result['message'],
+        ], 200);
+    }
+
+    public function removeFavoritable(Request $request)
+    {
+        $seller = auth()->guard('seller')->user();
+
+        if (!$seller) {
+            return response()->json([
+                'error' => 'Você precisa estar autenticado para acessar esta página.'
+            ], 401);
+        }
+
+        $result = $this->favoritableService->removeFavoritable(
+            $request->type,
+            $request->id,
+            $seller->id
+        );
+
+        if (!$result['success']) {
+            return response()->json([
+                'error' => $result['message'],
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $result['message'],
+        ], 200);
     }
 }

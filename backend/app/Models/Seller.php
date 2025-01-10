@@ -48,6 +48,18 @@ class Seller extends Authenticatable
             ->with('clientGroup','supplier');
     }
 
+    public function favoriteClients()
+    {
+        return $this->morphedByMany(Client::class, 'favoritable', 'favoritable')
+            ->withTimestamps();
+    }
+
+    public function favoriteOrders()
+    {
+        return $this->morphedByMany(Order::class, 'favoritable', 'favoritable')
+            ->withTimestamps();
+    }
+
     //------------------------------------------------------------------
     // Mutators
     //------------------------------------------------------------------
