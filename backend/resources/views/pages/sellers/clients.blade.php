@@ -72,18 +72,36 @@
                         </td>
                     </tr>
                     <tr class="collapsable-row">
-                        <td colspan="9" style= "width: 100%;background-color: #F4F5F8; padding: 1.25rem 0.625rem 0.625rem 0.75rem; box-sizing: border-box;">
+                        <td colspan="9"
+                            style= "width: 100%;background-color: #F4F5F8; padding: 1.25rem 0.625rem 0.625rem 0.75rem; box-sizing: border-box;">
                             <div style="display: flex;flex-direction: column;width: 100%;height: 100%;">
                                 <div class="profile-client">
                                     <span>Perfil do cliente:</span> {{ $client->profile }}
                                 </div>
                                 <div class="suppliers-list">
-                                    @foreach ($client->supplies as $supplier)
+                                    @foreach ($client->suppliers as $supplier)
                                         <div class="card-supplier">
                                             <div class="card-header">
-                                                <h2>
+                                                <h4>
                                                     {{ $supplier->name }}
-                                                </h2>
+                                                </h4>
+
+                                                @if ($supplier->last_buy)
+                                                    <div style="border-radius: 0.3rem; border: 1px solid #ECEFF6; padding: 0.5rem; display: flex; gap: 0.5rem;">
+                                                        <x-icons.calendar style="color: #3699CF;"></x-icons.calendar>
+                                                        <strong>Última compra:</strong>
+                                                        {{ $supplier->last_buy }}
+                                                    </div>
+                                                @else
+                                                    <span>Nenhuma compra realizada</span>
+                                                @endif
+                                            </div>
+
+                                            <div class="label-list-supplier">
+                                                <label>Desconto perfil cliente <span>{{ $supplier->profile_discount }}</span></label>
+                                                <label>ICMS entre estados <span>{{ $supplier->icms }}</span></label>
+                                                <label>Caixa fracionada <span>{{ $supplier->fractional_box === 1 ? "Permite" : "Não Permite" }}</span></label>
+                                                <label>Comissão comercial <span>{{ $supplier->commercial_commission }}</span></label>
                                             </div>
                                         </div>
                                     @endforeach
@@ -120,4 +138,3 @@
         });
     </script>
 @endpush
-
