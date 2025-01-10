@@ -118,7 +118,7 @@ class SellerController extends Controller
         });
 
         $currentPage = request()->get('page', 1);
-        $perPage = 1;
+        $perPage = 15;
         $clientDataPaginated = new LengthAwarePaginator(
             $clientData->forPage($currentPage, $perPage),
             $clientData->count(),
