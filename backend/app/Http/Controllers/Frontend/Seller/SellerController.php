@@ -146,21 +146,25 @@ class SellerController extends Controller
     public function orders()
     {
         $seller = auth()->guard('seller')->user();
-
+    
         if (!$seller) {
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
-
+    
         $seller = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
-
         $favoriteOrderIds = $seller->favoriteOrders->pluck('id')->toArray();
-
-        $orders = Order::where('seller_id', $seller->id)
-            ->orderBy('created_at', 'desc')
+    
+        $filters = request()->all();
+        unset($filters['page']);
+        $query = Order::where('seller_id', $seller->id);
+    
+        $query = $this->applyFiltersOrders($query, $filters);
+    
+        $orders = $query->orderBy('created_at', 'desc')
             ->with('supplier', 'client')
-            ->paginate(1)
+            ->paginate(10)
             ->withQueryString();
-
+    
         $orders->getCollection()->transform(function ($order) use ($favoriteOrderIds): object {
             return (object) [
                 'code' => $order->code,
@@ -171,11 +175,14 @@ class SellerController extends Controller
                 'value' => $order->getTotalValue(),
                 'status' => $order->getCurrentStatusAttribute(),
                 'favorite' => in_array($order->id, $favoriteOrderIds) ? 1 : 0,
+
             ];
         });
-
+    
         return view('pages.sellers.orders', compact('seller', 'orders'));
     }
+    
+
 
 
     public function order($orderCode)
@@ -372,4 +379,86 @@ class SellerController extends Controller
             'message' => $result['message'],
         ], 200);
     }
+
+    private function applyFiltersOrders($query, $filters)
+    {
+        foreach ($filters as $key => $value) {
+            if ($key === 'favoritables' && $value == 1) {
+                $seller = auth()->guard('seller')->user();
+                if ($seller) {
+                    $favoriteOrderIds = Seller::find($seller->id)
+                        ->favoriteOrders
+                        ->pluck('id')
+                        ->toArray();
+    
+                    $query->whereIn('id', $favoriteOrderIds);
+                }
+                continue;
+            }
+    
+            if (str_contains($key, 'by_')) {
+                $relation = str_replace('by_', '', $key);
+                $query->where("{$relation}_id", $value);
+                continue;
+            }
+    
+            if ($key == 'date') {
+                $date = explode('|', $value);
+                $startDate = str_replace('start:', null, $date[0]);
+                $endDate = str_replace('end:', null, $date[1]);
+    
+                $startDate = !empty($startDate) ? Carbon::parse($startDate)->startOfDay() : null;
+                $endDate = !empty($endDate) ? Carbon::parse($endDate)->endOfDay() : null;
+    
+                if ($startDate && $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                } elseif ($startDate) {
+                    $query->where('created_at', '>=', $startDate);
+                } else {
+                    $query->where('created_at', '<=', $endDate);
+                }
+    
+                continue;
+            }
+    
+            if ($key === 'code') {
+                if (str_contains($value, 'codigo:')) {
+                    $value = trim(str_replace('codigo:', '', $value));
+                    $query->where('code', 'like', "%{$value}%");
+                    continue;
+                }
+    
+                if (str_contains($value, 'cliente:')) {
+                    $value = trim(str_replace('cliente:', '', $value));
+                    $query->whereHas('client', function ($q) use ($value) {
+                        $q->where('name', 'like', "%{$value}%")
+                            ->orWhere('company_name', 'like', "%{$value}%");
+                    });
+                    continue;
+                }
+    
+                if (str_contains($value, 'fornecedor:')) {
+                    $value = trim(str_replace('fornecedor:', '', $value));
+                    $query->whereHas('supplier', function ($q) use ($value) {
+                        $q->where('name', 'like', "%{$value}%")
+                            ->orWhere('company_name', 'like', "%{$value}%");
+                    });
+                    continue;
+                }
+    
+                if (str_contains($value, 'cidade:')) {
+                    $value = trim(str_replace('cidade:', '', $value));
+                    $query->whereHas('supplier.address', function ($q) use ($value) {
+                        $q->where('city', 'like', "%{$value}%");
+                    });
+                    continue;
+                }
+            }
+    
+            $query->where($key, $value);
+        }
+    
+        return $query;
+    }
+    
 }
