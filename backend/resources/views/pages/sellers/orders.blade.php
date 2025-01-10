@@ -75,9 +75,9 @@
 
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="eye">
+                                        <a href="{{ route('seller.order', ['orderCode' => $order->code]) }}" class="eye">
                                             <x-icons.eye></x-icons.eye>
-                                        </button>
+                                        </a>
 
                                         <button class="printer">
                                             <x-icons.printer></x-icons.printer>
@@ -93,8 +93,6 @@
                     @endif
                 </tbody>
             </table>
-
-            {{-- @dd($orders) --}}
 
             @if ($orders->lastPage() > 1)
                 <div class="orders-pagination">
