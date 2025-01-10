@@ -18,6 +18,9 @@ Route::group(['as' => 'seller.'],function () {
         Route::get('/clientes-disponiveis/{supplierSlug}', [OpportunityController::class, 'opportunitiesFromSupplier'])->name('opportunitiesFromSupplier');
         Route::get('/clientes', [SellerController::class, 'clients'])->name('clients');
         Route::get('/perfil', [SellerController::class, 'profile'])->name('profile');
+
+        Route::post('/add-favorito', [SellerController::class, 'addFavoritable'])->name('addfavoritable');
+        Route::post('/rem-favorito', [SellerController::class, 'removeFavoritable'])->name('removefavoritable');
     });
 });
 
