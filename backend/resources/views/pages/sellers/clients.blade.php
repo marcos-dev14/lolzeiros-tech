@@ -1,5 +1,10 @@
 @push('styles')
     <link rel="stylesheet" href="{{ mix('css/clients-seller.css') }}">
+    <link rel="stylesheet" href="{{ mix('css/plugins.css') }}">
+@endpush
+
+@push('scripts')
+    <script src="{{ mix('js/seller.js') }}"></script>
 @endpush
 
 <x-layouts.seller-panel title="Clientes"
@@ -57,7 +62,7 @@
                         <td>{{ $client->status }}</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="collapse">
+                                <button class="collapse-button">
                                     <x-icons.collapse></x-icons.collapse>
                                 </button>
 
@@ -71,7 +76,7 @@
                             </div>
                         </td>
                     </tr>
-                    <tr class="collapsable-row">
+                    <tr class="collapsable-row" style="display: none;">
                         <td colspan="9"
                             style= "width: 100%;background-color: #F4F5F8; padding: 1.25rem 0.625rem 0.625rem 0.75rem; box-sizing: border-box;">
                             <div style="display: flex;flex-direction: column;width: 100%;height: 100%;">
@@ -118,23 +123,5 @@
         </tbody>
     </table>
 
-    <div class="d-flex justify-content-center">
-        {{ $clients->links() }}
-    </div>
+    {{ $clients->links('pagination::custom') }}
 </x-layouts.seller-panel>
-
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const collapseButton = document.querySelectorAll('.collapse');
-
-
-            collapseButton.addEventListener('click', () => {
-                const row = button.closest('tr');
-                const nextRow = row.nextElementSibling;
-                nextRow.style.display = nextRow.style.display === 'none' ? 'table-row' : 'none';
-            });
-
-        });
-    </script>
-@endpush

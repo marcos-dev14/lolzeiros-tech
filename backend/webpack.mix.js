@@ -67,6 +67,11 @@ scripts([
 
 scripts([
     'resources/js/frontend/initialize.js',
+    'resources/js/frontend/pages/seller.js'
+], 'public/js/seller.js').version();
+
+scripts([
+    'resources/js/frontend/initialize.js',
     'resources/js/frontend/components/form-address.js',
     'resources/js/frontend/receitaws.js',
     'resources/js/frontend/pages/buyer-panel.js',

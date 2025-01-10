@@ -83,7 +83,7 @@
         .card-supplier {
             display: flex;
             flex-direction: column;
-            padding: .6rem;
+            padding: .8rem 1.2rem;
             width: calc((100% - 2rem) / 3);
             background-color: #fff;
             border-radius: 8px;
@@ -255,10 +255,15 @@
             align-items: center;
             justify-content: center;
 
-            &.collapse {
+            &.collapse-button {
                 svg {
                     color: #3699CF;
                 }
+            }
+
+            &.collapse-button.active {
+                transform: rotate(180deg); /* Gira o ícone quando ativo */
+                transition: transform 0.5s ease;
             }
 
             &.contacts {
