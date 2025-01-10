@@ -140,9 +140,6 @@ class SellerController extends Controller
             'clients' => $clientDataPaginated,
         ]);
     }
-
-
-
     public function orders()
     {
         $seller = auth()->guard('seller')->user();
@@ -164,13 +161,20 @@ class SellerController extends Controller
             ->with('supplier', 'client')
             ->paginate(10)
             ->withQueryString();
-    
+            
+
         $orders->getCollection()->transform(function ($order) use ($favoriteOrderIds): object {
+            $mainAddress = $order->client->getMainAddress();
+            $state = $mainAddress?->country_state_id
+                ? CountryState::find($mainAddress->country_state_id)
+                : null;
+
             return (object) [
                 'code' => $order->code,
                 'order_id' => $order->id,
                 'client' => $order->client->company_name ?? $order->client->name,
                 'supplier' => $order->supplier->company_name ?? $order->supplier->name ?? null,
+                'state' => $state ? "{$state->name} - {$state->code}" : null,
                 'date' => Carbon::parse($order->created_at)->format('d/m/Y'),
                 'value' => $order->getTotalValue(),
                 'status' => $order->getCurrentStatusAttribute(),
@@ -178,7 +182,7 @@ class SellerController extends Controller
 
             ];
         });
-    
+
         return view('pages.sellers.orders', compact('seller', 'orders'));
     }
     
@@ -446,10 +450,24 @@ class SellerController extends Controller
                     continue;
                 }
     
-                if (str_contains($value, 'cidade:')) {
+                /* if (str_contains($value, 'cidade:')) {
                     $value = trim(str_replace('cidade:', '', $value));
-                    $query->whereHas('supplier.address', function ($q) use ($value) {
+                    $query->whereHas('client.address', function ($q) use ($value) {
                         $q->where('city', 'like', "%{$value}%");
+                    });
+                    continue;
+                } */
+
+                if (str_contains($value, 'estado:')) {
+                    $value = trim(str_replace('estado:', '', $value));
+                    $query->whereHas('client', function ($q) use ($value) {
+                        $q->whereHas('addresses', function ($subQuery) use ($value) {
+                            $subQuery->where('address_type_id', 1)  // Filtra pelo tipo de endereço principal
+                                ->whereHas('state', function ($subQuery2) use ($value) {
+                                    $subQuery2->where('name', 'like', "%{$value}%")
+                                        ->orWhere('code', 'like', "%{$value}%");
+                                });
+                        });
                     });
                     continue;
                 }
