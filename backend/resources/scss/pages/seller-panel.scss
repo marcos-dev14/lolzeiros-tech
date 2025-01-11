@@ -217,8 +217,8 @@
         .panel-header {
             margin-bottom: 30px;
             display: flex;
-            align-items: flex-start;
-            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
 
             h2 {
                 margin: 0;
@@ -238,6 +238,33 @@
                 font-size: 15px;
                 margin: 5px 0 0 27px;
                 line-height: 25px;
+            }
+
+            .panel-top {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .painel-action a {
+                width: 130px;
+                height: 56px;
+                border-radius: 8px;
+                background-color: #DAE0EC;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+
+                p {
+                    margin: 0;
+                    font-weight: 400;
+                    font-size: 14px;
+                    color: #454545;
+                }
+
+                svg {
+                    color: #454545;
+                }
             }
         }
 
