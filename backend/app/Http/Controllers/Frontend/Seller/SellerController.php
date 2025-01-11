@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\Seller;
 use App\Models\Supplier;
 use App\Services\FavoritableService;
+use App\Services\SellerService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SupplierDiscount;
 use Carbon\Carbon;

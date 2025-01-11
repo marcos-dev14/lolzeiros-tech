@@ -71,11 +71,9 @@
                                     <x-icons.contatos></x-icons.contatos>
                                 </button>
 
-                                @dd($client)
-
                                 <meta name="csrf-token" content="{{ csrf_token() }}">
-                                <button class="heart" data-type="Client" data-id="{{ $client->id }}">
-                                    <x-icons.order-heart></x-icons.order-heart>
+                                <button class="heart {{ $client->favorite === 1 ? 'favorited' : '' }}" data-type="Client" data-id="{{ $client->client_id }}" data-favorite="{{ $client->favorite }}">
+                                    <x-icons.heart></x-icons.heart>
                                 </button>
                             </div>
                         </td>

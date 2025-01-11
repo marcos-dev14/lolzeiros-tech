@@ -8,7 +8,6 @@ $(document).ready(function () {
         var collapsableRow = currentRow.next(".collapsable-row");
 
         if (collapsableRow.length) {
-            // Alterna a visibilidade com animação de deslizamento
             collapsableRow.slideToggle(300);
 
             // Alterna uma classe para mudar o ícone, se desejado
@@ -19,11 +18,12 @@ $(document).ready(function () {
     $(".heart").click(function () {
         let type = $(this).data("type"); // Assuming data-type attribute exists on the heart button
         let id = $(this).data("id"); // Assuming data-id attribute exists on the heart button
+        let isFavorited = $(this).data("favorite");
         let self = this;
 
         $.ajax({
             url:
-                type === "Order"
+                isFavorited === 0
                     ? "/vendedor/add-favorito"
                     : "/vendedor/rem-favorito",
             type: "POST",
@@ -37,7 +37,7 @@ $(document).ready(function () {
                 $(self).toggleClass("favorited"); // Example: Add/remove a 'favorited' class
             },
             error: function (error) {
-                console.error("Error favoriting/unfavoriting:", error);
+                console.error("Error favoritando/desfavoritando:", error);
                 // Handle errors (e.g., display an error message)
             },
         });

@@ -274,9 +274,15 @@
                 }
             }
 
-            &.printer {
-                svg {
-                    color: #1C1B1F;
+            &.heart {
+                svg path {
+                    fill: transparent;
+                }
+            }
+
+            &.heart.favorited {
+                svg path {
+                    fill: black;
                 }
             }
         }
