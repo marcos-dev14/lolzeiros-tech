@@ -5,6 +5,10 @@
     width: 100%;
     padding-right: 70px;
 
+    @media (max-width: 767px) {
+        padding: 0;
+    }
+
     .select2 {
         display: none !important;
         box-sizing: initial;
@@ -35,47 +39,21 @@
         justify-content: flex-start;
         gap: 16px;
 
+        @media (max-width: 991px) {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
         .order-form-group {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             justify-content: flex-start;
             gap: 8px;
-        }
 
-        .order-status {
-            max-width: 280px;
-            width: 100%;
-        }
-
-        .order-invoice {
-            max-width: 180px;
-            width: 100%;
-        }
-
-        .order-supplier {
-            max-width: 180px;
-            width: 100%;
-        }
-
-        .order-origin {
-            max-width: 100px;
-            width: 100%;
-        }
-
-        .order-type {
-            max-width: 180px;
-            width: 100%;
-        }
-
-        .order-number {
-            max-width: 140px;
-            width: 100%;
-        }
-
-        .order-supplier-date {
-            max-width: 140px;
-            width: 100%;
+            @media (max-width: 991px) {
+                width: 100% !important;
+            }
         }
     }
 
@@ -87,8 +65,17 @@
         gap: 16px;
         margin-top: 20px;
 
+        @media (max-width: 991px) {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
         .form-wrapper {
             margin-top: 20px;
+
+            @media (max-width: 991px) {
+                width: 100%;
+            }
         }
 
         .status-list {
@@ -174,6 +161,12 @@
                 }
             }
         }
+
+        @media (max-width: 991px) {
+            .status-form {
+                width: 100%;
+            }
+        }
     }
 
     label {
@@ -193,7 +186,7 @@
         outline: none;
         padding: 0 10px;
         font-weight: 600;
-        font-size: 14px;
+        font-size: 12px;
         color: #5F5F5F;
 
         &::placeholder {
@@ -234,6 +227,7 @@
     }
 
     .form-wrapper .icon-input {
+        width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -243,7 +237,7 @@
 
         .icon {
             width: 48px;
-            height: 48px;
+            height: 43px;
             background-color: #fff;
             display: flex;
             align-items: center;
@@ -259,6 +253,13 @@
             width: 100%;
             height: 48px;
             border: none !important;
+            font-size: 12px;
+
+            &.disabled {
+                background-color: #f4f5f8;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
         }
     }
 
@@ -385,6 +386,12 @@
         margin: 15px 0;
         padding: 6px 15px;
 
+        @media (max-width: 767px) {
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
         span {
             font-weight: 600;
             font-size: 12px;
@@ -401,6 +408,10 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+
+            @media (max-width: 767px) {
+                width: 100%;
+            }
 
             span {
                 font-weight: 600;

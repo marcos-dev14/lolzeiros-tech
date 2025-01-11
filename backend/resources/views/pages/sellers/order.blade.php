@@ -5,7 +5,7 @@
 
 <x-layouts.seller-panel
     title="Meus Pedidos"
-    subtitle="Resumo do Pedido | onde vai ficar o código | Data + Horário"
+    subtitle="Resumo do Pedido | {{ $order->code }} | {{ $order->created_at }}"
     icon="icons.bag-seller"
 >
     <div class="container">
@@ -16,7 +16,7 @@
                         <div class="order-form-group" style="width: 230px">
                             <label>Status do pedido</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->current_status }}" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 140px">
@@ -28,31 +28,31 @@
                         <div class="order-form-group" style="width: 140px">
                             <label>Fornecedor</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->product_supplier_name }}" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 100px">
                             <label>Origem</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->origin }}" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 170px">
                             <label>Tipo do pedido</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->order_type }}" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 140px">
                             <label>N° Pedido Fornecedor</label>
 
-                            <input type="text">
+                            <input type="text" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 140px">
                             <label>Data pedido Fornecedor</label>
 
-                            <input type="tex-date">
+                            <input type="tex-date" value="{{ $order->formated_date }}" disabled>
                         </div>
                     </div>
 
@@ -94,7 +94,7 @@
                                 <div class="order-form-group" style="width: 100px">
                                     <label>Caixa fracionada</label>
 
-                                    <input id="order-quantity" class="order-quantity" disabled />
+                                    <input id="order-quantity" value="{{ $order->fractional_box === 1 ? 'Sim' : 'Não' }}" class="order-quantity" disabled />
                                 </div>
                             </div>
 
@@ -113,7 +113,7 @@
                                             <p>%</p>
                                         </div>
 
-                                        <input type="texDigite aqui..." disabled />
+                                        <input type="texDigite aqui..." value="{{ $order->profile_discount }}" disabled />
                                     </div>
                                 </div>
 
@@ -125,7 +125,7 @@
                                             <p>%</p>
                                         </div>
 
-                                        <input type="texDigite aqui..." disabled />
+                                        <input type="texDigite aqui..." value="{{ $order->icms }}" disabled />
                                     </div>
                                 </div>
 
@@ -137,7 +137,7 @@
                                             <p>%</p>
                                         </div>
 
-                                        <input type="texDigite aqui..." disabled />
+                                        <input type="texDigite aqui..." value="{{ $order->discount_value }}" disabled />
                                     </div>
                                 </div>
                             </div>
@@ -151,7 +151,7 @@
                                             <x-icons.money></x-icons.money>
                                         </div>
 
-                                        <input type="texDigite aqui..." disabled />
+                                        <input type="texDigite aqui..." value="{{ $order->installment_discount_value }}" disabled />
                                     </div>
                                 </div>
 
@@ -163,7 +163,7 @@
                                             <x-icons.money></x-icons.money>
                                         </div>
 
-                                        <input type="texDigite aqui..." disabled />
+                                        <input type="texDigite aqui..." value="{{ $order->installment_discount_value_ipi }}" disabled />
                                     </div>
                                 </div>
 
@@ -192,13 +192,13 @@
                         <div class="form-group">
                             <label>Observações do Client</label>
 
-                            <textarea id="observations-client" class="form-control" rows="3" disabled></textarea>
+                            <textarea id="observations-client" class="form-control" value="{{ $order->comments }}" rows="3" disabled></textarea>
                         </div>
 
                         <div class="form-group">
                             <label>Observações Auge</label>
 
-                            <textarea id="observations-auge" class="form-control" rows="3"></textarea>
+                            <textarea id="observations-auge" class="form-control" value="{{ $order->internal_comments }}" rows="3" disabled></textarea>
                         </div>
                     </div>
 
@@ -210,10 +210,10 @@
                         <div class="order-form-group">
                             <label>Comercial da auge</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->buyer_name }}" disabled>
                         </div>
 
-                        <div class="order-form-group" style="width: 230px">
+                        <div class="order-form-group" style="width: 260px">
                             <label>Email</label>
 
                             <div class="icon-input">
@@ -221,7 +221,7 @@
                                     <x-icons.order-mail></x-icons.order-mail>
                                 </div>
 
-                                <input type="texDigite aqui..." disabled />
+                                <input type="texDigite aqui..." value="{{ $order->buyer_email }}" disabled />
                             </div>
                         </div>
 
@@ -233,14 +233,14 @@
                                    +55
                                 </div>
 
-                                <input type="texDigite aqui..." disabled />
+                                <input type="texDigite aqui..." value="{{ $order->buyer_cellphone }}" disabled />
                             </div>
                         </div>
 
                         <div class="order-form-group">
                             <label>Canal de vendas</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->sale_channel_id }}" disabled>
                         </div>
                     </div>
 
@@ -252,31 +252,31 @@
                         <div class="order-form-group">
                             <label>CNPJ</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->client_document }}" disabled>
                         </div>
 
                         <div class="order-form-group">
                             <label>Razão Social</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->client_name }}" disabled>
                         </div>
 
                         <div class="order-form-group">
                             <label>IE</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->old_id }}" disabled>
                         </div>
 
                         <div class="order-form-group">
                             <label>Grupo</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->client_group }}" disabled>
                         </div>
 
                         <div class="order-form-group">
                             <label>Código do cliente</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->client_code }}" disabled>
                         </div>
                     </div>
 
@@ -284,19 +284,19 @@
                         <div class="order-form-group">
                             <label>Status do CNPJ</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->client_status }}" disabled>
                         </div>
 
                         <div class="order-form-group">
                             <label>Status Comercial</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->client_commercial_status }}" disabled>
                         </div>
 
                         <div class="order-form-group">
                             <label>Tipo de PDV</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->client_pdv_name }}" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 230px">
@@ -307,7 +307,7 @@
                                     <x-icons.order-calendar></x-icons.order-calendar>
                                 </div>
 
-                                <input type="texDigite aqui..." disabled />
+                                <input type="texDigite aqui..." value="{{ $order->client_last_order }}" disabled />
                             </div>
                         </div>
                     </div>
@@ -316,7 +316,7 @@
                         <div class="order-form-group">
                             <label>Comprador</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->buyer_name }}" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 230px">
@@ -327,14 +327,14 @@
                                     <x-icons.order-mail></x-icons.order-mail>
                                 </div>
 
-                                <input type="texDigite aqui..." disabled />
+                                <input type="texDigite aqui..." value="{{ $order->buyer_email }}" disabled />
                             </div>
                         </div>
 
                         <div class="order-form-group">
                             <label>Contato</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->buyer_cellphone }}" disabled>
                         </div>
                     </div>
 
@@ -343,47 +343,47 @@
                     </div>
 
                     <div class="form-wrapper">
-                        <div class="order-form-group">
+                        <div class="order-form-group" style="width: 332px">
                             <label>Endereço</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->address_street }}" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 100px">
                             <label>Número</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->address_number }}" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 140px">
                             <label>Complemento</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->address_complement }}" disabled>
                         </div>
 
-                        <div class="order-form-group" style="width: 140px"
+                        <div class="order-form-group" style="width: 140px">
                             <label>Bairro</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->address_district }}" disabled>
                         </div>
 
                         <div class="order-form-group">
                             <label>Cidade</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->address_city }}" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 100px">
                             <label>Cep</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->address_zipcode }}" disabled>
                         </div>
 
 
                         <div class="order-form-group" style="width: 90px">
                             <label>Estado</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->address_state }}" disabled>
                         </div>
                     </div>
                 {!! Form::close() !!}

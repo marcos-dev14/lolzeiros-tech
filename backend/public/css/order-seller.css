@@ -4781,6 +4781,11 @@ body {
   width: 100%;
   padding-right: 70px;
 }
+@media (max-width: 767px) {
+  #order-content {
+    padding: 0;
+  }
+}
 #order-content .select2 {
   display: none !important;
   box-sizing: initial;
@@ -4805,9 +4810,15 @@ body {
 #order-content .form-wrapper {
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: flex-start;
   gap: 16px;
+}
+@media (max-width: 991px) {
+  #order-content .form-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 #order-content .form-wrapper .order-form-group {
   display: flex;
@@ -4816,33 +4827,10 @@ body {
   justify-content: flex-start;
   gap: 8px;
 }
-#order-content .form-wrapper .order-status {
-  max-width: 280px;
-  width: 100%;
-}
-#order-content .form-wrapper .order-invoice {
-  max-width: 180px;
-  width: 100%;
-}
-#order-content .form-wrapper .order-supplier {
-  max-width: 180px;
-  width: 100%;
-}
-#order-content .form-wrapper .order-origin {
-  max-width: 100px;
-  width: 100%;
-}
-#order-content .form-wrapper .order-type {
-  max-width: 180px;
-  width: 100%;
-}
-#order-content .form-wrapper .order-number {
-  max-width: 140px;
-  width: 100%;
-}
-#order-content .form-wrapper .order-supplier-date {
-  max-width: 140px;
-  width: 100%;
+@media (max-width: 991px) {
+  #order-content .form-wrapper .order-form-group {
+    width: 100% !important;
+  }
 }
 #order-content .status-form-wrapper {
   width: 100%;
@@ -4852,8 +4840,19 @@ body {
   gap: 16px;
   margin-top: 20px;
 }
+@media (max-width: 991px) {
+  #order-content .status-form-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
 #order-content .status-form-wrapper .form-wrapper {
   margin-top: 20px;
+}
+@media (max-width: 991px) {
+  #order-content .status-form-wrapper .form-wrapper {
+    width: 100%;
+  }
 }
 #order-content .status-form-wrapper .status-list {
   max-width: 280px;
@@ -4926,6 +4925,11 @@ body {
 #order-content .status-form-wrapper .status-item .status-icon.status-cancelado {
   background-color: #FF6F6F;
 }
+@media (max-width: 991px) {
+  #order-content .status-form-wrapper .status-form {
+    width: 100%;
+  }
+}
 #order-content label {
   font-weight: 600;
   font-size: 10px;
@@ -4942,7 +4946,7 @@ body {
   outline: none;
   padding: 0 10px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12px;
   color: #5F5F5F;
 }
 #order-content input::-moz-placeholder, #order-content textarea::-moz-placeholder {
@@ -4989,6 +4993,7 @@ body {
   pointer-events: none;
 }
 #order-content .form-wrapper .icon-input {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4998,7 +5003,7 @@ body {
 }
 #order-content .form-wrapper .icon-input .icon {
   width: 48px;
-  height: 48px;
+  height: 43px;
   background-color: #fff;
   display: flex;
   align-items: center;
@@ -5012,6 +5017,12 @@ body {
   width: 100%;
   height: 48px;
   border: none !important;
+  font-size: 12px;
+}
+#order-content .form-wrapper .icon-input input.disabled {
+  background-color: #f4f5f8;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 #order-content .action-buttons {
   display: flex;
@@ -5116,10 +5127,17 @@ body {
   border-radius: 4px;
   background-color: #f4f5f8;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   margin: 15px 0;
   padding: 6px 15px;
+}
+@media (max-width: 767px) {
+  #order-content .order-info {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
 }
 #order-content .order-info span {
   font-weight: 600;
@@ -5136,6 +5154,11 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
+}
+@media (max-width: 767px) {
+  #order-content .order-info .order-reviews {
+    width: 100%;
+  }
 }
 #order-content .order-info .order-reviews span {
   font-weight: 600;
