@@ -1,38 +1,45 @@
-$(document).ready(function() {
+$(document).ready(function () {
     // Adiciona um listener de clique a todos os botões com a classe 'collapse-button'
-    $('.collapse-button').on('click', function() {
+    $(".collapse-button").on("click", function () {
         // Encontra a linha <tr> atual
-        var currentRow = $(this).closest('tr');
+        var currentRow = $(this).closest("tr");
 
         // Encontra a próxima linha <tr> que deve ser a 'collapsable-row'
-        var collapsableRow = currentRow.next('.collapsable-row');
+        var collapsableRow = currentRow.next(".collapsable-row");
 
         if (collapsableRow.length) {
             // Alterna a visibilidade com animação de deslizamento
             collapsableRow.slideToggle(300);
 
             // Alterna uma classe para mudar o ícone, se desejado
-            $(this).toggleClass('active');
+            $(this).toggleClass("active");
         }
     });
-});
 
-$.ajax({
-    url: '/vendedor/add-favorito', // Substitua pelo seu endpoint
-    method: 'GET', // Ou 'POST', 'PUT', 'DELETE' dependendo da sua necessidade
-    data: {
-        // Dados a serem enviados para o servidor, se necessário
-    },
-    success: function(response) {
-        // Lógica para lidar com a resposta do servidor
-        console.log(response);
+    $(".heart").click(function () {
+        let type = $(this).data("type"); // Assuming data-type attribute exists on the heart button
+        let id = $(this).data("id"); // Assuming data-id attribute exists on the heart button
+        let self = this;
 
-        // Exemplo: inserir dados na tabela
-        // var newRow = '<tr><td>' + response.data + '</td></tr>';
-        // $('.your-table').append(newRow);
-    },
-    error: function(error) {
-        // Lógica para lidar com erros
-        console.error(error);
-    }
+        $.ajax({
+            url:
+                type === "Order"
+                    ? "/vendedor/add-favorito"
+                    : "/vendedor/rem-favorito",
+            type: "POST",
+            data: {
+                type: type,
+                id: id,
+                _token: $('meta[name="csrf-token"]').attr("content"), // Include CSRF token
+            },
+            success: function (response) {
+                // Toggle the heart icon (implementation-specific)
+                $(self).toggleClass("favorited"); // Example: Add/remove a 'favorited' class
+            },
+            error: function (error) {
+                console.error("Error favoriting/unfavoriting:", error);
+                // Handle errors (e.g., display an error message)
+            },
+        });
+    });
 });

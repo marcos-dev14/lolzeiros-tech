@@ -138,6 +138,11 @@ class Order extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    public function favoritable()
+    {
+        return $this->morphMany(Favoritable::class, 'favoritable');
+    }
+
     //------------------------------------------------------------------
     // Scopes
     //------------------------------------------------------------------

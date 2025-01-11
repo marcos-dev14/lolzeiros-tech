@@ -8,6 +8,7 @@ use App\Models\BlockedSupplier;
 use App\Models\ClientHasSeller;
 use App\Models\CountryState;
 use App\Models\Opportunity;
+use App\Models\Seller;
 use App\Models\Supplier;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SupplierDiscount;
@@ -53,6 +54,9 @@ class OpportunityController extends BaseController
                 ->route('seller.login')
                 ->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
+        $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
+
+        $favoriteClientsIds = $sellerId->favoriteClients->pluck('id')->toArray();
 
         $supplier = Supplier::where('slug', $supplierSlug)->first();
 
@@ -75,7 +79,7 @@ class OpportunityController extends BaseController
             ])
             ->paginate($perPage, ['*'], 'page', $currentPage);
 
-        $clients = $opportunities->sortByDesc('created_at')->flatMap(function ($opportunity) use ($countryStates, $supplier) {
+        $clients = $opportunities->sortByDesc('created_at')->flatMap(function ($opportunity) use ($countryStates, $supplier, $favoriteClientsIds) {
             $groupName = $opportunity->clientGroup->name ?? null;
             $lastLogin = optional($opportunity->clientGroup->buyer)->last_login;
 
@@ -83,7 +87,7 @@ class OpportunityController extends BaseController
                 ? Carbon::parse($lastLogin)->format('d/m/Y H:i') . 'h (' . Carbon::parse($lastLogin)->diffForHumans() . ')'
                 : null;
 
-            return $opportunity->clientGroup->clients->map(function ($client) use ($groupName, $formattedLastLogin, $countryStates, $supplier, $opportunity) {
+            return $opportunity->clientGroup->clients->map(function ($client) use ($groupName, $formattedLastLogin, $countryStates, $supplier, $opportunity, $favoriteClientsIds) {
                 $mainAddress = $client->getMainAddress();
                 $clientStateCode = $mainAddress?->state?->code;
                 $stateDiscount = $supplier->stateDiscounts()->whereHas('states', function ($query) use ($clientStateCode) {
@@ -106,6 +110,7 @@ class OpportunityController extends BaseController
                 return (object)[
                     'group' => $groupName,
                     'name' => $client->company_name ?? $client->name,
+                    'client_id' => $client->id,
                     'profile' => $client->profile->name ?? null,
                     'document' => $client->document ?? null,
                     'state' => $state ? "{$state} - {$mainAddress->code}" : null,
@@ -120,10 +125,11 @@ class OpportunityController extends BaseController
                         : null,
                     'status' => $client->document_status,
                     'opportunityData' => $opportunity->created_at,
+                    'favorite' => in_array($client->id, $favoriteClientsIds) ? 1 : 0,
+          
                 ];
             });
         });
-
         return view('pages.sellers.opportunities.opportunitiesFromSupplier', compact('clients', 'opportunities', 'seller'));
     }
 

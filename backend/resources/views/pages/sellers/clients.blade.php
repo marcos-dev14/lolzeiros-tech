@@ -10,6 +10,7 @@
 <x-layouts.seller-panel title="Clientes"
     subtitle="Olá <strong>{{ $seller->name ?? 'Wesley Bananas' }}</strong>, aqui estão todos os seus clientes junto à AugeApp."
     icon="icons.users">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <table id="clients-table" class="table">
         <thead>
             <tr>
@@ -70,7 +71,10 @@
                                     <x-icons.contatos></x-icons.contatos>
                                 </button>
 
-                                <button class="heart">
+                                @dd($client)
+
+                                <meta name="csrf-token" content="{{ csrf_token() }}">
+                                <button class="heart" data-type="Client" data-id="{{ $client->id }}">
                                     <x-icons.order-heart></x-icons.order-heart>
                                 </button>
                             </div>
