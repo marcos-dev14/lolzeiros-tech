@@ -103,6 +103,7 @@ class SellerController extends Controller
 
                 return (object) [
                     'group' => $groupName,
+                    'client_id' => $client->id,
                     'name' => $client->company_name ?? $client->name,
                     'profile' => $client->profile->name  ?? null,
                     'suppliers' => $suppliersData,
@@ -172,6 +173,7 @@ class SellerController extends Controller
             return (object) [
                 'code' => $order->code,
                 'order_id' => $order->id,
+                'client_id' => $order->client->id,
                 'client' => $order->client->company_name ?? $order->client->name,
                 'supplier' => $order->supplier->company_name ?? $order->supplier->name ?? null,
                 'state' => $state ? "{$state->name} - {$state->code}" : null,
@@ -291,6 +293,7 @@ class SellerController extends Controller
                     return (object) [
                         'group' => $groupName,
                         'name' => $client->company_name ?? $client->name,
+                        'client_id' => $client->id,
                         'profile' => $client->profile->name ?? null,
                         'suppliers' => $suppliersData,
                         'document' => $client->document ?? null,
