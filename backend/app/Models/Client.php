@@ -157,6 +157,12 @@ class Client extends Model implements Addressable, Bankable, Contactable
         )->with('supplier', 'brand', 'category', 'images');
     }
 
+    public function favoritable()
+    {
+        return $this->morphMany(Favoritable::class, 'favoritable');
+    }
+
+
     //------------------------------------------------------------------
     // Scopes
     //------------------------------------------------------------------

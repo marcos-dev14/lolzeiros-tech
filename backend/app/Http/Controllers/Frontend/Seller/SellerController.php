@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Frontend\Seller;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ClientListCartResource;
 use App\Http\Resources\OrderResource;
+use App\Models\Client;
 use App\Models\ClientHasSeller;
 use App\Models\CountryState;
+use App\Models\Favoritable;
 use App\Models\Order;
 use App\Models\Seller;
 use App\Models\Supplier;
+use App\Services\FavoritableService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SupplierDiscount;
 use Carbon\Carbon;
@@ -17,7 +20,11 @@ use Illuminate\Http\Request;
 
 class SellerController extends Controller
 {
-    public function __construct(private Seller $entityService) {}
+    protected $favoritableService;
+    public function __construct(private Seller $entityService, FavoritableService $favoritableService)
+    {
+        $this->favoritableService = $favoritableService;
+    }
 
     public function clients()
     {
@@ -30,7 +37,11 @@ class SellerController extends Controller
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
-        $clientData = $seller->ClientHasSeller->flatMap(function ($clientHasSeller) use ($seller) {
+        $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
+
+        $favoriteClientsIds = $sellerId->favoriteClients->pluck('id')->toArray();
+
+        $clientData = $seller->ClientHasSeller->flatMap(function ($clientHasSeller) use ($seller, $favoriteClientsIds) {
             $groupName = $clientHasSeller->clientGroup->name ?? null;
             $supplierName = $clientHasSeller->supplier->company_name
                 ?? $clientHasSeller->supplier->name
@@ -38,7 +49,7 @@ class SellerController extends Controller
 
             $lastLogin = Carbon::parse($clientHasSeller->clientGroup->buyer->last_login);
 
-            return $clientHasSeller->clientGroup->clients->map(function ($client) use ($groupName, $supplierName, $lastLogin, $clientHasSeller, $seller) {
+            return $clientHasSeller->clientGroup->clients->map(function ($client) use ($favoriteClientsIds, $groupName, $supplierName, $lastLogin, $clientHasSeller, $seller) {
                 $suppliers = Supplier::query()
                     ->where('is_available', 1)
                     ->where('suspend_sales', 0)
@@ -71,7 +82,7 @@ class SellerController extends Controller
                         ->last();
 
                     $lastBuy = $lastOrder?->created_at ?? null;
-                    return [
+                    return (object) [
                         'name' => $supplier['name'],
                         ...($isSellerClient && ($isSellerClient->seller_id == $seller->id || $isSellerClient->seller_id === null) ?
                             [
@@ -92,9 +103,10 @@ class SellerController extends Controller
 
                 return (object) [
                     'group' => $groupName,
+                    'client_id' => $client->id,
                     'name' => $client->company_name ?? $client->name,
                     'profile' => $client->profile->name  ?? null,
-                    'supplies' => $suppliersData,
+                    'suppliers' => $suppliersData,
                     'document' => $client->document ?? null,
                     'state' => $state ? "{$state->name} - {$state->code}" : null,
                     'register' => Carbon::parse($client->auge_register)->format('d/m/Y H:i'),
@@ -103,6 +115,7 @@ class SellerController extends Controller
                         ? (new ClientListCartResource($client->cart))->created_at
                         : null,
                     'status' => $client->document_status,
+                    'favorite' => in_array($client->id, $favoriteClientsIds) ? 1 : 0,
                 ];
             });
         });
@@ -128,36 +141,55 @@ class SellerController extends Controller
             'clients' => $clientDataPaginated,
         ]);
     }
-
-
-
     public function orders()
     {
         $seller = auth()->guard('seller')->user();
-
+    
         if (!$seller) {
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
-
-        $orders = Order::where('seller_id', $seller->id)
-            ->orderBy('created_at', 'desc')
+    
+        $seller = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
+        $favoriteOrderIds = $seller->favoriteOrders->pluck('id')->toArray();
+    
+        $filters = request()->all();
+        unset($filters['page']);
+        $query = Order::where('seller_id', $seller->id);
+    
+        $query = $this->applyFiltersOrders($query, $filters);
+    
+        $orders = $query->orderBy('created_at', 'desc')
             ->with('supplier', 'client')
             ->paginate(10)
             ->withQueryString();
+            
 
-        $orders->getCollection()->transform(function ($order) {
+        $orders->getCollection()->transform(function ($order) use ($favoriteOrderIds): object {
+            $mainAddress = $order->client->getMainAddress();
+            $state = $mainAddress?->country_state_id
+                ? CountryState::find($mainAddress->country_state_id)
+                : null;
+
             return (object) [
                 'code' => $order->code,
-                'cliente' => $order->client->company_name ?? $order->client->name,
-                'fornecedor' => $order->supplier->company_name ?? $order->supplier->name ?? null,
-                'data' => Carbon::parse($order->created_at)->format('d/m/Y H:i'),
-                'valor' => $order->getTotalValue(),
+                'order_id' => $order->id,
+                'client_id' => $order->client->id,
+                'client' => $order->client->company_name ?? $order->client->name,
+                'supplier' => $order->supplier->company_name ?? $order->supplier->name ?? null,
+                'state' => $state ? "{$state->name} - {$state->code}" : null,
+                'date' => Carbon::parse($order->created_at)->format('d/m/Y'),
+                'value' => $order->getTotalValue(),
                 'status' => $order->getCurrentStatusAttribute(),
+                'favorite' => in_array($order->id, $favoriteOrderIds) ? 1 : 0,
+
             ];
         });
 
         return view('pages.sellers.orders', compact('seller', 'orders'));
     }
+    
+
+
 
     public function order($orderCode)
     {
@@ -184,103 +216,270 @@ class SellerController extends Controller
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
-        $clients = $seller->ClientHasSeller->map(function ($clientHasSeller) use ($seller) {
-            $lastClient = null;
-            $clientLastOrder = null;
+        $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
 
-            if ($clientHasSeller->clientGroup && $clientHasSeller->clientGroup->clients) {
-                $clientHasSeller->clientGroup->clients->each(function ($client) use (&$clientLastOrder, &$lastClient) {
-                    $lastOrder = $client->orders->last();
-                    if ($lastOrder && (!$clientLastOrder || $lastOrder->created_at > $clientLastOrder->created_at)) {
-                        $clientLastOrder = $lastOrder;
-                        $lastClient = $client;
-                    }
-                });
-            }
+        $favoriteClientsIds = $sellerId->favoriteClients->pluck('id')->toArray();
 
-            if (!$lastClient) {
-                $lastClient = $clientHasSeller->clientGroup->clients->first();
-            }
+        $clientData = $seller->ClientHasSeller->flatMap(function ($clientHasSeller) use ($seller, $favoriteClientsIds) {
+            $groupName = $clientHasSeller->clientGroup->name ?? null;
+            $supplierName = $clientHasSeller->supplier->company_name
+                ?? $clientHasSeller->supplier->name
+                ?? null;
 
-            $mainAddress = $lastClient?->getMainAddress();
-            $state = $mainAddress?->country_state_id
-                ? CountryState::find($mainAddress->country_state_id)
+            $lastLogin = optional($clientHasSeller->clientGroup->buyer)->last_login
+                ? Carbon::parse($clientHasSeller->clientGroup->buyer->last_login)
                 : null;
 
-            $lastLogin = Carbon::parse($clientHasSeller->clientGroup->buyer->last_login ?? now());
-            $suppliers = Supplier::query()
-                ->where('is_available', 1)
-                ->where('suspend_sales', 0)
-                ->where('service_migrate', 'Ativado')
-                ->has('installmentRules')
-                ->get();
+            return $clientHasSeller->clientGroup->clients->map(function ($client) use ($groupName, $supplierName, $lastLogin, $clientHasSeller, $seller, $favoriteClientsIds) {
+                $suppliers = Supplier::query()
+                    ->where('is_available', 1)
+                    ->where('suspend_sales', 0)
+                    ->where('service_migrate', 'Ativado')
+                    ->whereHas('installmentRules')
+                    ->whereHas('ClientHasSeller', function ($query) use ($seller, $client) {
+                        $query->where('seller_id', $seller->id)
+                            ->where('client_group_id', $client->group->id);
+                    })
+                    ->get();
 
-            $supplierData = $suppliers->map(function ($supplier) use ($clientHasSeller, $seller, $lastClient) {
-                $isSellerClient = ClientHasSeller::where('client_group_id', $clientHasSeller->clientGroup->id)
-                    ->where('supplier_id', $supplier['id'])
-                    ->first();
+                $suppliersData = $suppliers->map(function ($supplier) use ($client, $clientHasSeller, $seller) {
+                    $isSellerClient = ClientHasSeller::query()
+                        ->where('client_group_id', $clientHasSeller->clientGroup->id)
+                        ->where('supplier_id', $supplier->id)
+                        ->first();
 
-                $mainAddress = $lastClient?->getMainAddress();
-                $clientStateCode = $mainAddress?->state?->code;
+                    $mainAddress = $client->getMainAddress();
+                    $clientStateCode = $mainAddress?->state?->code;
 
-                $stateDiscountFromClientState = $supplier->stateDiscounts()->whereHas('states', function ($query) use ($clientStateCode) {
-                    $query->where('code', $clientStateCode);
-                })->first();
+                    $stateDiscount = $supplier->stateDiscounts()
+                        ->whereHas('states', fn($query) => $query->where('code', $clientStateCode))
+                        ->first();
 
-                $icmsDiscount = 0;
-                if ($stateDiscountFromClientState instanceof SupplierDiscount) {
-                    $icmsDiscount += floatval($stateDiscountFromClientState->discount_value);
-                    $icmsDiscount += floatval($stateDiscountFromClientState->additional_value);
+                    $icmsDiscount = optional($stateDiscount)->discount_value + optional($stateDiscount)->additional_value;
+
+                    $profileDiscount = $supplier->profileDiscounts
+                        ->where('client_profile_id', $client->client_profile_id)
+                        ->first();
+
+                    $lastOrder = $client->orders
+                        ->where('product_supplier_id', $supplier->id)
+                        ->last();
+
+                    $cart = $client->cart?->instances && $client->cart->instances->where('product_supplier_id', $supplier->id)->isNotEmpty()
+                        ? $client->cart->instances->where('product_supplier_id', $supplier->id)->first()
+                        : null;
+
+                    if ($cart) {
+                        $cartCreatedAt = Carbon::parse($cart->created_at);
+                        $daysSinceCartCreated = $cartCreatedAt->diffInDays(Carbon::now());
+                        $value = $cart->products->sum(fn($product) => (float)$product->subtotal_with_ipi);
+
+                        return (object) [
+                            'name' => $supplier->company_name ?? $supplier->name,
+                            'value' => $value,
+                            'day' => $cartCreatedAt->format('d/m/Y'),
+                            'days' => $daysSinceCartCreated,
+                            'last_buy' => $lastOrder?->created_at,
+                        ];
+                    }
+                })->filter();
+
+                $mainAddress = $client->getMainAddress();
+                $state = $mainAddress?->country_state_id
+                    ? CountryState::find($mainAddress->country_state_id)
+                    : null;
+
+                if ($suppliersData->count() > 0) {
+                    return (object) [
+                        'group' => $groupName,
+                        'name' => $client->company_name ?? $client->name,
+                        'client_id' => $client->id,
+                        'profile' => $client->profile->name ?? null,
+                        'suppliers' => $suppliersData,
+                        'document' => $client->document ?? null,
+                        'state' => $state ? "{$state->name} - {$state->code}" : null,
+                        'register' => optional($client->auge_register)->format('d/m/Y H:i'),
+                        'lastLogin' => $lastLogin ? $lastLogin->format('d/m/Y H:i') . 'h (' . $lastLogin->diffForHumans() . ')' : null,
+                        'cartAbandoned' => $client->cart?->products->count() ? (new ClientListCartResource($client->cart))->created_at : null,
+                        'status' => $client->document_status,
+                        'favorite' => in_array($client->id, $favoriteClientsIds) ? 1 : 0,
+                    ];
                 }
-
-                $clientProfile = $lastClient?->client_profile_id;
-                $supplierDiscounts = $supplier->profileDiscounts;
-                $discountToClientProfile = $supplierDiscounts->where('client_profile_id', $clientProfile)->first();
-
-                return [
-                    'name' => $supplier['name'],
-                    ...($isSellerClient && ($isSellerClient->seller_id == $seller->id || $isSellerClient->seller_id === null) ?
-                        [
-                            'icms' => $icmsDiscount,
-                            'profileDiscount' => $discountToClientProfile->discount_value ?? 0,
-                            'commercial_commission' => $discountToClientProfile->commercial_commission ?? 0,
-                            'fractional_box' => $supplier['fractional_box'] ?? 0
-                        ] : []),
-                ];
-            });
-
-            $hasProductsInCart = $lastClient?->cart?->products?->count() > 0;
-            return $hasProductsInCart ? [
-                'name' => $clientHasSeller->clientGroup->company_name ?? $clientHasSeller->clientGroup->name,
-                'cnpj' => $lastClient?->document,
-                'suppliers' => $supplierData,
-                'state' => $state ? "{$state->name} - {$state->code}" : null,
-                'register' => Carbon::parse($lastClient?->auge_register)->format('d/m/Y H:i'),
-                'lastLogin' => $lastLogin->format('d/m/Y H:i') . 'h (' . $lastLogin->diffForHumans() . ')',
-                'cartAbandoned' => $lastClient?->cart ? (new ClientListCartResource($lastClient?->cart))->created_at : null,
-                'status' => $lastClient?->document_status,
-                'clients' => $clientHasSeller->clientGroup->clients,
-            ] : null;
-        })->filter();
-
-        $clientData = $clients->groupBy(function ($client) {
-            return $client['name'] . '-' . $client['cnpj'];
-        })->map(function ($group) {
-            $mergedSuppliers = $group->flatMap(function ($client) {
-                return $client['suppliers'];
-            })->unique('name')->values()->toArray();
-
-            $firstClient = $group->first();
-            $firstClient['suppliers'] = $mergedSuppliers;
-
-            return $firstClient;
+            })->filter();
         });
 
-        $paginatedData = collect($clientData->values())->paginate(10);
-        dd($paginatedData);
+        $clientData = $clientData->groupBy(fn($client) => $client->document . '-' . $client->group)
+            ->map(fn($group) => $group->first());
+
+        $currentPage = request()->get('page', 1);
+        $perPage = 15;
+
+        $clientDataPaginated = new LengthAwarePaginator(
+            $clientData->forPage($currentPage, $perPage),
+            $clientData->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url()]
+        );
+
         return view('pages.sellers.abandonedCarts', [
             'seller' => $seller,
-            'clientData' => $paginatedData,
+            'clients' => $clientDataPaginated,
         ]);
     }
+
+    public function addFavoritable(Request $request)
+    {
+        $seller = auth()->guard('seller')->user()?->load([
+            'ClientHasSeller.clientGroup',
+            'ClientHasSeller.supplier',
+        ]);
+
+        if (!$seller) {
+            return response()->json([
+                'error' => 'Você precisa estar autenticado para acessar esta página.'
+            ], 401);
+        }
+
+        $result = $this->favoritableService->addFavoritable(
+            $request->type,
+            $request->id,
+            $seller->id
+        );
+
+        if (!$result['success']) {
+            return response()->json([
+                'error' => $result['message'],
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $result['message'],
+        ], 200);
+    }
+
+    public function removeFavoritable(Request $request)
+    {
+        $seller = auth()->guard('seller')->user();
+
+        if (!$seller) {
+            return response()->json([
+                'error' => 'Você precisa estar autenticado para acessar esta página.'
+            ], 401);
+        }
+
+        $result = $this->favoritableService->removeFavoritable(
+            $request->type,
+            $request->id,
+            $seller->id
+        );
+
+        if (!$result['success']) {
+            return response()->json([
+                'error' => $result['message'],
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $result['message'],
+        ], 200);
+    }
+
+    private function applyFiltersOrders($query, $filters)
+    {
+        foreach ($filters as $key => $value) {
+            if ($key === 'favoritables' && $value == 1) {
+                $seller = auth()->guard('seller')->user();
+                if ($seller) {
+                    $favoriteOrderIds = Seller::find($seller->id)
+                        ->favoriteOrders
+                        ->pluck('id')
+                        ->toArray();
+    
+                    $query->whereIn('id', $favoriteOrderIds);
+                }
+                continue;
+            }
+    
+            if (str_contains($key, 'by_')) {
+                $relation = str_replace('by_', '', $key);
+                $query->where("{$relation}_id", $value);
+                continue;
+            }
+    
+            if ($key == 'date') {
+                $date = explode('|', $value);
+                $startDate = str_replace('start:', null, $date[0]);
+                $endDate = str_replace('end:', null, $date[1]);
+    
+                $startDate = !empty($startDate) ? Carbon::parse($startDate)->startOfDay() : null;
+                $endDate = !empty($endDate) ? Carbon::parse($endDate)->endOfDay() : null;
+    
+                if ($startDate && $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                } elseif ($startDate) {
+                    $query->where('created_at', '>=', $startDate);
+                } else {
+                    $query->where('created_at', '<=', $endDate);
+                }
+    
+                continue;
+            }
+    
+            if ($key === 'code') {
+                if (str_contains($value, 'codigo:')) {
+                    $value = trim(str_replace('codigo:', '', $value));
+                    $query->where('code', 'like', "%{$value}%");
+                    continue;
+                }
+    
+                if (str_contains($value, 'cliente:')) {
+                    $value = trim(str_replace('cliente:', '', $value));
+                    $query->whereHas('client', function ($q) use ($value) {
+                        $q->where('name', 'like', "%{$value}%")
+                            ->orWhere('company_name', 'like', "%{$value}%");
+                    });
+                    continue;
+                }
+    
+                if (str_contains($value, 'fornecedor:')) {
+                    $value = trim(str_replace('fornecedor:', '', $value));
+                    $query->whereHas('supplier', function ($q) use ($value) {
+                        $q->where('name', 'like', "%{$value}%")
+                            ->orWhere('company_name', 'like', "%{$value}%");
+                    });
+                    continue;
+                }
+    
+                /* if (str_contains($value, 'cidade:')) {
+                    $value = trim(str_replace('cidade:', '', $value));
+                    $query->whereHas('client.address', function ($q) use ($value) {
+                        $q->where('city', 'like', "%{$value}%");
+                    });
+                    continue;
+                } */
+
+                if (str_contains($value, 'estado:')) {
+                    $value = trim(str_replace('estado:', '', $value));
+                    $query->whereHas('client', function ($q) use ($value) {
+                        $q->whereHas('addresses', function ($subQuery) use ($value) {
+                            $subQuery->where('address_type_id', 1)  // Filtra pelo tipo de endereço principal
+                                ->whereHas('state', function ($subQuery2) use ($value) {
+                                    $subQuery2->where('name', 'like', "%{$value}%")
+                                        ->orWhere('code', 'like', "%{$value}%");
+                                });
+                        });
+                    });
+                    continue;
+                }
+            }
+    
+            $query->where($key, $value);
+        }
+    
+        return $query;
+    }
+    
 }
