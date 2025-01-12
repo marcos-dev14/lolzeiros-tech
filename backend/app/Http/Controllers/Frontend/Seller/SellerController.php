@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\Seller;
 use App\Models\Supplier;
 use App\Services\FavoritableService;
+use App\Services\SellerService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SupplierDiscount;
 use Carbon\Carbon;
@@ -21,8 +22,7 @@ use Illuminate\Http\Request;
 class SellerController extends Controller
 {
     protected $favoritableService;
-    public function __construct(private Seller $entityService, FavoritableService $favoritableService)
-    {
+    public function __construct(private SellerService $entityService, FavoritableService $favoritableService) {
         $this->favoritableService = $favoritableService;
     }
 
@@ -32,6 +32,9 @@ class SellerController extends Controller
         //     'ClientHasSeller.clientGroup',
         //     'ClientHasSeller.supplier',
         // ]);
+
+        $seller = $this->entityService->getBy(3, 'id');
+
 
         if (!$seller) {
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
@@ -143,26 +146,27 @@ class SellerController extends Controller
     }
     public function orders()
     {
-        $seller = auth()->guard('seller')->user();
-    
+        $seller = $this->entityService->getBy(3, 'id');
+        // $seller = auth()->guard('seller')->user();
+
         if (!$seller) {
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
-    
+
         $seller = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
         $favoriteOrderIds = $seller->favoriteOrders->pluck('id')->toArray();
-    
+
         $filters = request()->all();
         unset($filters['page']);
         $query = Order::where('seller_id', $seller->id);
-    
+
         $query = $this->applyFiltersOrders($query, $filters);
-    
+
         $orders = $query->orderBy('created_at', 'desc')
             ->with('supplier', 'client')
             ->paginate(10)
             ->withQueryString();
-            
+
 
         $orders->getCollection()->transform(function ($order) use ($favoriteOrderIds): object {
             $mainAddress = $order->client->getMainAddress();
@@ -187,7 +191,7 @@ class SellerController extends Controller
 
         return view('pages.sellers.orders', compact('seller', 'orders'));
     }
-    
+
 
 
 
@@ -397,26 +401,26 @@ class SellerController extends Controller
                         ->favoriteOrders
                         ->pluck('id')
                         ->toArray();
-    
+
                     $query->whereIn('id', $favoriteOrderIds);
                 }
                 continue;
             }
-    
+
             if (str_contains($key, 'by_')) {
                 $relation = str_replace('by_', '', $key);
                 $query->where("{$relation}_id", $value);
                 continue;
             }
-    
+
             if ($key == 'date') {
                 $date = explode('|', $value);
                 $startDate = str_replace('start:', null, $date[0]);
                 $endDate = str_replace('end:', null, $date[1]);
-    
+
                 $startDate = !empty($startDate) ? Carbon::parse($startDate)->startOfDay() : null;
                 $endDate = !empty($endDate) ? Carbon::parse($endDate)->endOfDay() : null;
-    
+
                 if ($startDate && $endDate) {
                     $query->whereBetween('created_at', [$startDate, $endDate]);
                 } elseif ($startDate) {
@@ -424,17 +428,17 @@ class SellerController extends Controller
                 } else {
                     $query->where('created_at', '<=', $endDate);
                 }
-    
+
                 continue;
             }
-    
+
             if ($key === 'code') {
                 if (str_contains($value, 'codigo:')) {
                     $value = trim(str_replace('codigo:', '', $value));
                     $query->where('code', 'like', "%{$value}%");
                     continue;
                 }
-    
+
                 if (str_contains($value, 'cliente:')) {
                     $value = trim(str_replace('cliente:', '', $value));
                     $query->whereHas('client', function ($q) use ($value) {
@@ -443,7 +447,7 @@ class SellerController extends Controller
                     });
                     continue;
                 }
-    
+
                 if (str_contains($value, 'fornecedor:')) {
                     $value = trim(str_replace('fornecedor:', '', $value));
                     $query->whereHas('supplier', function ($q) use ($value) {
@@ -452,7 +456,7 @@ class SellerController extends Controller
                     });
                     continue;
                 }
-    
+
                 /* if (str_contains($value, 'cidade:')) {
                     $value = trim(str_replace('cidade:', '', $value));
                     $query->whereHas('client.address', function ($q) use ($value) {
@@ -475,11 +479,11 @@ class SellerController extends Controller
                     continue;
                 }
             }
-    
+
             $query->where($key, $value);
         }
-    
+
         return $query;
     }
-    
+
 }
