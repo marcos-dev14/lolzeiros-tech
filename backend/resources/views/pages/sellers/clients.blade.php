@@ -68,7 +68,9 @@
                                 </button>
 
                                 <button class="contacts">
-                                    <x-icons.contatos></x-icons.contatos>
+                                    <x-icons.contatos><a href="{{ route('seller.showSellerLoginForm', ['email' => $seller->email, 'client_id' => $client->client_id]) }}">
+                                        Contatos
+                                    </a></x-icons.contatos>
                                 </button>
 
                                 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -93,7 +95,7 @@
                                                     {{ $supplier->name }}
                                                 </h4>
 
-                                                @if ($supplier->last_buy)
+                                                @if (isset($supplier->last_buy) && $supplier->last_buy)
                                                     <div style="border-radius: 0.3rem; border: 1px solid #ECEFF6; padding: 0.5rem; display: flex; gap: 0.5rem;">
                                                         <x-icons.calendar style="color: #3699CF;"></x-icons.calendar>
                                                         <strong>Última compra:</strong>
@@ -103,13 +105,12 @@
                                                     <span>Nenhuma compra realizada</span>
                                                 @endif
                                             </div>
-
-                                            <div class="label-list-supplier">
+                                          {{--   <div class="label-list-supplier">
                                                 <label>Desconto perfil cliente <span>{{ $supplier->profile_discount }}</span></label>
                                                 <label>ICMS entre estados <span>{{ $supplier->icms }}</span></label>
                                                 <label>Caixa fracionada <span>{{ $supplier->fractional_box === 1 ? "Permite" : "Não Permite" }}</span></label>
                                                 <label>Comissão comercial <span>{{ $supplier->commercial_commission }}</span></label>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                     @endforeach
                                 </div>

@@ -28,16 +28,13 @@ class SellerController extends Controller
 
     public function clients()
     {
-        // $seller = auth()->guard('seller')->user()?->load([
-        //     'ClientHasSeller.clientGroup',
-        //     'ClientHasSeller.supplier',
-        // ]);
-
-        $seller = $this->entityService->getBy(3, 'id');
-
+         $seller = auth()->guard('seller')->user()?->load([
+             'ClientHasSeller.clientGroup',
+             'ClientHasSeller.supplier',
+         ]);
 
         if (!$seller) {
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
         $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
@@ -146,11 +143,11 @@ class SellerController extends Controller
     }
     public function orders()
     {
-        $seller = $this->entityService->getBy(3, 'id');
-        // $seller = auth()->guard('seller')->user();
+        //$seller = $this->entityService->getBy(3, 'id');
+         $seller = auth()->guard('seller')->user();
 
         if (!$seller) {
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
         $seller = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
@@ -200,7 +197,7 @@ class SellerController extends Controller
         $seller = auth()->guard('seller')->user();
 
         if (!$seller) {
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
         $order = Order::where('code', $orderCode)->first();
@@ -217,7 +214,7 @@ class SellerController extends Controller
         ]);
 
         if (!$seller) {
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
         $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);

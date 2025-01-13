@@ -15,6 +15,8 @@ class HomeController extends BaseController
 
     public function index(): View
     {
+        $sellerId = session()->get('logged_in_seller_id');
+
         $brands = Brand::select(['id', 'name', 'slug', 'image'])
             ->whereNotNull('image')
             ->whereHas('availableProducts')
