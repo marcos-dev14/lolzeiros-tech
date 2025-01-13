@@ -856,3 +856,26 @@ tabs.forEach(tab => {
     }
     });
 });
+
+
+// Get elements
+const openModalBtn = document.getElementById('open-modal-btn');
+const modal = document.getElementById('modal-overlay');
+const closeBtn = document.getElementById('close-modal');
+
+// Open modal
+openModalBtn.addEventListener('click', () => {
+    modal.style.display = 'block';
+});
+
+// Close modal
+closeBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+});
+
+// Close modal when clicking outside of modal content
+window.addEventListener('click', (event) => {
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+});

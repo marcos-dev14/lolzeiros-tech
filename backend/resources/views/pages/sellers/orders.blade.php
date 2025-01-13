@@ -9,6 +9,11 @@
     icon="icons.bag-seller"
 >
     <div class="container">
+        <div class="search-container">
+            <input type="text" placeholder="Digite aqui..." class="search-input">
+            <button class="filter-button" id="open-modal-btn">Filtro</button>
+        </div>
+
         <div class="table-wrapper">
             <table id="orders-table" class="table">
                 <thead>
@@ -131,6 +136,86 @@
                     </ul>
                 </div>
             @endif
+        </div>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Filtro de Vendas</h2>
+                <button class="close-button" id="close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="filter-group">
+                    <div class="filter-item">
+                        <label>Representada</label>
+                        <select>
+                            <option>Selecione</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>Vendedor</label>
+                        <select>
+                            <option>Selecione</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-item">
+                        <label>Grupo</label>
+                        <select>
+                            <option>Selecione</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>Status do Pedido</label>
+                        <select>
+                            <option>Selecione</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-item">
+                        <label>Período Inicial</label>
+
+                        <div class="icon-input">
+                            <div class="icon">
+                                <x-icons.order-calendar></x-icons.order-calendar>
+                            </div>
+
+                            <input type="texDigite aqui..." value="" />
+                        </div>
+                    </div>
+                    <div class="filter-item">
+                        <label>Período Final</label>
+
+                        <div class="icon-input">
+                            <div class="icon">
+                                <x-icons.order-calendar></x-icons.order-calendar>
+                            </div>
+
+                            <input type="texDigite aqui..." value="" />
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-item">
+                        <label>Estados</label>
+                        <select>
+                            <option>Selecione</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>Cidade</label>
+                        <select>
+                            <option>Selecione</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="apply-button">Filtrar Vendas</button>
+            </div>
         </div>
     </div>
 </x-layouts.seller-panel>
