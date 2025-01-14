@@ -9,8 +9,8 @@
             </button>
         </div>
     @else
-        @foreach ($commercialList as $commercial)
-            <div class="boxes-list">
+    <div class="boxes-list">
+            @foreach ($commercialList as $commercial)
                 <button type="button">
                     <x-icons.hand-shake></x-icons.hand-shake>
                     @if ($commercial->seller)
@@ -34,7 +34,7 @@
                         @endif
                     @endif
                 </button>
-            </div>
-        @endforeach
+            @endforeach
+        </div>
     @endif
 </x-layouts.buyer-panel>
