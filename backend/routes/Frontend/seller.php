@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['as' => 'seller.'],function () {
     require 'AuthSeller/auth.php';
 
-    Route::middleware('auth:seller')->prefix('vendedor')->group(function () {
+    Route::prefix('vendedor')->group(function () {
         Route::get('/dashboard', [SellerController::class, 'clients'])->name('dashboard');
         Route::get('/carrinhos-abandonados', [SellerController::class, 'abandonedCarts'])->name('abandonedCarts');
         Route::get('/pedidos', [SellerController::class, 'orders'])->name('orders');

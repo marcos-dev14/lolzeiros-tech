@@ -7,6 +7,7 @@ use App\Http\Requests\Frontend\OrderRequest;
 use App\Models\Address;
 use App\Models\CartInstance;
 use App\Models\Client;
+use App\Models\ClientHasSeller;
 use App\Models\Coupon;
 use App\Models\CouponStatus;
 use App\Models\Order;
@@ -48,51 +49,66 @@ class OrderController extends BaseController
     {
         try {
             DB::beginTransaction();
-    
+
             $client = $this->_sessionManager->getSessionSelectedClient();
             $client = Client::with('group', 'buyer', 'seller')->find($client['id']);
-    
+
             $cart = $this->_cartService->getFullCart($client, ['uuid', '=', $request->instance]);
             $instance = $cart->instances->first();
-    
+            $sellerId = session('logged_in_seller_id');
+
+            if ($sellerId) {
+                $validateSeller = ClientHasSeller::where([
+                    ['client_group_id', $client->group->id],
+                    ['seller_id', $sellerId],
+                    ['supplier_id', $instance->supplier->id],
+                ])->exists();
+
+                if (!$validateSeller) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Você não é o representante deste cliente neste fornecedor!',
+                    ]);
+                }
+            }
             if ($cart->client_id !== $client->id || $instance->cart_id !== $cart->id) {
                 abort(401);
             }
-    
+
             $installmentRule = SupplierInstallmentRule::find($request->installment_rule_id);
-            $supplier = $instance->supplier; 
+            $supplier = $instance->supplier;
             $shippingCompany = $this->getShippingCompanyFromRequest($request);
-    
+
             $icmsValue = $this->getIcmsValue($client?->main_address, $supplier);
-    
+
             $profileDiscountPercentage = $this->getProfileDiscountPercentage(
-                $supplier, 
+                $supplier,
                 $client->client_profile_id
             );
             $paymentPromotionTermStart = $this->getPaymentPromotion(
-                $supplier, 
+                $supplier,
                 $instance->products_sum_subtotal_with_ipi
             );
-    
+
             $subtotalWithDiscount = $instance->products_sum_subtotal;
             $subtotalIpiWithDiscount = $instance->products_sum_subtotal_with_ipi;
             $couponDiscountValue = 0;
             $couponDiscountValueIpi = 0;
-            
+
             if ($request->couponHidden !== null) {
                 $coupon = Coupon::whereNull('used')->where('name', $request->couponHidden)->first();
-    
+
                 if (!$coupon) {
                     return redirect()->back()->with('error', 'Oops! Cupom inválido ou usado.')->withInput();
                 }
-    
+
                 $this->getDiscountedSubtotal($coupon, $instance, $installmentRule);
                 $this->getDiscountedSubtotal($coupon, $instance, $installmentRule, withIpi: true);
-    
+
                 $discountPercentage = $coupon->discount_porc / 100;
                 $couponDiscountValue = $subtotalWithDiscount * $discountPercentage;
                 $couponDiscountValueIpi = $subtotalIpiWithDiscount * $discountPercentage;
-    
+
                 $coupon->update();
                 $couponStatus = new CouponStatus();
                 $couponStatus->client_id = $client->id;
@@ -100,11 +116,11 @@ class OrderController extends BaseController
                 $couponStatus->name = 'usado';
                 $couponStatus->save();
             }
-    
+
             $productsSubtotal = $instance->products_sum_subtotal;
             $productsSubtotalWithIpi = $instance->products_sum_subtotal_with_ipi;
             $installmentRulePercentage = $installmentRule?->discount_value ?? $installmentRule?->additional_value ?? 0.0;
-            
+
             if ($installmentRule?->discount_value) {
                 $installmentRuleValue = $productsSubtotal * ($installmentRulePercentage / 100);
                 $installmentRuleValueIpi = $productsSubtotalWithIpi * ($installmentRulePercentage / 100);
@@ -112,8 +128,8 @@ class OrderController extends BaseController
                 $installmentRuleValue = -$productsSubtotal * ($installmentRulePercentage / 100);
                 $installmentRuleValueIpi = -$productsSubtotalWithIpi * ($installmentRulePercentage / 100);
             }
-    
-           $order = $this->_orderService->store(
+
+            $order = $this->_orderService->store(
                 products: $instance->products,
                 coupon: $coupon ?? null,
                 subtotal: $instance->products_sum_subtotal,
@@ -134,20 +150,19 @@ class OrderController extends BaseController
                 installmentRule: $installmentRule,
                 shippingCompany: $shippingCompany
             );
-    
         } catch (Exception $exception) {
             DB::rollBack();
             return redirect()->back()->with('error', $exception->getMessage())->withInput();
         }
-    
+
         DB::commit();
         $instance->delete();
-    
+
         $redirectRoute = (!empty($client->cart?->instances) && count($client->cart?->instances) > 1) ? 'cart.index' : 'buyer.congratulations';
-    
+
         return view('pages.buyer.congratulations', compact('client', 'order'));
     }
-    
+
 
     protected function getShippingCompanyFromRequest(Request $request): ?ShippingCompany
     {
@@ -316,7 +331,7 @@ class OrderController extends BaseController
     public function orderExport($code)
     {
 
-        $order = Order::with('products','coupon')->where('code', $code)->first();
+        $order = Order::with('products', 'coupon')->where('code', $code)->first();
 
         if (!$order) {
             return response()->json(['error' => 'Pedido não encontrado'], 404);
@@ -446,18 +461,16 @@ class OrderController extends BaseController
 
             $client = $this->_sessionManager->getSessionSelectedClient();
             $client = Client::with('seller')->find($client['id']);
-    
+
 
             if (!$client) {
                 return redirect()->back()->with('error', 'Cliente não encontrado');
             }
-    
+
 
             return view('pages.buyer.congratulations', compact('client'));
-    
         } catch (Exception $exception) {
             return redirect()->back()->with('error', $exception->getMessage());
         }
-    }    
-    
+    }
 }

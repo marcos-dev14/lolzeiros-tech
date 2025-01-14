@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\Seller;
 use App\Models\Supplier;
 use App\Services\FavoritableService;
+use App\Services\SellerService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SupplierDiscount;
 use Carbon\Carbon;
@@ -21,20 +22,19 @@ use Illuminate\Http\Request;
 class SellerController extends Controller
 {
     protected $favoritableService;
-    public function __construct(private Seller $entityService, FavoritableService $favoritableService)
-    {
+    public function __construct(private SellerService $entityService, FavoritableService $favoritableService) {
         $this->favoritableService = $favoritableService;
     }
 
     public function clients()
     {
-        $seller = auth()->guard('seller')->user()?->load([
-            'ClientHasSeller.clientGroup',
-            'ClientHasSeller.supplier',
-        ]);
+         $seller = auth()->guard('seller')->user()?->load([
+             'ClientHasSeller.clientGroup',
+             'ClientHasSeller.supplier',
+         ]);
 
         if (!$seller) {
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
         $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
@@ -103,6 +103,7 @@ class SellerController extends Controller
 
                 return (object) [
                     'group' => $groupName,
+                    'client_id' => $client->id,
                     'name' => $client->company_name ?? $client->name,
                     'profile' => $client->profile->name  ?? null,
                     'suppliers' => $suppliersData,
@@ -142,26 +143,27 @@ class SellerController extends Controller
     }
     public function orders()
     {
-        $seller = auth()->guard('seller')->user();
-    
+        //$seller = $this->entityService->getBy(3, 'id');
+         $seller = auth()->guard('seller')->user();
+
         if (!$seller) {
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
-    
+
         $seller = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
         $favoriteOrderIds = $seller->favoriteOrders->pluck('id')->toArray();
-    
+
         $filters = request()->all();
         unset($filters['page']);
         $query = Order::where('seller_id', $seller->id);
-    
+
         $query = $this->applyFiltersOrders($query, $filters);
-    
+
         $orders = $query->orderBy('created_at', 'desc')
             ->with('supplier', 'client')
             ->paginate(10)
             ->withQueryString();
-            
+
 
         $orders->getCollection()->transform(function ($order) use ($favoriteOrderIds): object {
             $mainAddress = $order->client->getMainAddress();
@@ -172,6 +174,7 @@ class SellerController extends Controller
             return (object) [
                 'code' => $order->code,
                 'order_id' => $order->id,
+                'client_id' => $order->client->id,
                 'client' => $order->client->company_name ?? $order->client->name,
                 'supplier' => $order->supplier->company_name ?? $order->supplier->name ?? null,
                 'state' => $state ? "{$state->name} - {$state->code}" : null,
@@ -185,7 +188,7 @@ class SellerController extends Controller
 
         return view('pages.sellers.orders', compact('seller', 'orders'));
     }
-    
+
 
 
 
@@ -194,7 +197,7 @@ class SellerController extends Controller
         $seller = auth()->guard('seller')->user();
 
         if (!$seller) {
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
         $order = Order::where('code', $orderCode)->first();
@@ -211,7 +214,7 @@ class SellerController extends Controller
         ]);
 
         if (!$seller) {
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
         $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
@@ -291,6 +294,7 @@ class SellerController extends Controller
                     return (object) [
                         'group' => $groupName,
                         'name' => $client->company_name ?? $client->name,
+                        'client_id' => $client->id,
                         'profile' => $client->profile->name ?? null,
                         'suppliers' => $suppliersData,
                         'document' => $client->document ?? null,
@@ -394,26 +398,26 @@ class SellerController extends Controller
                         ->favoriteOrders
                         ->pluck('id')
                         ->toArray();
-    
+
                     $query->whereIn('id', $favoriteOrderIds);
                 }
                 continue;
             }
-    
+
             if (str_contains($key, 'by_')) {
                 $relation = str_replace('by_', '', $key);
                 $query->where("{$relation}_id", $value);
                 continue;
             }
-    
+
             if ($key == 'date') {
                 $date = explode('|', $value);
                 $startDate = str_replace('start:', null, $date[0]);
                 $endDate = str_replace('end:', null, $date[1]);
-    
+
                 $startDate = !empty($startDate) ? Carbon::parse($startDate)->startOfDay() : null;
                 $endDate = !empty($endDate) ? Carbon::parse($endDate)->endOfDay() : null;
-    
+
                 if ($startDate && $endDate) {
                     $query->whereBetween('created_at', [$startDate, $endDate]);
                 } elseif ($startDate) {
@@ -421,17 +425,17 @@ class SellerController extends Controller
                 } else {
                     $query->where('created_at', '<=', $endDate);
                 }
-    
+
                 continue;
             }
-    
+
             if ($key === 'code') {
                 if (str_contains($value, 'codigo:')) {
                     $value = trim(str_replace('codigo:', '', $value));
                     $query->where('code', 'like', "%{$value}%");
                     continue;
                 }
-    
+
                 if (str_contains($value, 'cliente:')) {
                     $value = trim(str_replace('cliente:', '', $value));
                     $query->whereHas('client', function ($q) use ($value) {
@@ -440,7 +444,7 @@ class SellerController extends Controller
                     });
                     continue;
                 }
-    
+
                 if (str_contains($value, 'fornecedor:')) {
                     $value = trim(str_replace('fornecedor:', '', $value));
                     $query->whereHas('supplier', function ($q) use ($value) {
@@ -449,7 +453,7 @@ class SellerController extends Controller
                     });
                     continue;
                 }
-    
+
                 /* if (str_contains($value, 'cidade:')) {
                     $value = trim(str_replace('cidade:', '', $value));
                     $query->whereHas('client.address', function ($q) use ($value) {
@@ -472,11 +476,11 @@ class SellerController extends Controller
                     continue;
                 }
             }
-    
+
             $query->where($key, $value);
         }
-    
+
         return $query;
     }
-    
+
 }

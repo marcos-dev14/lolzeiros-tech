@@ -110,6 +110,7 @@ class OpportunityController extends BaseController
                 return (object)[
                     'group' => $groupName,
                     'name' => $client->company_name ?? $client->name,
+                    'client_id' => $client->id,
                     'profile' => $client->profile->name ?? null,
                     'document' => $client->document ?? null,
                     'state' => $state ? "{$state} - {$mainAddress->code}" : null,

@@ -10,6 +10,7 @@ mix.js('resources/js/app.js', 'public/js')
     .sass('resources/scss/pages/buyer-panel.scss', 'public/css')
     .sass('resources/scss/pages/seller-panel.scss', 'public/css')
     .sass('resources/scss/pages/orders-seller.scss', 'public/css')
+    .sass('resources/scss/pages/clients-seller.scss', 'public/css')
     .sass('resources/scss/pages/order-seller.scss', 'public/css')
     .sass('resources/scss/pages/register.scss', 'public/css')
     .sass('resources/scss/pages/blog-posts.scss', 'public/css')
@@ -64,6 +65,11 @@ scripts([
     'resources/js/frontend/initialize.js',
     'resources/js/frontend/pages/cart.js'
 ], 'public/js/cart.js').version();
+
+scripts([
+    'resources/js/frontend/initialize.js',
+    'resources/js/frontend/pages/seller.js'
+], 'public/js/seller.js').version();
 
 scripts([
     'resources/js/frontend/initialize.js',
