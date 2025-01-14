@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Models\CartInstance;
 use App\Models\Client;
+use App\Models\ClientHasSeller;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Seller;
 use App\Models\ShippingCompany;
 use App\Models\Supplier;
 use App\Services\CartService;
@@ -65,6 +67,23 @@ class CartController extends BaseController
         $product = Product::with('supplier')->find($request->product);
 
         try {
+            $sellerId = session('logged_in_seller_id');
+
+            if ($sellerId) {
+                $validateSeller = ClientHasSeller::where([
+                    ['client_group_id', $client->group->id],
+                    ['seller_id', $sellerId],
+                    ['supplier_id', $product->supplier->id],
+                ])->exists();
+
+                if (!$validateSeller) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Você não é o representante deste cliente neste fornecedor!',
+                    ]);
+                }
+            }
+
             $instance = $this->_cartService->addOrUpdateToCart(
                 $client,
                 $product,
@@ -130,9 +149,7 @@ class CartController extends BaseController
                 } else {
                     $log[] = $productList->title . ' Produto não existe ou indisponivel';
                 }
-
             }
-
         } else {
             $log[] = 'Pedido invalido!';
         }
