@@ -27,7 +27,7 @@
                         <div class="order-form-group" style="width: 140px">
                             <label>Fornecedor</label>
 
-                            <input type="text" value="{{ $order->supplier->company_name ?? $order->supplier->name }}" disabled>
+                            <input type="text" value="{{ $order->supplier?->company_name ?? $order->supplier?->name }}" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 100px">
@@ -97,13 +97,13 @@
                                 <div class="order-form-group" style="width: 170px">
                                     <label>Transportadora</label>
 
-                                    <input id="order-quantity" class="order-quantity" value="{{ $order->shippingCompany->company_name ?? $order->shippingCompany->name }}" disabled />
+                                    <input id="order-quantity" class="order-quantity" value="{{ $order->shippingCompany?->company_name ?? $order->shippingCompany?->name }}" disabled />
                                 </div>
 
                                 <div class="order-form-group" style="width: 180px">
                                     <label>CNPJ Da Transportadora</label>
 
-                                    <input id="order-cnpj-transporter" class="order-cnpj-transporter" value="{{ $order->shippingCompany->document }}" disabled />
+                                    <input id="order-cnpj-transporter" class="order-cnpj-transporter" value="{{ $order->shippingCompany?->document }}" disabled />
                                 </div>
 
                                 <div class="order-form-group" style="width: 264px">
@@ -442,7 +442,10 @@
                         @foreach ($order->products as $product)
                             <tr>
                                 <td>
-                                    <img src="" alt="Produto 1">
+                                    <img
+                                        src="{{ $product->thumb }}"
+                                        alt="{{ $product->title }}"
+                                    >
                                     <span>{{ $product->title }}</span>
                                 </td>
                                 <td>{{ $product->reference }}</td>
