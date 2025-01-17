@@ -22,16 +22,17 @@ use Illuminate\Http\Request;
 class SellerController extends Controller
 {
     protected $favoritableService;
-    public function __construct(private SellerService $entityService, FavoritableService $favoritableService) {
+    public function __construct(private SellerService $entityService, FavoritableService $favoritableService)
+    {
         $this->favoritableService = $favoritableService;
     }
 
     public function clients()
     {
-         $seller = auth()->guard('seller')->user()?->load([
-             'ClientHasSeller.clientGroup',
-             'ClientHasSeller.supplier',
-         ]);
+        $seller = auth()->guard('seller')->user()?->load([
+            'ClientHasSeller.clientGroup',
+            'ClientHasSeller.supplier',
+        ]);
 
         if (!$seller) {
             return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
@@ -144,7 +145,7 @@ class SellerController extends Controller
     public function orders()
     {
         //$seller = $this->entityService->getBy(3, 'id');
-         $seller = auth()->guard('seller')->user();
+        $seller = auth()->guard('seller')->user();
 
         if (!$seller) {
             return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
@@ -200,9 +201,24 @@ class SellerController extends Controller
             return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
 
-        $order = Order::where('code', $orderCode)->first();
+        $order = Order::with(
+            'supplier',
+            'coupon',
+            'clientGroup',
+            'seller',
+            'buyer',
+            'client',
+            'shippingCompany',
+            'products',
+            'orderStatuses',
+            'saleChannel',
+            'type',
+            'addressState',
+            'invoice',
+            'invoices'
+        )->where('code', $orderCode)->first();
         $order = new OrderResource($order);
-
+        
         return view('pages.sellers.order', compact('seller', 'order'));
     }
 
@@ -482,5 +498,4 @@ class SellerController extends Controller
 
         return $query;
     }
-
 }
