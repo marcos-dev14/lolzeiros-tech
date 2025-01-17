@@ -10,8 +10,6 @@
         </div>
     @else
     <div class="boxes-list">
-
-        {{-- @dd($commercialList) --}}
             @foreach ($commercialList as $commercial)
                 @if ($commercial->seller)
                     <button type="button">

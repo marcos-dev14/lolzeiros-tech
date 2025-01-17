@@ -23,7 +23,7 @@
                         <div class="order-form-group" style="width: 140px">
                             <label>Faturamento estimado</label>
 
-                            <input type="text" disabled>
+                            <input type="text" value="{{ $order->lead_time }}" disabled>
                         </div>
 
                         <div class="order-form-group" style="width: 140px">
@@ -45,7 +45,7 @@
                         </div>
 
                         <div class="order-form-group" style="width: 140px">
-                            <label>N° Pedido Fornecedor</label>
+                            <label>N° Pedido Fornecedor (Verificar com Joseph)</label>
 
                             <input type="text" disabled>
                         </div>
@@ -53,7 +53,7 @@
                         <div class="order-form-group" style="width: 140px">
                             <label>Data pedido Fornecedor</label>
 
-                            <input type="tex-date" value="{{ $order->formated_date }}" disabled>
+                            <input type="tex-date" value="{{ $order->external_created_at }}" disabled>
                         </div>
                     </div>
 
@@ -77,11 +77,11 @@
                                 <div class="order-form-group" style="width: 170px">
                                     <label>Transportadora</label>
 
-                                    <input id="order-quantity" class="order-quantity" disabled />
+                                    <input id="order-quantity" class="order-quantity" value="{{ $order->shipping_company }}" disabled />
                                 </div>
 
                                 <div class="order-form-group" style="width: 180px">
-                                    <label>CNPJ Da Transportadora</label>
+                                    <label>CNPJ Da Transportadora (Verificar com Joseph)</label>
 
                                     <input id="order-cnpj-transporter" class="order-cnpj-transporter" disabled />
                                 </div>
@@ -89,19 +89,19 @@
                                 <div class="order-form-group" style="width: 264px">
                                     <label>Quantidade</label>
 
-                                    <input id="order-quantity" class="order-quantity" disabled />
+                                    <input id="order-quantity" class="order-quantity" value="{{ $order->quantities }}" disabled />
                                 </div>
 
                                 <div class="order-form-group" style="width: 100px">
                                     <label>Caixa fracionada</label>
 
-                                    <input id="order-quantity" value="{{ $order->fractional_box === 1 ? 'Sim' : 'Não' }}" class="order-quantity" disabled />
+                                    <input id="order-quantity" value="{{ $order->fractional_box === 'Sim' ? 'Sim' : 'Não' }}" class="order-quantity" disabled />
                                 </div>
                             </div>
 
                             <div class="form-wrapper">
                                 <div class="order-form-group" style="width: 180px">
-                                    <label>Perfil do Cliente</label>
+                                    <label>Perfil do Cliente (Verificar com Joseph)</label>
 
                                     <input id="order-customer-profile" class="order-customer-profile" disabled />
                                 </div>
@@ -119,7 +119,7 @@
                                 </div>
 
                                 <div class="order-form-group" style="width: 180px">
-                                    <label>Desconto de ICMS entre estados</label>
+                                    <label>Desconto de ICMS entre estados (Verificar com Joseph)</label>
 
                                     <div class="icon-input">
                                         <div class="icon">
@@ -131,7 +131,7 @@
                                 </div>
 
                                 <div class="order-form-group" style="width: 180px">
-                                    <label>Desconto financeiro</label>
+                                    <label>Desconto financeiro (Verificar com Joseph)</label>
 
                                     <div class="icon-input">
                                         <div class="icon">
@@ -152,7 +152,7 @@
                                             <x-icons.money></x-icons.money>
                                         </div>
 
-                                        <input type="texDigite aqui..." value="{{ $order->installment_discount_value }}" disabled />
+                                        <input type="texDigite aqui..." value="{{ $order->total_value }}" disabled />
                                     </div>
                                 </div>
 
