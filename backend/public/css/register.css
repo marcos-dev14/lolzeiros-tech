@@ -4957,6 +4957,7 @@ a.bt.bt-inverse:hover, button.bt.bt-inverse:hover {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: all 0.4s ease-in;
 }
 #login-register .login-div .tabs .tab p {
   font-weight: 600;

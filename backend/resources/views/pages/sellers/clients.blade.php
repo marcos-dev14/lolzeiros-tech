@@ -68,13 +68,18 @@
                                 </button>
 
                                 <button class="contacts">
-                                    <x-icons.contatos><a href="{{ route('seller.showSellerLoginForm', ['email' => $seller->email, 'client_id' => $client->client_id]) }}">
-                                        Contatos
-                                    </a></x-icons.contatos>
+                                    <a
+                                        href="{{ route('seller.showSellerLoginForm', ['email' => $seller->email, 'client_id' => $client->client_id]) }}">
+                                        <x-icons.contatos>
+                                            Contatos
+                                        </x-icons.contatos>
+                                    </a>
                                 </button>
 
                                 <meta name="csrf-token" content="{{ csrf_token() }}">
-                                <button class="heart {{ $client->favorite === 1 ? 'favorited' : '' }}" data-type="Client" data-id="{{ $client->client_id }}" data-favorite="{{ $client->favorite }}">
+                                <button class="heart {{ $client->favorite === 1 ? 'favorited' : '' }}"
+                                    data-type="Client" data-id="{{ $client->client_id }}"
+                                    data-favorite="{{ $client->favorite }}">
                                     <x-icons.heart></x-icons.heart>
                                 </button>
                             </div>
@@ -96,7 +101,8 @@
                                                 </h4>
 
                                                 @if (isset($supplier->last_buy) && $supplier->last_buy)
-                                                    <div style="border-radius: 0.3rem; border: 1px solid #ECEFF6; padding: 0.5rem; display: flex; gap: 0.5rem;">
+                                                    <div
+                                                        style="border-radius: 0.3rem; border: 1px solid #ECEFF6; padding: 0.5rem; display: flex; gap: 0.5rem;">
                                                         <x-icons.calendar style="color: #3699CF;"></x-icons.calendar>
                                                         <strong>Última compra:</strong>
                                                         {{ $supplier->last_buy }}
@@ -105,12 +111,32 @@
                                                     <span>Nenhuma compra realizada</span>
                                                 @endif
                                             </div>
-                                          {{--   <div class="label-list-supplier">
-                                                <label>Desconto perfil cliente <span>{{ $supplier->profile_discount }}</span></label>
-                                                <label>ICMS entre estados <span>{{ $supplier->icms }}</span></label>
-                                                <label>Caixa fracionada <span>{{ $supplier->fractional_box === 1 ? "Permite" : "Não Permite" }}</span></label>
-                                                <label>Comissão comercial <span>{{ $supplier->commercial_commission }}</span></label>
-                                            </div> --}}
+
+                                            <div class="label-list-supplier">
+                                                @if (isset($supplier->profile_discount))
+                                                    @if ($supplier->profile_discount > 0)
+                                                        <label>Desconto perfil cliente
+                                                            <span>{{ $supplier->profile_discount }}</span></label>
+                                                    @else
+                                                        <label>Desconto perfil cliente <span>Não possui</span></label>
+                                                    @endif
+                                                @endif
+
+                                                @if (isset($supplier->icms))
+                                                    <label>ICMS entre estados
+                                                        <span>{{ $supplier->icms }}</span></label>
+                                                @endif
+
+                                                @if (isset($supplier->fractional_box))
+                                                    <label>Caixa fracionada
+                                                        <span>{{ $supplier->fractional_box === 1 ? 'Permite' : 'Não Permite' }}</span></label>
+                                                @endif
+
+                                                @if (isset($supplier->commercial_commission))
+                                                    <label>Comissão comercial
+                                                        <span>{{ $supplier->commercial_commission }}</span></label>
+                                                @endif
+                                            </div>
                                         </div>
                                     @endforeach
                                 </div>

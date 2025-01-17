@@ -35,11 +35,34 @@ $(document).ready(function () {
             success: function (response) {
                 // Toggle the heart icon (implementation-specific)
                 $(self).toggleClass("favorited"); // Example: Add/remove a 'favorited' class
+                $(self).data("favorite", isFavorited === 0 ? 1 : 0);
             },
             error: function (error) {
                 console.error("Error favoritando/desfavoritando:", error);
                 // Handle errors (e.g., display an error message)
             },
         });
+    });
+
+    // Get elements
+    const openModalBtn = document.getElementById("open-modal-btn");
+    const modal = document.getElementById("modal-overlay");
+    const closeBtn = document.getElementById("close-modal");
+
+    // Open modal
+    openModalBtn.addEventListener("click", () => {
+        modal.style.display = "block";
+    });
+
+    // Close modal
+    closeBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+
+    // Close modal when clicking outside of modal content
+    window.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
     });
 });
