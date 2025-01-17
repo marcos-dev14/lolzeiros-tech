@@ -3,6 +3,10 @@
     <link rel="stylesheet" href="{{ mix('css/plugins.css') }}">
 @endpush
 
+@push('scripts')
+    <script src="{{ mix('js/seller.js') }}"></script>
+@endpush
+
 <x-layouts.seller-panel
     title="Meus Pedidos"
     subtitle="Olá <strong>{{ $seller->name }}</strong> aqui estão todas suas vendas junta a AugeApp."
@@ -88,8 +92,11 @@
                                             <x-icons.printer></x-icons.printer>
                                         </button>
 
-                                        <button class="heart" data-id="{{ $order->order_id }}" onclick="addToFavorites(this)">
-                                            <x-icons.order-heart></x-icons.order-heart>
+                                        <meta name="csrf-token" content="{{ csrf_token() }}">
+                                        <button class="heart {{ $order->favorite === 1 ? 'favorited' : '' }}"
+                                            data-type="Order" data-id="{{ $order->order_id }}"
+                                            data-favorite="{{ $order->favorite }}">
+                                            <x-icons.heart></x-icons.heart>
                                         </button>
                                     </div>
                                 </td>

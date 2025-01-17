@@ -183,7 +183,6 @@ class SellerController extends Controller
                 'value' => $order->getTotalValue(),
                 'status' => $order->getCurrentStatusAttribute(),
                 'favorite' => in_array($order->id, $favoriteOrderIds) ? 1 : 0,
-
             ];
         });
 

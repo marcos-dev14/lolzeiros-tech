@@ -3,10 +3,6 @@
     <link rel="stylesheet" href="{{ mix('css/plugins.css') }}">
 @endpush
 
-@push('scripts')
-    <script src="{{ mix('js/seller.js') }}"></script>
-@endpush
-
 <x-layouts.seller-panel
     title="Meus Pedidos"
     subtitle="Resumo do Pedido | {{ $order->code }} | {{ $order->created_at }}"

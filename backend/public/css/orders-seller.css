@@ -5015,6 +5015,45 @@ body {
 #orders-table td:last-child {
   border-right: none;
 }
+#orders-table td .action-buttons {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+#orders-table td .action-buttons button, #orders-table td .action-buttons a {
+  width: 25px;
+  height: 25px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#orders-table td .action-buttons button.collapse-button svg, #orders-table td .action-buttons a.collapse-button svg {
+  color: #3699CF;
+}
+#orders-table td .action-buttons button.collapse-button.active, #orders-table td .action-buttons a.collapse-button.active {
+  transform: rotate(180deg); /* Gira o ícone quando ativo */
+  transition: transform 0.5s ease;
+}
+#orders-table td .action-buttons button.contacts, #orders-table td .action-buttons a.contacts {
+  background-color: #EDEFF7;
+}
+#orders-table td .action-buttons button.contacts svg, #orders-table td .action-buttons a.contacts svg {
+  color: #6A6A6A;
+}
+#orders-table td .action-buttons button.heart svg path, #orders-table td .action-buttons a.heart svg path {
+  fill: transparent;
+}
+#orders-table td .action-buttons button.heart.favorited svg path, #orders-table td .action-buttons a.heart.favorited svg path {
+  fill: black;
+}
 #orders-table .formatted-input {
   display: flex;
   height: 28px;
