@@ -9,32 +9,36 @@
             </button>
         </div>
     @else
-        @foreach ($commercialList as $commercial)
-            <div class="boxes-list">
-                <button type="button">
-                    <x-icons.hand-shake></x-icons.hand-shake>
-                    @if ($commercial->seller)
-                        @if ($commercial->seller->name)
-                            <span class="h5">{{ $commercial->seller->name }}</span>
-                        @endif
+    <div class="boxes-list">
 
-                        @if ($commercial->seller->email)
-                            <span class="p">{{ $commercial->seller->email }}</span>
-                        @endif
+        {{-- @dd($commercialList) --}}
+            @foreach ($commercialList as $commercial)
+                @if ($commercial->seller)
+                    <button type="button">
+                        <x-icons.hand-shake></x-icons.hand-shake>
+                        @if ($commercial->seller)
+                            @if ($commercial->seller->name)
+                                <span class="h5">{{ $commercial->seller->name }}</span>
+                            @endif
 
-                        @if ($commercial->seller->phone)
-                            <span class="p">{{ $commercial->seller->phone }}</span>
-                        @endif
+                            @if ($commercial->seller->email)
+                                <span class="p">{{ $commercial->seller->email }}</span>
+                            @endif
 
-                        @if ($commercial->seller->cellphone)
-                            <span class="p">{{ $commercial->seller->cellphone }}</span>
+                            @if ($commercial->seller->phone)
+                                <span class="p">{{ $commercial->seller->phone }}</span>
+                            @endif
+
+                            @if ($commercial->seller->cellphone)
+                                <span class="p">{{ $commercial->seller->cellphone }}</span>
+                            @endif
+                            @if ($commercial->supplier->name)
+                                <span class="p">{{ $commercial->supplier->name }}</span>
+                            @endif
                         @endif
-                        @if ($commercial->supplier->name)
-                            <span class="p">{{ $commercial->supplier->name }}</span>
-                        @endif
-                    @endif
-                </button>
-            </div>
-        @endforeach
+                    </button>
+                @endif
+            @endforeach
+        </div>
     @endif
 </x-layouts.buyer-panel>

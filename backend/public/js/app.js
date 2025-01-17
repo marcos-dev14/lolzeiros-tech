@@ -17280,6 +17280,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/scss/pages/order-seller.scss":
+/*!************************************************!*\
+  !*** ./resources/scss/pages/order-seller.scss ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./resources/scss/pages/register.scss":
 /*!********************************************!*\
   !*** ./resources/scss/pages/register.scss ***!
@@ -17545,6 +17558,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 			"css/blog-post": 0,
 /******/ 			"css/blog-posts": 0,
 /******/ 			"css/register": 0,
+/******/ 			"css/order-seller": 0,
 /******/ 			"css/clients-seller": 0,
 /******/ 			"css/orders-seller": 0
 /******/ 		};
@@ -17596,20 +17610,21 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/js/app.js")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/home.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/products.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/product-details.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/buyer-panel.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/seller-panel.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/orders-seller.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/clients-seller.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/register.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/blog-posts.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/blog-post.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/pages-industry.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/cart.scss")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pdf/invoice.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/js/app.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/home.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/products.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/product-details.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/buyer-panel.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/seller-panel.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/orders-seller.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/clients-seller.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/order-seller.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/register.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/blog-posts.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/blog-post.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/pages-industry.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pages/cart.scss")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/seller-panel","css/buyer-panel","css/product-details","css/products","css/home","css/invoice","css/cart","css/pages-industry","css/blog-post","css/blog-posts","css/register","css/order-seller","css/clients-seller","css/orders-seller"], () => (__webpack_require__("./resources/scss/pdf/invoice.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

@@ -67,9 +67,11 @@
                                     <x-icons.collapse></x-icons.collapse>
                                 </button>
 
-                                <a class="contacts" href="{{ route('seller.showSellerLoginForm', ['email' => $seller->email, 'client_id' => $client->client_id]) }}">
-                                    <x-icons.contatos></x-icons.contatos>
-                                </a>
+                                <button class="contacts">
+                                    <x-icons.contatos><a href="{{ route('seller.showSellerLoginForm', ['email' => $seller->email, 'client_id' => $client->client_id]) }}">
+                                        Contatos
+                                    </a></x-icons.contatos>
+                                </button>
 
                                 <meta name="csrf-token" content="{{ csrf_token() }}">
                                 <button class="heart {{ $client->favorite === 1 ? 'favorited' : '' }}"
@@ -95,9 +97,8 @@
                                                     {{ $supplier->name }}
                                                 </h4>
 
-                                                @if (isset($supplier->last_buy))
-                                                    <div
-                                                        style="border-radius: 0.3rem; border: 1px solid #ECEFF6; padding: 0.5rem; display: flex; gap: 0.5rem;">
+                                                @if (isset($supplier->last_buy) && $supplier->last_buy)
+                                                    <div style="border-radius: 0.3rem; border: 1px solid #ECEFF6; padding: 0.5rem; display: flex; gap: 0.5rem;">
                                                         <x-icons.calendar style="color: #3699CF;"></x-icons.calendar>
                                                         <strong>Última compra:</strong>
                                                         {{ $supplier->last_buy }}

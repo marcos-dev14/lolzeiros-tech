@@ -73,15 +73,27 @@
                         <div class="panel-box @if(!isset($title)) bg-transparent @endif">
                             @if(isset($title))
                                 <div class="panel-header">
-                                    <h2 id="page-title">
-                                        @if(isset($icon))
-                                            <x-dynamic-component :component="$icon"></x-dynamic-component>
-                                        @endif
+                                    <div class="panel-top">
+                                        <h2 id="page-title">
+                                            @if(isset($icon))
+                                                <x-dynamic-component :component="$icon"></x-dynamic-component>
+                                            @endif
 
-                                        {{ $title }}
-                                    </h2>
-                                    @if(isset($subtitle))
-                                        <p>{!! $subtitle !!}</p>
+                                            {{ $title }}
+                                        </h2>
+                                        @if(isset($subtitle))
+                                            <p>{!! $subtitle !!}</p>
+                                        @endif
+                                    </div>
+
+                                    @if(isset($backButton))
+                                        <div class="painel-action">
+                                            <a href="{{ $backButton }}" class="back-button">
+                                                <x-icons.arrow-back></x-icons.arrow-back>
+
+                                                <p>Voltar</p>
+                                            </a>
+                                        </div>
                                     @endif
                                 </div>
                             @endif
