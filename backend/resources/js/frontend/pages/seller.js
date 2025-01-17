@@ -35,6 +35,7 @@ $(document).ready(function () {
             success: function (response) {
                 // Toggle the heart icon (implementation-specific)
                 $(self).toggleClass("favorited"); // Example: Add/remove a 'favorited' class
+                $(self).data("favorite", isFavorited === 0 ? 1 : 0);
             },
             error: function (error) {
                 console.error("Error favoritando/desfavoritando:", error);
