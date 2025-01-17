@@ -7,9 +7,9 @@
     <script src="{{ mix('js/seller.js') }}"></script>
 @endpush
 
-<x-layouts.seller-panel title="Clientes"
-    subtitle="Olá <strong>{{ $seller->name ?? 'Wesley Bananas' }}</strong>, aqui estão todos os seus clientes junto à AugeApp."
-    icon="icons.users">
+<x-layouts.seller-panel title="Carrinhos Abandonados"
+    subtitle="Olá <strong>{{ $seller->name }}</strong>, aqui estão os carrinhos abandonados dos seus clientes."
+    icon="icons.shopping-cart">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <table id="clients-table" class="table">
         <thead>
@@ -69,7 +69,12 @@
                                 </button>
 
                                 <button class="contacts">
-                                    <x-icons.contatos></x-icons.contatos>
+                                    <a
+                                        href="{{ route('seller.showSellerLoginForm', ['email' => $seller->email, 'client_id' => $client->client_id]) }}">
+                                        <x-icons.contatos>
+                                            Contatos
+                                        </x-icons.contatos>
+                                    </a>
                                 </button>
 
                                 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -81,6 +86,7 @@
                             </div>
                         </td>
                     </tr>
+                    {{-- @dd($client->suppliers) --}}
                     <tr class="collapsable-row" style="display: none;">
                         <td colspan="9"
                             style= "width: 100%;background-color: #F4F5F8; padding: 1.25rem 0.625rem 0.625rem 0.75rem; box-sizing: border-box;">
@@ -109,28 +115,19 @@
                                             </div>
 
                                             <div class="label-list-supplier">
-                                                @if (isset($supplier->profile_discount))
-                                                    @if ($supplier->profile_discount > 0)
-                                                        <label>Desconto perfil cliente
-                                                            <span>{{ $supplier->profile_discount }}</span></label>
-                                                    @else
-                                                        <label>Desconto perfil cliente <span>Não possui</span></label>
-                                                    @endif
+                                                @if (isset($supplier->days))
+                                                    <label>Dias no carrinho:
+                                                        <span>{{ $supplier->days }}</span></label>
                                                 @endif
 
-                                                @if (isset($supplier->icms))
-                                                    <label>ICMS entre estados
-                                                        <span>{{ $supplier->icms }}</span></label>
+                                                @if (isset($supplier->day))
+                                                    <label>Data do carrinho:
+                                                        <span>{{ $supplier->day }}</span></label>
                                                 @endif
 
-                                                @if (isset($supplier->fractional_box))
-                                                    <label>Caixa fracionada
-                                                        <span>{{ $supplier->fractional_box === 1 ? 'Permite' : 'Não Permite' }}</span></label>
-                                                @endif
-
-                                                @if (isset($supplier->commercial_commission))
-                                                    <label>Comissão comercial
-                                                        <span>{{ $supplier->commercial_commission }}</span></label>
+                                                @if (isset($supplier->value))
+                                                    <label>Valor do Carrinho:
+                                                        <span>R${{ formatMoney($supplier->value) }}</span></label>
                                                 @endif
                                             </div>
                                         </div>
