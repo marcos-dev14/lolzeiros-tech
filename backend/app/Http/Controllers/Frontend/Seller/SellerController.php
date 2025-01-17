@@ -207,9 +207,10 @@ class SellerController extends Controller
             'clientGroup',
             'seller',
             'buyer',
-            'client',
+            'client.profile',
+            'client.pdvType',
             'shippingCompany',
-            'products',
+            'products.product.images',
             'orderStatuses',
             'saleChannel',
             'type',
@@ -218,7 +219,7 @@ class SellerController extends Controller
             'invoices'
         )->where('code', $orderCode)->first();
         $order = new OrderResource($order);
-        
+
         return view('pages.sellers.order', compact('seller', 'order'));
     }
 
