@@ -48,6 +48,10 @@ class AuthController extends Controller
             return redirect()->route('buyer.clients');
         }
 
+        if (auth()->guard('seller')->user()) {
+            return redirect()->route('seller.dashboard');
+        }
+
         $clientPdvs = ClientPdv::orderBy('name')->pluck('name', 'id');
 
         return view('pages.register', compact('clientPdvs'));
