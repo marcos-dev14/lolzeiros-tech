@@ -9,6 +9,7 @@
 
 <x-layouts.seller-panel title="Carrinhos Abandonados"
     subtitle="Olá <strong>{{ $seller->name }}</strong>, aqui estão os carrinhos abandonados dos seus clientes."
+    comercial="{{$seller->name}}"
     icon="icons.shopping-cart">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <table id="clients-table" class="table">

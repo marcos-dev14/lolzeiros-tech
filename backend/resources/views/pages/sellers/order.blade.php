@@ -7,6 +7,7 @@
     title="Meus Pedidos"
     subtitle="Resumo do Pedido | {{ $order->code }} | {{ $order->created_at }}"
     icon="icons.bag-seller"
+    comercial="{{$seller->name}}"
     backButton="{{ route('seller.orders') }}"
 >
     <div class="container">

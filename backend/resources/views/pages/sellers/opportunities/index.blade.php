@@ -1,5 +1,6 @@
 <x-layouts.seller-panel title="Oportunidades"
     subtitle="Olá <strong>{{ $seller->name ?? 'Wesley Bananas' }}</strong> aqui estão todas oportunidades disponiveis pra você arrasar com a AugeApp."
+    comercial="{{$seller->name}}"
     icon="icons.users">
     <div class="container">
         <table class="table">

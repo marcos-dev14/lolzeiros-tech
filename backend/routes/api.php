@@ -77,7 +77,12 @@ use App\Http\Controllers\Api\VCardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('vcard/{name}', [VCardController::class, 'index'])->name('vcard');
-
+Route::group(['prefix' => 'clients'], function () {
+    Route::apiResource('groups', ClientGroupController::class);
+    Route::apiResource('profiles', ClientProfileController::class, ['except' => ['show']]);
+    Route::apiResource('pdvs', ClientPdvController::class, ['except' => ['show']]);
+    Route::apiResource('origins', ClientOriginController::class, ['except' => ['show']]);
+});
 Route::post('login', [AuthController::class, 'login'])->name('login');
 
 Route::get('country_states', [CountryStateController::class, 'index'])->name('country_states');
@@ -171,12 +176,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api.auth']], function () {
     Route::get('regions', fn() => collect([]));
     Route::apiResource('blocking_rules', BlockingRuleController::class, ['except' => ['show']]);
     Route::apiResource('buyers', BuyerController::class);
-    Route::group(['prefix' => 'clients'], function () {
-        Route::apiResource('groups', ClientGroupController::class);
-        Route::apiResource('profiles', ClientProfileController::class, ['except' => ['show']]);
-        Route::apiResource('pdvs', ClientPdvController::class, ['except' => ['show']]);
-        Route::apiResource('origins', ClientOriginController::class, ['except' => ['show']]);
-    });
+
 
     Route::apiResource('clients', ClientController::class);
     Route::group(['prefix' => 'clients/{client}', 'as' => 'clients.'], function () {

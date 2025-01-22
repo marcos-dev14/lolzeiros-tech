@@ -20,14 +20,14 @@ class ClientGroupController extends BaseController
         $builder = $this->_model->orderBy('name');
 
         $builder->withCount('clients')->with('buyer');
-
+        
         if (!empty($request->search)) {
             $searchTerms = $request->search;
             $builder->where(function ($query) use ($searchTerms) {
                 $query->where('name', 'like', "%$searchTerms%");
             });
         }
-
+        
         $hasBuyer = $request->has_buyer;
         if (!empty($hasBuyer)) {
             if ($hasBuyer === 'true') {
@@ -36,17 +36,18 @@ class ClientGroupController extends BaseController
                 $builder->whereDoesntHave('buyer');
             }
         }
-
+        
         if ($request->paginated == 'true') {
             $items = $builder->paginate(50);
-
+            
             return $this->sendResponse(
                 ClientGroupResource::collection($items)->response()->getData(),
                 'Grupos encontrados.'
             );
         }
-
+        
         $items = $builder->get();
+        // dd($items);
 
         return $this->sendResponse(ClientGroupResource::collection($items), 'Grupos encontrados.');
     }
