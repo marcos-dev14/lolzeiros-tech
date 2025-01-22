@@ -10,6 +10,7 @@
 <x-layouts.seller-panel
     title="Meus Pedidos"
     subtitle="Olá <strong>{{ $seller->name }}</strong> aqui estão todas suas vendas junta a AugeApp."
+    comercial="{{$seller->name}}"
     icon="icons.bag-seller"
 >
     <div class="container">

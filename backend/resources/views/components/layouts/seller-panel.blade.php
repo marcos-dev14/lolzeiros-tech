@@ -26,7 +26,7 @@
 
                                             <div class="text">
                                                 <p>Comercial</p>
-                                                <span>Thiago Lopes</span>
+                                                <span>{{$comercial}}</span>
                                             </div>
                                        </a>
                                     </li>
@@ -60,10 +60,20 @@
                                         <a href="{{ route('seller.opportunities.index') }}" title="Clientes Disponíveis" data-toggle="tooltip">
                                             <x-icons.users></x-icons.users>
 
-                                            <p>Clientes Disponíveis</p>
-                                            <span>(1000)</span>
+                                            <p>Oportunidades</p>
+                                            {{-- <span>(100)</span> --}}
                                         </a>
                                     </li>
+                                    <li class="nav-item nav-client @if(url()->current() == route('seller.opportunities.index')) active @endif">
+                                        <a href="{{ route('seller.opportunities.index') }}" title="Clientes Disponíveis" data-toggle="tooltip">
+                                            <x-icons.users></x-icons.users>
+
+                                            <p>Clientes Disponíveis</p>
+                                            {{-- <span>(100)</span> --}}
+
+                                        </a>
+                                    </li>
+
                                 </ul>
                             </div>
                         </aside>

@@ -33,7 +33,6 @@ class ClientGroupResource extends JsonResource
                 'email' => $buyer->email,
             ];
         }
-
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -45,7 +44,7 @@ class ClientGroupResource extends JsonResource
                 $supplier = $ClientHasSeller->supplier;
 
                 return [
-                    'seller_id' => $seller?->id, // Utilizando o operador de null-safe
+                    'seller_id' => $seller?->id,
                     'seller_name' => $seller?->name,
                     'supplier_id' => $supplier?->id,
                     'supplier_name' => $supplier?->company_name ?? $supplier?->name ?? null,

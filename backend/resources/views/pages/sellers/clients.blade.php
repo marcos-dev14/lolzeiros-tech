@@ -8,8 +8,10 @@
 @endpush
 
 <x-layouts.seller-panel title="Clientes"
-    subtitle="Olá <strong>{{ $seller->name ?? 'Wesley Bananas' }}</strong>, aqui estão todos os seus clientes junto à AugeApp."
-    icon="icons.users">
+    subtitle="Olá <strong>{{ $seller->name }}</strong>, aqui estão todos os seus clientes junto à AugeApp."
+    icon="icons.users"
+    comercial="{{$seller->name}}"
+    >
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <table id="clients-table" class="table">
         <thead>
@@ -19,7 +21,7 @@
                 <th>GRUPO</th>
                 <th>ESTADO</th>
                 <th>CADASTRO</th>
-                <th>ÚLTIMO LOGIN</th>
+                <th>ÚLTIMO ACESSO</th>
                 <th>CARRINHO ABANDONADO</th>
                 <th>STATUS</th>
                 <th>AÇÃO</th>
