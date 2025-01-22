@@ -63,7 +63,6 @@ class SellerAuthController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         $this->killSession($request);
-        dd(auth()->guard($this->guard)->user());
         return redirect()->route('index');
     }
 
