@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ClientListCartResource;
 use App\Http\Resources\OrderResource;
 use App\Models\Client;
+use App\Models\ClientGroup;
 use App\Models\ClientHasSeller;
 use App\Models\CountryState;
 use App\Models\Favoritable;
@@ -142,6 +143,99 @@ class SellerController extends Controller
             'clients' => $clientDataPaginated,
         ]);
     }
+
+    public function availableClients()
+    {
+        $seller = auth()->guard('seller')->user()?->load([
+            'ClientHasSeller.clientGroup',
+            'ClientHasSeller.supplier',
+        ]);
+    
+        if (!$seller) {
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+        }
+    
+        $clientGroupsWithoutSeller = ClientGroup::whereDoesntHave('clientHasSeller')->get();
+    
+        $clientData = $clientGroupsWithoutSeller->flatMap(function ($clientGroup) use ($seller) {
+            $groupName = $clientGroup->name;
+            
+            $suppliers = Supplier::query()
+                ->where('is_available', 1)
+                ->where('suspend_sales', 0)
+                ->where('service_migrate', 'Ativado')
+                ->has('installmentRules')
+                ->get();
+    
+            return $clientGroup->clients->map(function ($client) use ($groupName, $suppliers, $seller) {
+                $suppliersData = $suppliers->map(function ($supplier) use ($client, $seller) {
+                    $isSellerClient = ClientHasSeller::where('client_group_id', $client->client_group_id)
+                        ->where('supplier_id', $supplier->id)
+                        ->first();
+    
+                    $mainAddress = $client->getMainAddress();
+                    $clientStateCode = $mainAddress?->state?->code;
+    
+                    $stateDiscount = $supplier->stateDiscounts()->whereHas('states', function ($query) use ($clientStateCode) {
+                        $query->where('code', $clientStateCode);
+                    })->first();
+    
+                    $icmsDiscount = 0;
+                    if ($stateDiscount instanceof SupplierDiscount) {
+                        $icmsDiscount += floatval($stateDiscount->discount_value);
+                        $icmsDiscount += floatval($stateDiscount->additional_value);
+                    }
+    
+                    $clientProfile = $client->client_profile_id;
+                    $profileDiscount = $supplier->profileDiscounts->where('client_profile_id', $clientProfile)->first();
+                    $lastOrder = $client->orders->where('product_supplier_id', $supplier->id)->last();
+    
+                    $lastBuy = $lastOrder?->created_at ?? null;
+    
+                    return (object) [
+                        'name' => $supplier->name,
+                        'opportunity' => $isSellerClient ? 0 : 1,
+                        'icms' => $icmsDiscount,
+                        'profile_discount' => $profileDiscount->discount_value ?? 0,
+                        'commercial_commission' => $profileDiscount->commercial_commission ?? 0,
+                        'fractional_box' => $supplier->fractional_box ?? 0,
+                        'last_buy' => $lastBuy,
+                    ];
+                });
+    
+                $mainAddress = $client->getMainAddress();
+                $state = $mainAddress?->country_state_id ? CountryState::find($mainAddress->country_state_id) : null;
+    
+                return (object) [
+                    'group' => $groupName,
+                    'client_id' => $client->id,
+                    'name' => $client->company_name ?? $client->name,
+                    'profile' => $client->profile->name ?? null,
+                    'suppliers' => $suppliersData,
+                    'document' => $client->document ?? null,
+                    'state' => $state ? "{$state->name} - {$state->code}" : null,
+                    'register' => Carbon::parse($client->auge_register)->format('d/m/Y H:i'),
+                    'status' => $client->document_status,
+                ];
+            });
+        });
+    
+        $currentPage = request()->get('page', 1);
+        $perPage = 15;
+        $clientDataPaginated = new LengthAwarePaginator(
+            $clientData->forPage($currentPage, $perPage),
+            $clientData->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url()]
+        );
+    
+        return view('pages.sellers.clients', [
+            'seller' => $seller,
+            'clients' => $clientDataPaginated,
+        ]);
+    }
+            
     public function orders()
     {
         //$seller = $this->entityService->getBy(3, 'id');
