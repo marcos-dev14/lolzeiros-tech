@@ -154,78 +154,79 @@
                 <button class="close-button" id="close-modal">×</button>
             </div>
             <div class="modal-body">
-                <div class="filter-group">
-                    <div class="filter-item">
-                        <label>Representada</label>
-                        <select>
-                            <option>Selecione</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Vendedor</label>
-                        <select>
-                            <option>Selecione</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="filter-group">
-                    <div class="filter-item">
-                        <label>Grupo</label>
-                        <select>
-                            <option>Selecione</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Status do Pedido</label>
-                        <select>
-                            <option>Selecione</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="filter-group">
-                    <div class="filter-item">
-                        <label>Período Inicial</label>
-
-                        <div class="icon-input">
-                            <div class="icon">
-                                <x-icons.order-calendar></x-icons.order-calendar>
-                            </div>
-
-                            <input type="texDigite aqui..." value="" />
+                <form id="filter-form" method="POST" action="{{ route('seller.getFilteredOrders') }}">
+                    @csrf
+                    <div class="filter-group">
+                        <div class="filter-item">
+                            <label>Representada</label>
+                            <select name="representada_name">
+                                <option>Selecione</option>
+                                <!-- Adicione as opções dinâmicas de Representada aqui -->
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label>Vendedor</label>
+                            <select name="seller_name">
+                                <option>Selecione</option>
+                                <!-- Adicione as opções dinâmicas de Vendedor aqui -->
+                            </select>
                         </div>
                     </div>
-                    <div class="filter-item">
-                        <label>Período Final</label>
-
-                        <div class="icon-input">
-                            <div class="icon">
-                                <x-icons.order-calendar></x-icons.order-calendar>
-                            </div>
-
-                            <input type="texDigite aqui..." value="" />
+                    <div class="filter-group">
+                        <div class="filter-item">
+                            <label>Grupo</label>
+                            <select name="group_name">
+                                <option>Selecione</option>
+                                <!-- Adicione as opções dinâmicas de Grupo aqui -->
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label>Status do Pedido</label>
+                            <select name="status">
+                                <option value="">Selecione</option>
+                                <option value="new">Novo</option>
+                                <option value="canceled">Cancelado</option>
+                                <option value="closed">Fechado</option>
+                                <!-- Adicione mais opções conforme necessário -->
+                            </select>
                         </div>
                     </div>
-                </div>
-                <div class="filter-group">
-                    <div class="filter-item">
-                        <label>Estados</label>
-                        <select>
-                            <option>Selecione</option>
-                        </select>
+                    <div class="filter-group">
+                        <div class="filter-item">
+                            <label>Estados</label>
+                            <select name="state_name" id="state-select">
+                                <option>Selecione</option>
+                                <select name="state" id="stateSelect">
+                                    <option value="">Selecione o estado</option>
+                                </select>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label>Cidade</label>
+                            <select name="city_name" id="citySelect">
+                                <option>Selecione</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="filter-item">
-                        <label>Cidade</label>
-                        <select>
-                            <option>Selecione</option>
-                        </select>
+                    <div class="filter-group">
+                        <div class="filter-item">
+                            <label>Período Inicial</label>
+                            <input type="date" name="date_from">
+                        </div>
+                        <div class="filter-item">
+                            <label>Período Final</label>
+                            <input type="date" name="date_to">
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="apply-button">Filtrar Vendas</button>
+                    <div class="filter-group">
+                        <button type="submit" class="apply-button">Filtrar Vendas</button>
+                    </div>
+                </form>
+                
             </div>
         </div>
     </div>
+    
 </x-layouts.seller-panel>
 
 @push('scripts')
@@ -255,5 +256,6 @@
         dateInput.value = formattedDate;
         valueInput.value = formattedValue;
         });
+
     </script>
 @endpush
