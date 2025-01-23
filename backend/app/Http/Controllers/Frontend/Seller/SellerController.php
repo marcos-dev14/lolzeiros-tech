@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ClientListCartResource;
 use App\Http\Resources\OrderResource;
 use App\Models\Client;
+use App\Models\ClientGroup;
 use App\Models\ClientHasSeller;
 use App\Models\CountryState;
 use App\Models\Favoritable;
 use App\Models\Order;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Seller;
 use App\Models\Supplier;
 use App\Services\FavoritableService;
@@ -18,6 +20,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SupplierDiscount;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+
+use App\Jobs\ProcessClientData;
 
 class SellerController extends Controller
 {
@@ -142,6 +146,129 @@ class SellerController extends Controller
             'clients' => $clientDataPaginated,
         ]);
     }
+
+    public function availableClients()
+    {
+        $seller = auth()->guard('seller')->user();
+        set_time_limit(300);
+    
+        if (!$seller) {
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+        }
+    
+        $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
+    
+        $favoriteClientsIds = $sellerId->favoriteClients->pluck('id')->toArray();
+    
+        $clientData = collect();
+    
+        
+        $suppliers = Cache::remember('suppliers_available', 60, function () {
+            return Supplier::query()
+                ->where('is_available', 1)
+                ->where('suspend_sales', 0)
+                ->where('service_migrate', 'Ativado')
+                ->has('installmentRules')
+                ->get();
+        });
+    
+        
+        $clientHasSellers = ClientHasSeller::whereNull('seller_id')->inRandomOrder()->limit(100)->get();
+    
+        foreach ($clientHasSellers as $clientHasSeller) {
+            $group = $clientHasSeller->clientGroup;
+    
+            if (!$group) {
+                continue;
+            }
+    
+            $lastLogin = Carbon::parse($group->buyer?->last_login);
+            $groupName = $group->name;
+    
+            $group->clients->each(function ($client) use ($groupName, $suppliers, $seller, $lastLogin, $favoriteClientsIds, &$clientData) {
+                $suppliersData = $suppliers->map(function ($supplier) use ($client, $seller) {
+                    $isSellerClient = ClientHasSeller::where('client_group_id', $client->client_group_id)
+                        ->where('supplier_id', $supplier->id)
+                        ->first();
+    
+                    $mainAddress = $client->getMainAddress();
+                    $clientStateCode = $mainAddress?->state?->code;
+    
+                    $stateDiscount = $supplier->stateDiscounts()->whereHas('states', function ($query) use ($clientStateCode) {
+                        $query->where('code', $clientStateCode);
+                    })->first();
+    
+                    $icmsDiscount = 0;
+                    if ($stateDiscount instanceof SupplierDiscount) {
+                        $icmsDiscount += floatval($stateDiscount->discount_value);
+                        $icmsDiscount += floatval($stateDiscount->additional_value);
+                    }
+    
+                    $clientProfile = $client->client_profile_id;
+                    $profileDiscount = $supplier->profileDiscounts->where('client_profile_id', $clientProfile)->first();
+    
+                    $lastOrder = $client->orders->where('product_supplier_id', $supplier->id)->last();
+                    $lastBuy = $lastOrder?->created_at ?? null;
+    
+                    return (object) [
+                        'name' => $supplier->name,
+                        'opportunity' => $isSellerClient ? 0 : 1,
+                        'icms' => $icmsDiscount,
+                        'profile_discount' => $profileDiscount->discount_value ?? 0,
+                        'commercial_commission' => $profileDiscount->commercial_commission ?? 0,
+                        'fractional_box' => $supplier->fractional_box ?? 0,
+                        'last_buy' => $lastBuy,
+                    ];
+                });
+    
+                $mainAddress = $client->getMainAddress();
+                $state = $mainAddress?->country_state_id ? CountryState::find($mainAddress->country_state_id) : null;
+    
+                $clientData->push((object) [
+                    'group' => $groupName,
+                    'client_id' => $client->id,
+                    'name' => $client->company_name ?? $client->name,
+                    'profile' => $client->profile->name ?? null,
+                    'suppliers' => $suppliersData,
+                    'document' => $client->document ?? null,
+                    'state' => $state ? "{$state->name} - {$state->code}" : null,
+                    'register' => Carbon::parse($client->auge_register)->format('d/m/Y H:i'),
+                    'lastLogin' => $lastLogin->format('d/m/Y H:i') . 'h (' . $lastLogin->diffForHumans() . ')',
+                    'cartAbandoned' => $client->cart?->products?->count()
+                        ? (new ClientListCartResource($client->cart))->created_at
+                        : null,
+                    'status' => $client->document_status,
+                    'favorite' => in_array($client->id, $favoriteClientsIds) ? 1 : 0,
+                ]);
+            });
+        }
+    
+        $clientData = Cache::remember('client_data_' . $seller->id, 60, function () use ($clientData) {
+            return $clientData->groupBy(function ($client) {
+                return $client->document . '-' . $client->group;
+            })->map(function ($group) {
+                return $group->first();
+            });
+        });
+    
+        $currentPage = request()->get('page', 1);
+        $perPage = 15;
+        $clientDataPaginated = new LengthAwarePaginator(
+            $clientData->forPage($currentPage, $perPage),
+            $clientData->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url()]
+        );
+    
+        return view('pages.sellers.clients', [
+            'seller' => $seller,
+            'clients' => $clientDataPaginated,
+        ]);
+    }
+    
+
+
     public function orders()
     {
         //$seller = $this->entityService->getBy(3, 'id');

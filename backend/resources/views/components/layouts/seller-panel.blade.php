@@ -89,13 +89,12 @@
                                              <span>({{$countOpportunities}})</span> 
                                         </a>
                                     </li>
-                                    <li class="nav-item nav-client @if (url()->current() == route('seller.opportunities.index')) active @endif">
-                                        <a href="{{ route('seller.opportunities.index') }}" title="Clientes Disponíveis"
-                                            data-toggle="tooltip">
+                                    <li class="nav-item nav-client @if(url()->current() == route('seller.availableClients')) active @endif">
+                                        <a href="{{ route('seller.availableClients') }}" title="Clientes Disponíveis" data-toggle="tooltip">
                                             <x-icons.users></x-icons.users>
 
                                             <p>Clientes Disponíveis</p>
-                                            {{-- <span>(100)</span> --}}
+                                            <span>({{$countOpportunities}})</span>
 
                                         </a>
                                     </li>
