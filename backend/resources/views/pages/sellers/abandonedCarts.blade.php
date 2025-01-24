@@ -13,6 +13,9 @@
     icon="icons.shopping-cart">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <table id="clients-table" class="table">
+        <div class="search-container">
+            <button class="filter-button" id="open-modal-btn">Filtro</button>
+        </div>
         <thead>
             <tr>
                 <th>RAZÃO SOCIAL</th>
@@ -144,6 +147,60 @@
                 </tr>
             @endif
         </tbody>
+        <div id="modal-overlay" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Filtro de Vendas</h2>
+                    <button class="close-button" id="close-modal">×</button>
+                </div>
+                <div class="modal-body">
+                    <form id="filter-form" method="GET" action="{{ route('seller.getFilteredOrders') }}">
+                        <div class="filter-group">
+                            <div class="filter-item">
+                                <label>Pesquisa</label>
+                                <input type="text" name="search" placeholder="Digite aqui..." class="search-input">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <div class="filter-item">
+                                <label>Status do Pedido</label>
+                                <select name="status">
+                                    <option value="">Selecione</option>
+                                    <option value="new">Novo</option>
+                                    <option value="transmitted">Transmitido</option>
+                                    <option value="billed">Faturado</option>
+                                    <option value="canceled">Cancelado</option>
+                                    <option value="paused">Pausado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <div class="filter-item">
+                                <label>Período Inicial</label>
+                                <input type="date" name="date_from">
+                            </div>
+                            <div class="filter-item">
+                                <label>Período Final</label>
+                                <input type="date" name="date_to">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <div class="filter-item">
+                                <label>Valor Min</label>
+                                <input type="value" name="min_value">
+                            </div>
+                            <div class="filter-item">
+                                <label>Valor Max</label>
+                                <input type="value" name="max_value">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <button type="submit" class="apply-button">Filtrar Vendas</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </table>
 
     {{ $clients->links('pagination::custom') }}

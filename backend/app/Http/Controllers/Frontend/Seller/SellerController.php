@@ -11,6 +11,7 @@ use App\Models\ClientHasSeller;
 use App\Models\CountryState;
 use App\Models\Favoritable;
 use App\Models\Order;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Seller;
 use App\Models\Supplier;
 use App\Services\FavoritableService;
@@ -19,6 +20,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SupplierDiscount;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+
+use App\Jobs\ProcessClientData;
 
 class SellerController extends Controller
 {
@@ -203,15 +206,8 @@ class SellerController extends Controller
 
                     $clientProfile = $client->client_profile_id;
                     $profileDiscount = $supplier->profileDiscounts->where('client_profile_id', $clientProfile)->first();
-<<<<<<<<< Temporary merge branch 1
-    
-                    $lastOrder = $client->orders->where('product_supplier_id', $supplier->id)->last();
-=========
-                    $lastOrder = $client->orders
-                        ->where('product_supplier_id', $supplier['id'])
-                        ->last();
 
->>>>>>>>> Temporary merge branch 2
+                    $lastOrder = $client->orders->where('product_supplier_id', $supplier->id)->last();
                     $lastBuy = $lastOrder?->created_at ?? null;
 
                     return (object) [
@@ -226,17 +222,9 @@ class SellerController extends Controller
                 });
 
                 $mainAddress = $client->getMainAddress();
-<<<<<<<<< Temporary merge branch 1
                 $state = $mainAddress?->country_state_id ? CountryState::find($mainAddress->country_state_id) : null;
-    
-                $clientData->push((object) [
-=========
-                $state = $mainAddress?->country_state_id
-                    ? CountryState::find($mainAddress->country_state_id)
-                    : null;
 
-                return (object) [
->>>>>>>>> Temporary merge branch 2
+                $clientData->push((object) [
                     'group' => $groupName,
                     'client_id' => $client->id,
                     'name' => $client->company_name ?? $client->name,
@@ -251,19 +239,15 @@ class SellerController extends Controller
                         : null,
                     'status' => $client->document_status,
                     'favorite' => in_array($client->id, $favoriteClientsIds) ? 1 : 0,
-<<<<<<<<< Temporary merge branch 1
                 ]);
             });
         }
-    
+
         $clientData = Cache::remember('client_data_' . $seller->id, 60, function () use ($clientData) {
             return $clientData->groupBy(function ($client) {
                 return $client->document . '-' . $client->group;
             })->map(function ($group) {
                 return $group->first();
-=========
-                ];
->>>>>>>>> Temporary merge branch 2
             });
         });
 
@@ -282,7 +266,7 @@ class SellerController extends Controller
             'clients' => $clientDataPaginated,
         ]);
     }
-    
+
 
 
     public function orders()
@@ -741,6 +725,93 @@ class SellerController extends Controller
         // Retorna a view com os dados
         return view('pages.sellers.orders', compact('seller', 'orders'));
     }
-    
-      
+
+    public function getFilteredClients(Request $request)
+    {
+        $seller = auth()->guard('seller')->user();
+        if (!$seller) {
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+        }
+        dd($request);
+
+        $seller = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
+        $favoriteClientIds = $seller->favoriteClients->pluck('id')->toArray();
+
+        $query = Client::query();
+
+        if ($request->filled('client_name') && $request->input('client_name') !== 'Selecione') {
+            $query->byClientName($request->input('client_name'));
+        }
+
+        if ($request->filled('supplier_name') && $request->input('supplier_name') !== 'Selecione') {
+            $query->bySupplierName($request->input('supplier_name'));
+        }
+
+        if ($request->filled('city_name') && $request->input('city_name') !== 'Selecione') {
+            $query->byAddressCityName($request->input('city_name'));
+        }
+
+        if ($request->filled('document')) {
+            $query->byClientDocument($request->input('document'));
+        }
+
+        if ($request->filled('status') && $request->input('status') !== 'Selecione') {
+            $status = $request->input('status');
+            $query->where('current_status', $status);
+        }
+
+        if ($request->filled('code') && $request->input('code') !== 'Selecione') {
+            $query->where('code', 'like', '%' . $request->input('code') . '%');
+        }
+
+        if ($request->filled('date_from') && $request->filled('date_to')) {
+            $dateFrom = Carbon::parse($request->input('date_from'))->startOfDay();
+            $dateTo = Carbon::parse($request->input('date_to'))->endOfDay();
+            $query->whereBetween('created_at', [$dateFrom, $dateTo]);
+        } elseif ($request->filled('date_from')) {
+            $dateFrom = Carbon::parse($request->input('date_from'))->startOfDay();
+            $query->where('created_at', '>=', $dateFrom);
+        } elseif ($request->filled('date_to')) {
+            $dateTo = Carbon::parse($request->input('date_to'))->endOfDay();
+            $query->where('created_at', '<=', $dateTo);
+        }
+
+
+        if ($request->filled('min_value') || $request->filled('max_value')) {
+            $minValue = $request->input('min_value', 0);
+            $maxValue = $request->input('max_value', PHP_INT_MAX);
+            $query->whereBetween('total_value', [$minValue, $maxValue]);
+        }
+
+        if ($request->filled('sort_by') && $request->filled('sort_order')) {
+            $query->orderBy($request->input('sort_by'), $request->input('sort_order'));
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $orders = $query->paginate(10)->withQueryString();
+
+        $orders->getCollection()->transform(function ($order) use ($favoriteOrderIds): object {
+            $mainAddress = $order->client->getMainAddress();
+            $state = $mainAddress?->country_state_id
+                ? CountryState::find($mainAddress->country_state_id)
+                : null;
+
+            return (object) [
+                'code' => $order->code,
+                'order_id' => $order->id,
+                'client_id' => $order->client->id,
+                'client' => $order->client->company_name ?? $order->client->name,
+                'supplier' => $order->supplier->company_name ?? $order->supplier->name ?? null,
+                'state' => $state ? "{$state->name} - {$state->code}" : null,
+                'date' => Carbon::parse($order->created_at)->format('d/m/Y'),
+                'value' => $order->getTotalValue(),
+                'status' => $order->getCurrentStatusAttribute(),
+                'favorite' => in_array($order->id, $favoriteOrderIds) ? 1 : 0,
+            ];
+        });
+
+        // Retorna a view com os dados
+        return view('pages.sellers.orders', compact('seller', 'orders'));
+    }
 }
