@@ -9,11 +9,12 @@
 
 <x-layouts.seller-panel title="Clientes"
     subtitle="Olá <strong>{{ $seller->name }}</strong>, aqui estão todos os seus clientes junto à AugeApp."
-    icon="icons.users"
-    comercial="{{$seller->name}}"
-    >
+    icon="icons.users" comercial="{{ $seller->name }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <table id="clients-table" class="table">
+        <div class="search-container">
+            <button class="filter-button" id="open-modal-btn">Filtro</button>
+        </div>
         <thead>
             <tr>
                 <th>RAZÃO SOCIAL</th>
@@ -153,6 +154,56 @@
             @endif
         </tbody>
     </table>
-
+    <div id="modal-overlay" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Filtro de Clientes</h2>
+                <button class="close-button" id="close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="filter-form" method="GET" action="{{ route('seller.availableClients') }}">
+                    <div class="filter-group">
+                        <div class="filter-item">
+                            <label>Pesquisa</label>
+                            <input type="text" name="search" placeholder="Digite aqui..." class="search-input">
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-item">
+                            <label>Status do Cliente</label>
+                            <select name="status">
+                                <option value="">Selecione</option>
+                                <option value="Ativa">Ativo</option>
+                                <option value="Suspenso">Suspenso</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-item">
+                            <label>Último Login</label>
+                            <input type="month" name="lastLogin">
+                        </div>
+                        <div class="filter-item">
+                            <label>Data de cadastro</label>
+                            <input type="month" name="register">
+                        </div>cartAbandoned
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-item">
+                            <label>Carrinho abandonado</label>
+                            <input type="month" name="cartAbandoned">
+                        </div>
+                        <div class="filter-item">
+                            <input type="checkbox" name="favorite" id="favorite">
+                            Favoritos
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <button type="submit" class="apply-button">Filtrar Clientes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     {{ $clients->links('pagination::custom') }}
 </x-layouts.seller-panel>

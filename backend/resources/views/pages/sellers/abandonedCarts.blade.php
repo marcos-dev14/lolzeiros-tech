@@ -150,11 +150,11 @@
         <div id="modal-overlay" class="modal-overlay" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Filtro de Vendas</h2>
+                    <h2>Filtro de Clientes</h2>
                     <button class="close-button" id="close-modal">×</button>
                 </div>
                 <div class="modal-body">
-                    <form id="filter-form" method="GET" action="{{ route('seller.getFilteredOrders') }}">
+                    <form id="filter-form" method="GET" action="{{ route('seller.abandonedCarts') }}">
                         <div class="filter-group">
                             <div class="filter-item">
                                 <label>Pesquisa</label>
@@ -163,39 +163,36 @@
                         </div>
                         <div class="filter-group">
                             <div class="filter-item">
-                                <label>Status do Pedido</label>
+                                <label>Status do Cliente</label>
                                 <select name="status">
                                     <option value="">Selecione</option>
-                                    <option value="new">Novo</option>
-                                    <option value="transmitted">Transmitido</option>
-                                    <option value="billed">Faturado</option>
-                                    <option value="canceled">Cancelado</option>
-                                    <option value="paused">Pausado</option>
+                                    <option value="Ativa">Ativo</option>
+                                    <option value="Suspenso">Suspenso</option>
                                 </select>
                             </div>
                         </div>
                         <div class="filter-group">
                             <div class="filter-item">
-                                <label>Período Inicial</label>
-                                <input type="date" name="date_from">
+                                <label>Último Login</label>
+                                <input type="month" name="lastLogin">
                             </div>
                             <div class="filter-item">
-                                <label>Período Final</label>
-                                <input type="date" name="date_to">
-                            </div>
+                                <label>Data de cadastro</label>
+                                <input type="month" name="register">
+                            </div>cartAbandoned
                         </div>
                         <div class="filter-group">
                             <div class="filter-item">
-                                <label>Valor Min</label>
-                                <input type="value" name="min_value">
+                                <label>Carrinho abandonado</label>
+                                <input type="month" name="cartAbandoned">
                             </div>
                             <div class="filter-item">
-                                <label>Valor Max</label>
-                                <input type="value" name="max_value">
+                                <input type="checkbox" name="favorite" id="favorite">
+                                Favoritos
                             </div>
                         </div>
                         <div class="filter-group">
-                            <button type="submit" class="apply-button">Filtrar Vendas</button>
+                            <button type="submit" class="apply-button">Filtrar Clientes</button>
                         </div>
                     </form>
                 </div>
