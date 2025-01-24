@@ -7,15 +7,11 @@
     <script src="{{ mix('js/seller.js') }}"></script>
 @endpush
 
-<x-layouts.seller-panel
-    title="Meus Pedidos"
+<x-layouts.seller-panel title="Meus Pedidos"
     subtitle="Olá <strong>{{ $seller->name }}</strong> aqui estão todas suas vendas junta a AugeApp."
-    comercial="{{$seller->name}}"
-    icon="icons.bag-seller"
->
+    comercial="{{ $seller->name }}" icon="icons.bag-seller">
     <div class="container">
         <div class="search-container">
-            <input type="text" placeholder="Digite aqui..." class="search-input">
             <button class="filter-button" id="open-modal-btn">Filtro</button>
         </div>
 
@@ -33,7 +29,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if($seller)
+                    @if ($seller)
                         @foreach ($orders as $order)
                             <tr>
                                 <td>{{ $order->code }}</td>
@@ -47,8 +43,8 @@
 
                                         <input type="text" id="date" disabled value="{{ $order->date }}">
                                     </div>
-                                  </td>
-                                  <td>
+                                </td>
+                                <td>
                                     <div class="formatted-input">
                                         <div class="formatted-input-icon">
                                             <x-icons.money></x-icons.money>
@@ -59,15 +55,21 @@
                                 </td>
 
                                 <td>
-                                    <div class="status {{
-                                        $order->status === 'Novo' ? 'status-novo' :
-                                        ($order->status === 'Liberado' ? 'status-liberado' :
-                                        ($order->status === 'Recebido' ? 'status-recebido' :
-                                        ($order->status === 'Faturado' ? 'status-faturado' :
-                                        ($order->status === 'Transmitido' ? 'status-transmitido' :
-                                        ($order->status === 'Cancelado' ? 'status-cancelado' : '')))))
-                                    }}">
-                                        @if($order->status === 'Novo' || $order->status === 'Transmitido')
+                                    <div
+                                        class="status {{ $order->status === 'Novo'
+                                            ? 'status-novo'
+                                            : ($order->status === 'Liberado'
+                                                ? 'status-liberado'
+                                                : ($order->status === 'Recebido'
+                                                    ? 'status-recebido'
+                                                    : ($order->status === 'Faturado'
+                                                        ? 'status-faturado'
+                                                        : ($order->status === 'Transmitido'
+                                                            ? 'status-transmitido'
+                                                            : ($order->status === 'Cancelado'
+                                                                ? 'status-cancelado'
+                                                                : ''))))) }}">
+                                        @if ($order->status === 'Novo' || $order->status === 'Transmitido')
                                             <x-icons.order-star></x-icons.order-star>
                                         @elseif($order->status === 'Cancelado')
                                             <x-icons.order-cancel></x-icons.order-cancel>
@@ -85,7 +87,8 @@
 
                                 <td>
                                     <div class="action-buttons">
-                                        <a href="{{ route('seller.order', ['orderCode' => $order->code]) }}" class="eye">
+                                        <a href="{{ route('seller.order', ['orderCode' => $order->code]) }}"
+                                            class="eye">
                                             <x-icons.eye></x-icons.eye>
                                         </a>
 
@@ -154,57 +157,23 @@
                 <button class="close-button" id="close-modal">×</button>
             </div>
             <div class="modal-body">
-                <form id="filter-form" method="POST" action="{{ route('seller.getFilteredOrders') }}">
-                    @csrf
+                <form id="filter-form" method="GET" action="{{ route('seller.getFilteredOrders') }}">
                     <div class="filter-group">
                         <div class="filter-item">
-                            <label>Representada</label>
-                            <select name="representada_name">
-                                <option>Selecione</option>
-                                <!-- Adicione as opções dinâmicas de Representada aqui -->
-                            </select>
-                        </div>
-                        <div class="filter-item">
-                            <label>Vendedor</label>
-                            <select name="seller_name">
-                                <option>Selecione</option>
-                                <!-- Adicione as opções dinâmicas de Vendedor aqui -->
-                            </select>
+                            <label>Pesquisa</label>
+                            <input type="text" name="search" placeholder="Digite aqui..." class="search-input">
                         </div>
                     </div>
                     <div class="filter-group">
-                        <div class="filter-item">
-                            <label>Grupo</label>
-                            <select name="group_name">
-                                <option>Selecione</option>
-                                <!-- Adicione as opções dinâmicas de Grupo aqui -->
-                            </select>
-                        </div>
                         <div class="filter-item">
                             <label>Status do Pedido</label>
                             <select name="status">
                                 <option value="">Selecione</option>
                                 <option value="new">Novo</option>
+                                <option value="transmitted">Transmitido</option>
+                                <option value="billed">Faturado</option>
                                 <option value="canceled">Cancelado</option>
-                                <option value="closed">Fechado</option>
-                                <!-- Adicione mais opções conforme necessário -->
-                            </select>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <div class="filter-item">
-                            <label>Estados</label>
-                            <select name="state_name" id="state-select">
-                                <option>Selecione</option>
-                                <select name="state" id="stateSelect">
-                                    <option value="">Selecione o estado</option>
-                                </select>
-                            </select>
-                        </div>
-                        <div class="filter-item">
-                            <label>Cidade</label>
-                            <select name="city_name" id="citySelect">
-                                <option>Selecione</option>
+                                <option value="paused">Pausado</option>
                             </select>
                         </div>
                     </div>
@@ -219,43 +188,51 @@
                         </div>
                     </div>
                     <div class="filter-group">
+                        <div class="filter-item">
+                            <label>Valor Min</label>
+                            <input type="value" name="min_value">
+                        </div>
+                        <div class="filter-item">
+                            <label>Valor Max</label>
+                            <input type="value" name="max_value">
+                        </div>
+                    </div>
+                    <div class="filter-group">
                         <button type="submit" class="apply-button">Filtrar Vendas</button>
                     </div>
                 </form>
-                
             </div>
         </div>
     </div>
-    
+
 </x-layouts.seller-panel>
 
 @push('scripts')
     <script>
         function formatDate(dateString) {
-        const date = new Date(dateString.split('T')[0]);
-        const day = String(date.getUTCDate()).padStart(2, '0');
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-        const year = date.getUTCFullYear();
-        return `${day}/${month}/${year}`;
+            const date = new Date(dateString.split('T')[0]);
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const year = date.getUTCFullYear();
+            return `${day}/${month}/${year}`;
         }
 
         function formatCurrency(value) {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        }).format(value).replace('R$', '').trim();
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value).replace('R$', '').trim();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-        const dateInput = document.getElementById('date');
-        const valueInput = document.getElementById('value');
+            const dateInput = document.getElementById('date');
+            const valueInput = document.getElementById('value');
 
-        const formattedDate = formatDate('2024-12-22T22:43:00');
-        const formattedValue = formatCurrency(99999.99);
+            const formattedDate = formatDate('2024-12-22T22:43:00');
+            const formattedValue = formatCurrency(99999.99);
 
-        dateInput.value = formattedDate;
-        valueInput.value = formattedValue;
+            dateInput.value = formattedDate;
+            valueInput.value = formattedValue;
         });
-
     </script>
 @endpush

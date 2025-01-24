@@ -144,12 +144,10 @@ class SellerController extends Controller
         ]);
     }
 
-        public function availableClients()
+    public function availableClients()
     {
-        $seller = auth()->guard('seller')->user()?->load([
-            'ClientHasSeller.clientGroup',
-            'ClientHasSeller.supplier',
-        ]);
+        $seller = auth()->guard('seller')->user();
+        set_time_limit(300);
 
         if (!$seller) {
             return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
@@ -159,25 +157,35 @@ class SellerController extends Controller
 
         $favoriteClientsIds = $sellerId->favoriteClients->pluck('id')->toArray();
 
-        $clientData = $seller->ClientHasSeller->flatMap(function ($clientHasSeller) use ($seller, $favoriteClientsIds) {
-            $groupName = $clientHasSeller->clientGroup->name ?? null;
-            $supplierName = $clientHasSeller->supplier->company_name
-                ?? $clientHasSeller->supplier->name
-                ?? null;
+        $clientData = collect();
 
-            $lastLogin = Carbon::parse($clientHasSeller->clientGroup->buyer->last_login);
 
-            return $clientHasSeller->clientGroup->clients->map(function ($client) use ($favoriteClientsIds, $groupName, $supplierName, $lastLogin, $clientHasSeller, $seller) {
-                $suppliers = Supplier::query()
-                    ->where('is_available', 1)
-                    ->where('suspend_sales', 0)
-                    ->where('service_migrate', 'Ativado')
-                    ->has('installmentRules')
-                    ->get();
+        $suppliers = Cache::remember('suppliers_available', 60, function () {
+            return Supplier::query()
+                ->where('is_available', 1)
+                ->where('suspend_sales', 0)
+                ->where('service_migrate', 'Ativado')
+                ->has('installmentRules')
+                ->get();
+        });
 
-                $suppliersData = $suppliers->map(function ($supplier) use ($client, $clientHasSeller, $seller) {
-                    $isSellerClient = ClientHasSeller::where('client_group_id', $clientHasSeller->clientGroup->id)
-                        ->where('supplier_id', $supplier['id'])
+
+        $clientHasSellers = ClientHasSeller::whereNull('seller_id')->inRandomOrder()->limit(100)->get();
+
+        foreach ($clientHasSellers as $clientHasSeller) {
+            $group = $clientHasSeller->clientGroup;
+
+            if (!$group) {
+                continue;
+            }
+
+            $lastLogin = Carbon::parse($group->buyer?->last_login);
+            $groupName = $group->name;
+
+            $group->clients->each(function ($client) use ($groupName, $suppliers, $seller, $lastLogin, $favoriteClientsIds, &$clientData) {
+                $suppliersData = $suppliers->map(function ($supplier) use ($client, $seller) {
+                    $isSellerClient = ClientHasSeller::where('client_group_id', $client->client_group_id)
+                        ->where('supplier_id', $supplier->id)
                         ->first();
 
                     $mainAddress = $client->getMainAddress();
@@ -195,35 +203,44 @@ class SellerController extends Controller
 
                     $clientProfile = $client->client_profile_id;
                     $profileDiscount = $supplier->profileDiscounts->where('client_profile_id', $clientProfile)->first();
+<<<<<<<<< Temporary merge branch 1
+    
+                    $lastOrder = $client->orders->where('product_supplier_id', $supplier->id)->last();
+=========
                     $lastOrder = $client->orders
                         ->where('product_supplier_id', $supplier['id'])
                         ->last();
 
+>>>>>>>>> Temporary merge branch 2
                     $lastBuy = $lastOrder?->created_at ?? null;
+
                     return (object) [
-                        'name' => $supplier['name'],
-                        ...($isSellerClient && ($isSellerClient->seller_id == $seller->id || $isSellerClient->seller_id === null) ?
-                            [
-                                'opportunity' => $isSellerClient->seller_id === null ?  1 : 0,
-                                'icms' => $icmsDiscount,
-                                'profile_discount' => $profileDiscount->discount_value ?? 0,
-                                'commercial_commission' => $profileDiscount->commercial_commission ?? 0,
-                                'fractional_box' => $supplier['fractional_box'] ?? 0,
-                                'last_buy' => $lastBuy,
-                            ] : []),
+                        'name' => $supplier->name,
+                        'opportunity' => $isSellerClient ? 0 : 1,
+                        'icms' => $icmsDiscount,
+                        'profile_discount' => $profileDiscount->discount_value ?? 0,
+                        'commercial_commission' => $profileDiscount->commercial_commission ?? 0,
+                        'fractional_box' => $supplier->fractional_box ?? 0,
+                        'last_buy' => $lastBuy,
                     ];
                 });
 
                 $mainAddress = $client->getMainAddress();
+<<<<<<<<< Temporary merge branch 1
+                $state = $mainAddress?->country_state_id ? CountryState::find($mainAddress->country_state_id) : null;
+    
+                $clientData->push((object) [
+=========
                 $state = $mainAddress?->country_state_id
                     ? CountryState::find($mainAddress->country_state_id)
                     : null;
 
                 return (object) [
+>>>>>>>>> Temporary merge branch 2
                     'group' => $groupName,
                     'client_id' => $client->id,
                     'name' => $client->company_name ?? $client->name,
-                    'profile' => $client->profile->name  ?? null,
+                    'profile' => $client->profile->name ?? null,
                     'suppliers' => $suppliersData,
                     'document' => $client->document ?? null,
                     'state' => $state ? "{$state->name} - {$state->code}" : null,
@@ -234,14 +251,20 @@ class SellerController extends Controller
                         : null,
                     'status' => $client->document_status,
                     'favorite' => in_array($client->id, $favoriteClientsIds) ? 1 : 0,
-                ];
+<<<<<<<<< Temporary merge branch 1
+                ]);
             });
-        });
-
-        $clientData = $clientData->groupBy(function ($client) {
-            return $client->document . '-' . $client->group;
-        })->map(function ($group) {
-            return $group->first();
+        }
+    
+        $clientData = Cache::remember('client_data_' . $seller->id, 60, function () use ($clientData) {
+            return $clientData->groupBy(function ($client) {
+                return $client->document . '-' . $client->group;
+            })->map(function ($group) {
+                return $group->first();
+=========
+                ];
+>>>>>>>>> Temporary merge branch 2
+            });
         });
 
         $currentPage = request()->get('page', 1);
@@ -259,7 +282,9 @@ class SellerController extends Controller
             'clients' => $clientDataPaginated,
         ]);
     }
-            
+    
+
+
     public function orders()
     {
         //$seller = $this->entityService->getBy(3, 'id');
@@ -272,11 +297,11 @@ class SellerController extends Controller
         $seller = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
         $favoriteOrderIds = $seller->favoriteOrders->pluck('id')->toArray();
 
-        $filters = request()->all();
-        unset($filters['page']);
+        //$filters = request()->all();
+        //unset($filters['page']);
         $query = Order::where('seller_id', $seller->id);
 
-        $query = $this->applyFiltersOrders($query, $filters);
+        //$query = $this->applyFiltersOrders($query, $filters);
 
         $orders = $query->orderBy('created_at', 'desc')
             ->with('supplier', 'client')
@@ -518,7 +543,7 @@ class SellerController extends Controller
         ], 200);
     }
 
-    private function applyFiltersOrders($query, $filters)
+    /* private function applyFiltersOrders($query, $filters)
     {
         foreach ($filters as $key => $value) {
             if ($key === 'favoritables' && $value == 1) {
@@ -584,13 +609,13 @@ class SellerController extends Controller
                     continue;
                 }
 
-                /* if (str_contains($value, 'cidade:')) {
+                 if (str_contains($value, 'cidade:')) {
                     $value = trim(str_replace('cidade:', '', $value));
                     $query->whereHas('client.address', function ($q) use ($value) {
                         $q->where('city', 'like', "%{$value}%");
                     });
                     continue;
-                } */
+                } 
 
                 if (str_contains($value, 'estado:')) {
                     $value = trim(str_replace('estado:', '', $value));
@@ -611,7 +636,7 @@ class SellerController extends Controller
         }
 
         return $query;
-    }
+    } */
 
     public function getFilteredOrders(Request $request)
     {
@@ -619,37 +644,53 @@ class SellerController extends Controller
         if (!$seller) {
             return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
         }
-    
+
         $seller = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
         $favoriteOrderIds = $seller->favoriteOrders->pluck('id')->toArray();
-    
+
         $query = Order::where('seller_id', $seller->id);
-    
+       
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('code', 'like', '%' . $searchTerm . '%') 
+                    ->orWhereHas('client', function ($q) use ($searchTerm) { 
+                        $q->where('company_name', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('name', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereHas('supplier', function ($q) use ($searchTerm) { 
+                        $q->where('company_name', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('name', 'like', '%' . $searchTerm . '%');
+                    });
+            });
+        }
+
         if ($request->filled('client_name') && $request->input('client_name') !== 'Selecione') {
             $query->byClientName($request->input('client_name'));
         }
-    
+
         if ($request->filled('supplier_name') && $request->input('supplier_name') !== 'Selecione') {
             $query->bySupplierName($request->input('supplier_name'));
         }
-    
+
         if ($request->filled('city_name') && $request->input('city_name') !== 'Selecione') {
             $query->byAddressCityName($request->input('city_name'));
         }
-    
+
         if ($request->filled('document')) {
             $query->byClientDocument($request->input('document'));
         }
-    
+
         if ($request->filled('status') && $request->input('status') !== 'Selecione') {
             $status = $request->input('status');
             $query->where('current_status', $status);
         }
-    
+
         if ($request->filled('code') && $request->input('code') !== 'Selecione') {
             $query->where('code', 'like', '%' . $request->input('code') . '%');
         }
-        
+
         if ($request->filled('date_from') && $request->filled('date_to')) {
             $dateFrom = Carbon::parse($request->input('date_from'))->startOfDay();
             $dateTo = Carbon::parse($request->input('date_to'))->endOfDay();
@@ -661,28 +702,28 @@ class SellerController extends Controller
             $dateTo = Carbon::parse($request->input('date_to'))->endOfDay();
             $query->where('created_at', '<=', $dateTo);
         }
-        
-    
+
+
         if ($request->filled('min_value') || $request->filled('max_value')) {
             $minValue = $request->input('min_value', 0);
             $maxValue = $request->input('max_value', PHP_INT_MAX);
             $query->whereBetween('total_value', [$minValue, $maxValue]);
         }
-    
+
         if ($request->filled('sort_by') && $request->filled('sort_order')) {
             $query->orderBy($request->input('sort_by'), $request->input('sort_order'));
         } else {
             $query->orderBy('created_at', 'desc');
         }
-    
+
         $orders = $query->paginate(10)->withQueryString();
-    
+
         $orders->getCollection()->transform(function ($order) use ($favoriteOrderIds): object {
             $mainAddress = $order->client->getMainAddress();
             $state = $mainAddress?->country_state_id
                 ? CountryState::find($mainAddress->country_state_id)
                 : null;
-    
+
             return (object) [
                 'code' => $order->code,
                 'order_id' => $order->id,
@@ -696,8 +737,10 @@ class SellerController extends Controller
                 'favorite' => in_array($order->id, $favoriteOrderIds) ? 1 : 0,
             ];
         });
-    
+
         // Retorna a view com os dados
         return view('pages.sellers.orders', compact('seller', 'orders'));
-    }        
+    }
+    
+      
 }

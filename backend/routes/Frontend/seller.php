@@ -19,7 +19,7 @@ Route::group(['as' => 'seller.'],function () {
         Route::get('/clientes', [SellerController::class, 'clients'])->name('clients');
         Route::get('/clientes-disponiveis', [SellerController::class, 'availableClients'])->name('availableClients');
         Route::get('/perfil', [SellerController::class, 'profile'])->name('profile');
-        Route::post('/seller/orders/filter', [SellerController::class, 'getFilteredOrders'])->name('getFilteredOrders');
+        Route::get('/seller/orders/filter', [SellerController::class, 'getFilteredOrders'])->name('getFilteredOrders');
 
         Route::post('/add-favorito', [SellerController::class, 'addFavoritable'])->name('addfavoritable');
         Route::post('/rem-favorito', [SellerController::class, 'removeFavoritable'])->name('removefavoritable');
