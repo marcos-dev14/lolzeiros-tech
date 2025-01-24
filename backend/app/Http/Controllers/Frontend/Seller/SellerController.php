@@ -281,11 +281,11 @@ class SellerController extends Controller
         $seller = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
         $favoriteOrderIds = $seller->favoriteOrders->pluck('id')->toArray();
 
-        $filters = request()->all();
-        unset($filters['page']);
+        //$filters = request()->all();
+        //unset($filters['page']);
         $query = Order::where('seller_id', $seller->id);
 
-        $query = $this->applyFiltersOrders($query, $filters);
+        //$query = $this->applyFiltersOrders($query, $filters);
 
         $orders = $query->orderBy('created_at', 'desc')
             ->with('supplier', 'client')
@@ -633,6 +633,111 @@ class SellerController extends Controller
         $favoriteOrderIds = $seller->favoriteOrders->pluck('id')->toArray();
 
         $query = Order::where('seller_id', $seller->id);
+       
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('code', 'like', '%' . $searchTerm . '%') 
+                    ->orWhereHas('client', function ($q) use ($searchTerm) { 
+                        $q->where('company_name', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('name', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereHas('supplier', function ($q) use ($searchTerm) { 
+                        $q->where('company_name', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('name', 'like', '%' . $searchTerm . '%');
+                    });
+            });
+        }
+
+        if ($request->filled('client_name') && $request->input('client_name') !== 'Selecione') {
+            $query->byClientName($request->input('client_name'));
+        }
+
+        if ($request->filled('supplier_name') && $request->input('supplier_name') !== 'Selecione') {
+            $query->bySupplierName($request->input('supplier_name'));
+        }
+
+        if ($request->filled('city_name') && $request->input('city_name') !== 'Selecione') {
+            $query->byAddressCityName($request->input('city_name'));
+        }
+
+        if ($request->filled('document')) {
+            $query->byClientDocument($request->input('document'));
+        }
+
+        if ($request->filled('status') && $request->input('status') !== 'Selecione') {
+            $status = $request->input('status');
+            $query->where('current_status', $status);
+        }
+
+        if ($request->filled('code') && $request->input('code') !== 'Selecione') {
+            $query->where('code', 'like', '%' . $request->input('code') . '%');
+        }
+
+        if ($request->filled('date_from') && $request->filled('date_to')) {
+            $dateFrom = Carbon::parse($request->input('date_from'))->startOfDay();
+            $dateTo = Carbon::parse($request->input('date_to'))->endOfDay();
+            $query->whereBetween('created_at', [$dateFrom, $dateTo]);
+        } elseif ($request->filled('date_from')) {
+            $dateFrom = Carbon::parse($request->input('date_from'))->startOfDay();
+            $query->where('created_at', '>=', $dateFrom);
+        } elseif ($request->filled('date_to')) {
+            $dateTo = Carbon::parse($request->input('date_to'))->endOfDay();
+            $query->where('created_at', '<=', $dateTo);
+        }
+
+
+        if ($request->filled('min_value') || $request->filled('max_value')) {
+            $minValue = $request->input('min_value', 0);
+            $maxValue = $request->input('max_value', PHP_INT_MAX);
+            $query->whereBetween('total_value', [$minValue, $maxValue]);
+        }
+
+        if ($request->filled('sort_by') && $request->filled('sort_order')) {
+            $query->orderBy($request->input('sort_by'), $request->input('sort_order'));
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $orders = $query->paginate(10)->withQueryString();
+
+        $orders->getCollection()->transform(function ($order) use ($favoriteOrderIds): object {
+            $mainAddress = $order->client->getMainAddress();
+            $state = $mainAddress?->country_state_id
+                ? CountryState::find($mainAddress->country_state_id)
+                : null;
+
+            return (object) [
+                'code' => $order->code,
+                'order_id' => $order->id,
+                'client_id' => $order->client->id,
+                'client' => $order->client->company_name ?? $order->client->name,
+                'supplier' => $order->supplier->company_name ?? $order->supplier->name ?? null,
+                'state' => $state ? "{$state->name} - {$state->code}" : null,
+                'date' => Carbon::parse($order->created_at)->format('d/m/Y'),
+                'value' => $order->getTotalValue(),
+                'status' => $order->getCurrentStatusAttribute(),
+                'favorite' => in_array($order->id, $favoriteOrderIds) ? 1 : 0,
+            ];
+        });
+
+        // Retorna a view com os dados
+        return view('pages.sellers.orders', compact('seller', 'orders'));
+    }
+
+    public function getFilteredClients(Request $request)
+    {
+        $seller = auth()->guard('seller')->user();
+        if (!$seller) {
+            return redirect()->route('buyer.login')->with('error', 'Você precisa estar autenticado para acessar esta página.');
+        }
+        dd($request);
+
+        $seller = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
+        $favoriteClientIds = $seller->favoriteClients->pluck('id')->toArray();
+
+        $query = Client::query();
 
         if ($request->filled('client_name') && $request->input('client_name') !== 'Selecione') {
             $query->byClientName($request->input('client_name'));
