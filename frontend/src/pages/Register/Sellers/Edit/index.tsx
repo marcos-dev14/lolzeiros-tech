@@ -27,7 +27,7 @@ export function EditSeller() {
   const [suppliersOptions, setSuppliersOptions] = useState([]);
   const [isUpdatingBlockedSupplier, setIsUpdatingBlockedSupplier] = useState(false);
   const [suppliersId, setSuppliersId] = useState<number[]>([]);
-  
+
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -36,7 +36,7 @@ export function EditSeller() {
   const { goBack } = useHistory();
 
   const { id } = useParams<{ id: string }>();
-  
+
   const [sellerStatus, setSellerStatus] = useState(() =>
     !!sellerData ?
       'status' in sellerData ? sellerData.status! :
@@ -44,14 +44,14 @@ export function EditSeller() {
       : 'Inativo'
   );
 
-  const [avaliableOpportunity , setAvaliableOpportunity ] = useState(() =>
+  const [avaliableOpportunity, setAvaliableOpportunity] = useState(() =>
     !!sellerData ?
       'avaliable_opportunity ' in sellerData ? sellerData.status! :
         !!sellerData.status ? 'Sim' : 'Não'
       : 'Não'
   );
 
-  const [portfolioCustomer , setPortfolioCustomer  ] = useState(() =>
+  const [portfolioCustomer, setPortfolioCustomer] = useState(() =>
     !!sellerData ?
       'portfolio_customer' in sellerData ? sellerData.status! :
         !!sellerData.status ? 'Fixo' : 'Dinâmico'
@@ -75,7 +75,7 @@ export function EditSeller() {
       const {
         data: { data: suppliersData }
       } = suppliersResponse;
-      
+
       setSeller(seller);
       setSellerData(seller);
 
@@ -104,16 +104,16 @@ export function EditSeller() {
     try {
       if (!sellerData.blocked_suppliers) return;
       setIsUpdatingBlockedSupplier(true);
-  
+
       const formattedBlockedSuppliersId = value.map(e => e.id); // Extraindo apenas os IDs
-  
+
       // console.log("FORMATTED BLOCKED: ", formattedBlockedSuppliers);
-  
+
       // Atualizando o suppliersId com os IDs (números) extraídos
       setSuppliersId(formattedBlockedSuppliersId);
 
       const formattedBlockedSuppliers = value.map(e => ({ id: e.id, name: e.value }));
-  
+
       // @ts-ignore
       updateSeller({ blocked_suppliers: formattedBlockedSuppliers });
     } catch (e) {
@@ -125,7 +125,13 @@ export function EditSeller() {
 
   const handleSubmit = useCallback(async () => {
     // @ts-ignore
-    const data = formRef.current.getData()
+
+    const data = formRef.current.getData();
+
+    if (data.password && data.password !== data.confirmPassword) {
+      setError('As senhas não correspondem.');
+      return;
+    }
 
     const formattingData = {
       name: data.name,
@@ -135,27 +141,21 @@ export function EditSeller() {
       status: sellerStatus === 'Ativo' ? 'Ativo' : 'Inativo',
       avaliable_opportunity: avaliableOpportunity === 'Sim' ? 'Sim' : 'Não',
       portfolio_customer: portfolioCustomer === 'Fixo' ? 'Fixo' : 'Dinâmico',
-      created_at: typeof data.created_at === 'string' ? data.created_at :
-      // @ts-ignore
-      data.created_at.toISOString(),
-      blocked_suppliers: suppliersId
-    }
-
-    // console.log("DADOS ENVIADO: ", formattingData)
+      created_at: typeof data.created_at === 'string' ? data.created_at : data.created_at.toISOString(),
+      blocked_suppliers: suppliersId,
+      password: data.password || undefined,
+    };
 
     try {
       await api.post(`/sellers/${id}?_method=PUT`, formattingData);
       setMessage('Salvo com sucesso');
     } catch (e) {
-      console.log('Erro ao editar vendedor:', e);
-
       // @ts-ignore
-      const errorMessage = !!e.response ? e.response.data.message :
-        'Houve um erro ao salvar o cliente.';
 
+      const errorMessage = e.response ? e.response.data.message : 'Houve um erro ao salvar o vendedor.';
       setError(errorMessage);
     }
-  }, [sellerStatus, avaliableOpportunity, portfolioCustomer, suppliersId])
+  }, [sellerStatus, avaliableOpportunity, portfolioCustomer, suppliersId, id]);
 
   useEffect(() => {
     fetchSeller();
@@ -167,7 +167,7 @@ export function EditSeller() {
       <MenuAndTableContainer>
         <Menu />
 
-        <Form ref={formRef} onSubmit={() => {}} initialData={formattedFetchSeller} >
+        <Form ref={formRef} onSubmit={() => { }} initialData={formattedFetchSeller} >
           <Container>
             <SectionTitle>
               Comercial
@@ -223,8 +223,8 @@ export function EditSeller() {
               />
 
               {sellerData.created_at && (
-                <DateBox 
-                  name="created_at" 
+                <DateBox
+                  name="created_at"
                   title="Cadastro na Auge"
                   width="6.75rem"
                   validated={false}
@@ -247,11 +247,27 @@ export function EditSeller() {
                 value={avaliableOpportunity}
                 setValue={setAvaliableOpportunity}
               />
-               <RadioBox
+              <RadioBox
                 title="Portfólio"
                 value={portfolioCustomer}
                 setValue={setPortfolioCustomer}
                 options={['Fixo', 'Dinâmico']}
+              />
+            </InputContainer>
+            <InputContainer>
+              <FormInput
+                name="password"
+                title="Nova Senha"
+                type="password"
+                placeholder="Digite a nova senha..."
+                style={{ textAlign: "left" }}
+              />
+              <FormInput
+                name="confirmPassword"
+                title="Confirmar Senha"
+                type="password"
+                placeholder="Confirme a nova senha..."
+                style={{ textAlign: "left" }}
               />
             </InputContainer>
 

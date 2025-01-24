@@ -618,7 +618,7 @@ console.log(external_order_id,originSale,salesChannel);
             }            <InputContainer>
               <FormInput
                 name="comments"
-                title="Observações do Cliente"
+                title="Observações do Cdte"
                 fullW
                 width="100%"
                 validated={false}

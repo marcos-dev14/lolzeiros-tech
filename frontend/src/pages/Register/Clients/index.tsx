@@ -566,9 +566,9 @@ export function Clients() {
         data: { data: profiles }
       } = profilesResponse;
 
-      const {
-        data: { data: groups }
-      } = groupsResponse;
+       const {
+         data: { data: groups }
+       } = groupsResponse;
 
       const {
         data: { data: pdvs }
@@ -598,7 +598,7 @@ export function Clients() {
       setProfilesOptions(profiles.map((a: string) => ({ id: a.id, value: a.name, label: a.name })))
 
       // @ts-ignore
-      setGroupsOptions(groups.map((a: string) => ({ id: a.id, value: a.name, label: a.name })))
+       setGroupsOptions(groups.map((a: string) => ({ id: a.id, value: a.name, label: a.name })))
 
       // @ts-ignore
       setPdvsOptions(pdvs.map((a: string) => ({ id: a.id, value: a.name, label: a.name })))

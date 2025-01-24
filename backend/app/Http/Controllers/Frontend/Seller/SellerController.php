@@ -699,7 +699,5 @@ class SellerController extends Controller
     
         // Retorna a view com os dados
         return view('pages.sellers.orders', compact('seller', 'orders'));
-    }
-    
-      
+    }        
 }

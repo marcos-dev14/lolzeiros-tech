@@ -56,6 +56,7 @@ import { BankAccounts } from './components/BankAccounts';
 import { AlertModal } from '@/src/components/AlertModal';
 import { FormTextArea } from '@/src/components/FormTextArea';
 import { FormPhoneBox } from '@/src/components/FormPhoneBox';
+import { SellersList } from './components/SellerCard/SellersList';
 
 export function NewClient() {
   const { client, setClient, updateClient } = useRegister();
@@ -1080,7 +1081,7 @@ export function NewClient() {
                   }
                   customValue={{
                     // @ts-ignore
-                    value: client.origin?.name ?? '' ,
+                    value: client.origin?.name ?? '',
                     // @ts-ignore
                     label: client.origin?.name ?? ''
                   }}
@@ -1273,6 +1274,17 @@ export function NewClient() {
                 setTags={setNewsletterTags}
                 width="19.25rem"
                 validated={false}
+              />
+            </InputContainer>
+            <CustomSectionTitle>
+              Comerciais Vinculados
+            </CustomSectionTitle>
+            <InputContainer>
+
+              <SellersList
+                // @ts-ignore
+
+                clientsSeller={client?.clients_sellers}
               />
             </InputContainer>
             <CustomSectionTitle>

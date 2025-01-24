@@ -12,8 +12,12 @@
             <x-icons.tag></x-icons.tag>
         </a>
 
-        @if(!auth()->guard('buyer')->user())
+        @if (!auth()->guard('buyer')->user())
             <a class="menu-button no-auth" href="{{ route('buyer.showLoginForm') }}">
+                <x-icons.user-check></x-icons.user-check>
+            </a>
+        @elseif (auth()->guard('seller')->user())
+            <a class="menu-button" href="{{ route('seller.clients') }}">
                 <x-icons.user-check></x-icons.user-check>
             </a>
         @else
@@ -21,9 +25,11 @@
                 <x-icons.user-check></x-icons.user-check>
             </a>
         @endif
-
-        <a class="menu-button" href="{{ route('cart.index') }}">
-            <x-icons.shopping-cart></x-icons.shopping-cart>
-        </a>
+        @if (auth()->guard('seller')->user())
+        @else
+            <a class="menu-button" href="{{ route('cart.index') }}">
+                <x-icons.shopping-cart></x-icons.shopping-cart>
+            </a>
+        @endif
     </nav>
 </div>
