@@ -204,7 +204,6 @@
             </div>
         </div>
     </div>
-
 </x-layouts.seller-panel>
 
 @push('scripts')

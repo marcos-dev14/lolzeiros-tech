@@ -66,3 +66,29 @@ $(document).ready(function () {
         }
     });
 });
+
+function formatDate(dateString) {
+    const date = new Date(dateString.split('T')[0]);
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const year = date.getUTCFullYear();
+    return `${day}/${month}/${year}`;
+}
+
+function formatCurrency(value) {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    }).format(value).replace('R$', '').trim();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const dateInput = document.getElementById('date');
+    const valueInput = document.getElementById('value');
+
+    const formattedDate = formatDate('2024-12-22T22:43:00');
+    const formattedValue = formatCurrency(99999.99);
+
+    dateInput.value = formattedDate;
+    valueInput.value = formattedValue;
+});
