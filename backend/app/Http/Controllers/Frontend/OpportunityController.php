@@ -45,7 +45,7 @@ class OpportunityController extends BaseController
         return view('pages.sellers.opportunities.index', compact('suppliers', 'seller'));
     }
 
-    public function opportunitiesFromSupplier($supplierSlug)
+    public function opportunitiesFromSupplier($supplierSlug, Request $request)
     {
         $seller = auth()->guard('seller')->user();
 
@@ -130,7 +130,63 @@ class OpportunityController extends BaseController
                 ];
             });
         });
-        return view('pages.sellers.opportunities.opportunitiesFromSupplier', compact('clients', 'opportunities', 'seller'));
+
+        if ($request->has('status') && $request->status != null) {
+            $clients = $clients->filter(function ($client) use ($request) {
+                return $client->status == $request->status;
+            });
+        }
+
+        if ($request->has('lastLogin') && $request->lastLogin != null) {
+            $clients = $clients->filter(function ($client) use ($request) {
+                $requestDate = Carbon::createFromFormat('Y-m', $request->lastLogin); // 'YYYY-MM'
+                $clientDate = Carbon::createFromFormat('d/m/Y H:i', $client->lastLoginFilter)->format('Y-m');
+
+                return $clientDate === $requestDate->format('Y-m');
+            });
+        }
+           
+        if ($request->has('favorite')) {
+            $clients = $clients->filter(function ($client) use ($request) {
+                return $client->favorite == 1;
+            });
+        }
+        
+
+        if ($request->has('register') && $request->register != null) {
+            $clients = $clients->filter(function ($client) use ($request) {
+                $requestDate = Carbon::createFromFormat('Y-m', $request->register); // 'YYYY-MM'
+                $clientDate = Carbon::createFromFormat('d/m/Y H:i', $client->register)->format('Y-m');
+
+                return $clientDate === $requestDate->format('Y-m');
+            });
+        }
+
+        if ($request->has('cartAbandoned') && $request->cartAbandoned != null) {
+            $clients = $clients->filter(function ($client) use ($request) {
+                if (is_null($client->cartAbandoned)) {
+                    return false;
+                }
+
+                $requestDate = Carbon::createFromFormat('Y-m', $request->cartAbandoned); // 'YYYY-MM'
+                $clientDate = Carbon::createFromFormat('d/m/Y H:i', $client->cartAbandoned)->format('Y-m');
+
+                return $clientDate === $requestDate->format('Y-m');
+            });
+        }
+
+        if ($request->has('search') && $request->search != null) {
+            $search = strtolower($request->search);
+            $clients = $clients->filter(function ($client) use ($search) {
+                return str_contains(strtolower($client->name), $search)
+                    || str_contains(strtolower($client->group), $search)
+                    || str_contains(strtolower($client->document), $search)
+                    || str_contains(strtolower($client->state), $search);
+            });
+        }
+
+
+        return view('pages.sellers.opportunities.opportunitiesFromSupplier', compact('clients', 'opportunities', 'seller', 'supplier'));
     }
 
     public function store(Request $request)

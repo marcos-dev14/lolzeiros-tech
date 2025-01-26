@@ -147,7 +147,7 @@
                 <button class="close-button" id="close-modal">×</button>
             </div>
             <div class="modal-body">
-                <form id="filter-form" method="GET" action="{{ route('seller.clients') }}">
+                <form id="filter-form" method="GET" action="{{ route('seller.opportunitiesFromSupplier' , ['supplierSlug' => $supplier->slug]) }}">
                     <div class="filter-group">
                         <div class="filter-item">
                             <label>Pesquisa</label>
