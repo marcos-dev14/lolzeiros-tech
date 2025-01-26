@@ -140,13 +140,13 @@ class SellerController extends Controller
                 return $clientDate === $requestDate->format('Y-m');
             });
         }
-           
+
         if ($request->has('favorite')) {
             $clientData = $clientData->filter(function ($client) use ($request) {
                 return $client->favorite == 1;
             });
         }
-        
+
 
         if ($request->has('register') && $request->register != null) {
             $clientData = $clientData->filter(function ($client) use ($request) {
@@ -314,13 +314,13 @@ class SellerController extends Controller
                 return $clientDate === $requestDate->format('Y-m');
             });
         }
-           
+
         if ($request->has('favorite')) {
             $clientData = $clientData->filter(function ($client) use ($request) {
                 return $client->favorite == 1;
             });
         }
-        
+
 
         if ($request->has('register') && $request->register != null) {
             $clientData = $clientData->filter(function ($client) use ($request) {
@@ -575,13 +575,13 @@ class SellerController extends Controller
                 return $clientDate === $requestDate->format('Y-m');
             });
         }
-           
+
         if ($request->has('favorite')) {
             $clientData = $clientData->filter(function ($client) use ($request) {
                 return $client->favorite == 1;
             });
         }
-        
+
 
         if ($request->has('register') && $request->register != null) {
             $clientData = $clientData->filter(function ($client) use ($request) {
@@ -889,7 +889,24 @@ class SellerController extends Controller
             ];
         });
 
-        // Retorna a view com os dados
+        if ($request->has('favorite')) {
+            $orders->getCollection()->transform(function ($order) {
+                if ($order->favorite == 1) {
+                    return $order; 
+                } else {
+                    return null; 
+                }
+            });
+        
+            
+            $orders = $orders->filter(function ($order) {
+                return $order !== null;
+            });
+            
+            
+            $orders = $orders->values()->paginate(10)->withQueryString();  // This resets the array keys
+        }
+        
         return view('pages.sellers.orders', compact('seller', 'orders'));
     }
 }

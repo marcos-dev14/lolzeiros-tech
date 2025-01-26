@@ -196,6 +196,10 @@
                             <label>Valor Max</label>
                             <input type="value" name="max_value">
                         </div>
+                        <div class="filter-item">
+                            <input type="checkbox" name="favorite" id="favorite">
+                            Favoritos
+                        </div>
                     </div>
                     <div class="filter-group">
                         <button type="submit" class="apply-button">Filtrar Vendas</button>
