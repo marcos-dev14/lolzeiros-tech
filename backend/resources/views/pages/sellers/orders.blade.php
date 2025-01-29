@@ -92,9 +92,10 @@
                                             <x-icons.eye></x-icons.eye>
                                         </a>
 
-                                        <button class="printer">
+                                        <a href="{{ route('seller.orderExport', ['orderCode' => $order->code]) }}"
+                                            class="eye">
                                             <x-icons.printer></x-icons.printer>
-                                        </button>
+                                        </a>
 
                                         <meta name="csrf-token" content="{{ csrf_token() }}">
                                         <button class="heart {{ $order->favorite === 1 ? 'favorited' : '' }}"

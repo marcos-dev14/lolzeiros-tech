@@ -19,7 +19,9 @@ use App\Services\SellerService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\SupplierDiscount;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use App\Exports\OrderExport;
 
 use App\Jobs\ProcessClientData;
 
@@ -908,5 +910,17 @@ class SellerController extends Controller
         }
         
         return view('pages.sellers.orders', compact('seller', 'orders'));
+    }
+
+    public function orderExport($orderCode)
+    {
+        $order = Order::with(['products', 'coupon.client'])->where('code', $orderCode)->first();
+
+        if (!$order) {
+            return response()->json(['error' => 'Pedido não encontrado'], 404);
+        }
+
+        return Excel::download(new OrderExport($order), 'pedido_' . $orderCode . '.xlsx');
+
     }
 }
