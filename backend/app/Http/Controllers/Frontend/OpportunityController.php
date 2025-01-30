@@ -109,7 +109,7 @@ class OpportunityController extends BaseController
 
                 return (object)[
                     'group' => $groupName,
-                    'name' => $client->company_name ?? $client->name,
+                    'name' => $client->name ?? $client->company_name,
                     'client_id' => $client->id,
                     'profile' => $client->profile->name ?? null,
                     'document' => $client->document ?? null,
@@ -187,6 +187,140 @@ class OpportunityController extends BaseController
 
 
         return view('pages.sellers.opportunities.opportunitiesFromSupplier', compact('clients', 'opportunities', 'seller', 'supplier'));
+    }
+
+    public function opportunitiesWithoutOrders(Request $request)
+    {
+        $seller = auth()->guard('seller')->user();
+
+        if (!$seller) {
+            return redirect()
+                ->route('seller.login')
+                ->with('error', 'Você precisa estar autenticado para acessar esta página.');
+        }
+
+        $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
+        $favoriteClientsIds = $sellerId->favoriteClients->pluck('id')->toArray();
+
+        $perPage = 15;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $countryStates = CountryState::pluck('name', 'id')->toArray();
+
+        // Buscar oportunidades de clientes sem pedidos
+        $opportunities = Opportunity::orderByDesc('created_at')
+            ->whereDoesntHave('clientGroup.clients.orders') // Clientes sem pedidos
+            ->with(['clientGroup.clients' => function ($query) {
+                $query->select('id', 'client_group_id', 'company_name', 'name', 'document', 'document_status', 'client_profile_id', 'auge_register');
+            }])
+            ->paginate($perPage, ['*'], 'page', $currentPage);
+
+        $clients = $opportunities->sortByDesc('created_at')->flatMap(function ($opportunity) use ($countryStates, $favoriteClientsIds) {
+            $groupName = $opportunity->clientGroup->name ?? null;
+            $lastLogin = optional($opportunity->clientGroup->buyer)->last_login;
+
+            $formattedLastLogin = $lastLogin
+                ? Carbon::parse($lastLogin)->format('d/m/Y H:i') . 'h (' . Carbon::parse($lastLogin)->diffForHumans() . ')'
+                : null;
+
+            return $opportunity->clientGroup->clients->map(function ($client) use ($groupName, $formattedLastLogin, $countryStates, $favoriteClientsIds) {
+                $mainAddress = $client->getMainAddress();
+                $clientStateCode = $mainAddress?->state?->code;
+                $stateDiscount = null;
+
+                $state = $mainAddress?->country_state_id
+                    ? ($countryStates[$mainAddress->country_state_id] ?? null)
+                    : null;
+
+                $icmsDiscount = 0;
+                if ($stateDiscount instanceof SupplierDiscount) {
+                    $icmsDiscount += floatval($stateDiscount->discount_value);
+                    $icmsDiscount += floatval($stateDiscount->additional_value);
+                }
+
+                return (object)[
+                    'group' => $groupName,
+                    'name' => $client->name ?? $client->company_name,
+                    'client_id' => $client->id,
+                    'profile' => $client->profile->name ?? null,
+                    'document' => $client->document ?? null,
+                    'state' => $state ? "{$state} - {$mainAddress->code}" : null,
+                    'icms' => $icmsDiscount,
+                    'register' => optional($client->auge_register)->format('d/m/Y H:i'),
+                    'lastLogin' => $formattedLastLogin,
+                    'status' => $client->document_status,
+                    'favorite' => in_array($client->id, $favoriteClientsIds) ? 1 : 0,
+                ];
+            });
+        });
+
+        return view('pages.sellers.opportunities.opportunitiesWithoutOrders', compact('clients', 'opportunities', 'seller'));
+    }
+    
+    public function opportunitiesFrozenClients(Request $request)
+    {
+        $seller = auth()->guard('seller')->user();
+
+        if (!$seller) {
+            return redirect()
+                ->route('seller.login')
+                ->with('error', 'Você precisa estar autenticado para acessar esta página.');
+        }
+
+        $sellerId = Seller::with(['favoriteClients', 'favoriteOrders'])->find($seller->id);
+        $favoriteClientsIds = $sellerId->favoriteClients->pluck('id')->toArray();
+
+        $perPage = 15;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $countryStates = CountryState::pluck('name', 'id')->toArray();
+
+        // Buscar oportunidades de clientes com pedidos (Frozen)
+        $opportunities = Opportunity::orderByDesc('created_at')
+            ->whereHas('clientGroup.clients.orders') // Clientes com pedidos
+            ->with(['clientGroup.clients' => function ($query) {
+                $query->select('id', 'client_group_id', 'company_name', 'name', 'document', 'document_status', 'client_profile_id', 'auge_register');
+            }])
+            ->paginate($perPage, ['*'], 'page', $currentPage);
+
+        $clients = $opportunities->sortByDesc('created_at')->flatMap(function ($opportunity) use ($countryStates, $favoriteClientsIds) {
+            $groupName = $opportunity->clientGroup->name ?? null;
+            $lastLogin = optional($opportunity->clientGroup->buyer)->last_login;
+
+            $formattedLastLogin = $lastLogin
+                ? Carbon::parse($lastLogin)->format('d/m/Y H:i') . 'h (' . Carbon::parse($lastLogin)->diffForHumans() . ')'
+                : null;
+
+            return $opportunity->clientGroup->clients->map(function ($client) use ($groupName, $formattedLastLogin, $countryStates, $favoriteClientsIds) {
+                $mainAddress = $client->getMainAddress();
+                $clientStateCode = $mainAddress?->state?->code;
+                $stateDiscount = null;
+
+                $state = $mainAddress?->country_state_id
+                    ? ($countryStates[$mainAddress->country_state_id] ?? null)
+                    : null;
+
+                $icmsDiscount = 0;
+                if ($stateDiscount instanceof SupplierDiscount) {
+                    $icmsDiscount += floatval($stateDiscount->discount_value);
+                    $icmsDiscount += floatval($stateDiscount->additional_value);
+                }
+
+                return (object)[
+                    'group' => $groupName,
+                    'name' => $client->company_name ?? $client->name,
+                    'client_id' => $client->id,
+                    'profile' => $client->profile->name ?? null,
+                    'document' => $client->document ?? null,
+                    'state' => $state ? "{$state} - {$mainAddress->code}" : null,
+                    'icms' => $icmsDiscount,
+                    'register' => optional($client->auge_register)->format('d/m/Y H:i'),
+                    'lastLogin' => $formattedLastLogin,
+                    'status' => $client->document_status,
+                    'favorite' => in_array($client->id, $favoriteClientsIds) ? 1 : 0,
+                ];
+            });
+        });
+
+        return view('pages.sellers.opportunities.opportunitiesFrozenClients', compact('clients', 'opportunities', 'seller'));
     }
 
     public function store(Request $request)

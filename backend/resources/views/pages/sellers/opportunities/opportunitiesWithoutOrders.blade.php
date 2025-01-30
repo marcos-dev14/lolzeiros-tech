@@ -1,6 +1,5 @@
 @push('styles')
     <link rel="stylesheet" href="{{ mix('css/opportunities-details.css') }}">
-    <link rel="stylesheet" href="{{ mix('css/orders-seller.css') }}">
     <link rel="stylesheet" href="{{ mix('css/plugins.css') }}">
 @endpush
 
@@ -12,10 +11,10 @@
     subtitle="Olá <strong>{{ $seller->name ?? 'Wesley Bananas' }}</strong> aqui estão todas oportunidades disponiveis pra você arrasar com a AugeApp."
     icon="icons.users"
     comercial="{{$seller->name}}"
->
+    >
     <x-menu />
-    <h1>Oportunidades do Fornecedor</h1>
-
+    <h1>Oportunidades Novas</h1>
+    
 
     @if ($clients->isEmpty())
         <p>Não há clientes para exibir.</p>
@@ -73,7 +72,7 @@
                                     <x-icons.calendar></x-icons.calendar>
                                 </div>
 
-                                <input type="text" id="date" disabled value="{{ $client->cartAbandoned }}">
+                                <input type="text" id="date" disabled value="{{ $client->lastLogin }}">
                             </div>
                         </td>
                         <td>
@@ -150,7 +149,7 @@
                 <button class="close-button" id="close-modal">×</button>
             </div>
             <div class="modal-body">
-                <form id="filter-form" method="GET" action="{{ route('seller.opportunitiesFromSupplier' , ['supplierSlug' => $supplier->slug]) }}">
+                <form id="filter-form" method="GET" action="{{ route('seller.withoutOrders' ) }}">
                     <div class="filter-group">
                         <div class="filter-item">
                             <label>Pesquisa</label>

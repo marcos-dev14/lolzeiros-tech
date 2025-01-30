@@ -7,6 +7,7 @@
     subtitle="Olá <strong>{{ $seller->name ?? 'Wesley Bananas' }}</strong> aqui estão todas oportunidades disponiveis pra você arrasar com a AugeApp."
     comercial="{{$seller->name}}"
     icon="icons.users">
+    <x-menu />
     <div class="container">
         <div id="opportunities-list">
             @foreach ($suppliers as $supplier)

@@ -1,6 +1,5 @@
 @push('styles')
     <link rel="stylesheet" href="{{ mix('css/opportunities-details.css') }}">
-    <link rel="stylesheet" href="{{ mix('css/orders-seller.css') }}">
     <link rel="stylesheet" href="{{ mix('css/plugins.css') }}">
 @endpush
 
@@ -14,7 +13,7 @@
     comercial="{{$seller->name}}"
 >
     <x-menu />
-    <h1>Oportunidades do Fornecedor</h1>
+    <h1>Oportunidades Congeladas</h1>
 
 
     @if ($clients->isEmpty())
@@ -73,7 +72,7 @@
                                     <x-icons.calendar></x-icons.calendar>
                                 </div>
 
-                                <input type="text" id="date" disabled value="{{ $client->cartAbandoned }}">
+                                <input type="text" id="date" disabled value="{{ $client->lastLogin }}">
                             </div>
                         </td>
                         <td>
@@ -150,7 +149,7 @@
                 <button class="close-button" id="close-modal">×</button>
             </div>
             <div class="modal-body">
-                <form id="filter-form" method="GET" action="{{ route('seller.opportunitiesFromSupplier' , ['supplierSlug' => $supplier->slug]) }}">
+                <form id="filter-form" method="GET" action="{{ route('seller.frozenClients') }}">
                     <div class="filter-group">
                         <div class="filter-item">
                             <label>Pesquisa</label>

@@ -4883,6 +4883,16 @@ body {
   flex: 1;
 }
 
+.search-input,
+select,
+input[type=date] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
 .filter-item label {
   display: block;
   margin-bottom: 5px;
