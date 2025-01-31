@@ -32,6 +32,7 @@
                     <th>Perfil</th>
                     <th>Documento</th>
                     <th>Estado</th>
+                    <th>Premio</th>
                     <th>Registro</th>
                     <th>Último Login</th>
                     <th>Status</th>
@@ -47,6 +48,8 @@
                         <td>{{ $client->profile }}</td>
                         <td>{{ $client->document }}</td>
                         <td>{{ $client->state ?? 'N/A' }}</td>
+                        <td>R$ 100</td>
+
                         <td>
                             <div class="formatted-input">
                                 <div class="formatted-input-icon">
