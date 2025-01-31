@@ -197,9 +197,9 @@
                             <label>Valor Max</label>
                             <input type="value" name="max_value">
                         </div>
-                        <div class="filter-item">
+                        <div class="filter-item modal-checkbox">
                             <input type="checkbox" name="favorite" id="favorite">
-                            Favoritos
+                            <p>Favoritos</p>
                         </div>
                     </div>
                     <div class="filter-group">

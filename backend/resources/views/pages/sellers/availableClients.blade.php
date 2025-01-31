@@ -1,5 +1,5 @@
 @push('styles')
-    <link rel="stylesheet" href="{{ mix('css/clients-seller.css') }}">
+    <link rel="stylesheet" href="{{ mix('css/available-customers.css') }}">
     <link rel="stylesheet" href="{{ mix('css/plugins.css') }}">
 @endpush
 
@@ -11,7 +11,7 @@
     subtitle="Olá <strong>{{ $seller->name }}</strong>, aqui estão todos os seus clientes junto à AugeApp."
     icon="icons.users" comercial="{{ $seller->name }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <table id="clients-table" class="table">
+    <table id="available-table" class="table">
         <div class="search-container">
             <button class="filter-button" id="open-modal-btn">Filtro</button>
         </div>
@@ -186,16 +186,16 @@
                         <div class="filter-item">
                             <label>Data de cadastro</label>
                             <input type="month" name="register">
-                        </div>cartAbandoned
+                        </div>
                     </div>
                     <div class="filter-group">
                         <div class="filter-item">
                             <label>Carrinho abandonado</label>
                             <input type="month" name="cartAbandoned">
                         </div>
-                        <div class="filter-item">
+                        <div class="filter-item modal-checkbox">
                             <input type="checkbox" name="favorite" id="favorite">
-                            Favoritos
+                            <p>Favoritos</p>
                         </div>
                     </div>
                     <div class="filter-group">

@@ -175,16 +175,16 @@
                         <div class="filter-item">
                             <label>Data de cadastro</label>
                             <input type="month" name="register">
-                        </div>cartAbandoned
+                        </div>
                     </div>
                     <div class="filter-group">
                         <div class="filter-item">
                             <label>Carrinho abandonado</label>
                             <input type="month" name="cartAbandoned">
                         </div>
-                        <div class="filter-item">
+                        <div class="filter-item modal-checkbox">
                             <input type="checkbox" name="favorite" id="favorite">
-                            Favoritos
+                            <p>Favoritos</p>
                         </div>
                     </div>
                     <div class="filter-group">
